@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   FlatList,
@@ -15,7 +15,7 @@ import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import { api } from "../../services/api";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ChecklistRoutesPrams } from "./routes";
 
@@ -144,16 +144,6 @@ export function PhotosScreen({ route }: any) {
       .then(({ data }) => setChecklistItem(data))
       .finally(() => setLoading(false));
   };
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", (e) => {
-      if (e) {
-        console.log(e.data);
-      }
-    });
-
-    return unsubscribe;
-  }, [navigation]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>

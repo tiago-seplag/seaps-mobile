@@ -36,9 +36,6 @@ export function HomeScreen() {
   return (
     <FlatList
       data={data}
-      ItemSeparatorComponent={({ highlighted }) => (
-        <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
-      )}
       refreshControl={
         <RefreshControl
           refreshing={loading}
@@ -116,11 +113,6 @@ const Badge = ({ status }: { status: string }) => {
 };
 
 const styles = StyleSheet.create({
-  separator: {
-    margin: 1,
-    backgroundColor: "blue",
-    height: 2,
-  },
   title: {
     fontSize: 32,
   },
