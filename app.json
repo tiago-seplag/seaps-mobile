@@ -1,6 +1,8 @@
 {
   "expo": {
     "name": "checklists-app",
+    "scheme": "smartpass",
+    "platforms": ["ios", "android"],
     "slug": "checklists-app",
     "version": "1.0.0",
     "orientation": "portrait",
