@@ -1,18 +1,12 @@
 import { useEffect, useState } from "react";
-import {
-  FlatList,
-  Pressable,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Materialnicons from "@expo/vector-icons/MaterialIcons";
 
 import { api } from "../../services/api";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "../../../App";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../..";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export function HomeScreen() {
   const [data, setData] = useState();
@@ -34,65 +28,85 @@ export function HomeScreen() {
   }, [refresh]);
 
   return (
-    <FlatList
-      data={data}
-      refreshControl={
-        <RefreshControl
-          refreshing={loading}
-          onRefresh={() => setRefresh(!refresh)}
-        />
-      }
+    <SafeAreaView
       style={{
         flex: 1,
-        padding: 16,
-        backgroundColor: "#e8e8e8",
-        shadowColor: "black",
-        shadowOffset: {
-          height: 2,
-          width: 4,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "row",
       }}
-      renderItem={(item) => (
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Checklists", {
-              screen: "Checklist",
-              params: { id: item.item.id },
-            });
-          }}
-          key={item.item.id}
-          style={styles.card}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Text style={styles.cardSid}>{item.item.sid}</Text>
-            <Badge status={item.item.status} />
-          </View>
-          <Text style={styles.cardTitle}>{item.item.property.name}</Text>
-          <View
-            style={{
-              flexDirection: "row",
-              gap: 16,
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={styles.cardText}>
-              {item.item.property.organization.name}
-            </Text>
-            <Text style={styles.cardText}>
-              {item.item.property.person?.name}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      )}
-    />
+    >
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("Checklists", {
+            screen: "ChecklistsScreen",
+          });
+        }}
+        style={styles.card}
+      >
+        <Materialnicons name="list" size={36} color={"#1A1A1A"} />
+        <Text>Checklists</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
+    // <FlatList
+    //   data={data}
+    //   refreshControl={
+    //     <RefreshControl
+    //       refreshing={loading}
+    //       onRefresh={() => setRefresh(!refresh)}
+    //     />
+    //   }
+    //   style={{
+    //     flex: 1,
+    //     padding: 16,
+    //     backgroundColor: "#e8e8e8",
+    //     shadowColor: "black",
+    //     shadowOffset: {
+    //       height: 2,
+    //       width: 4,
+    //     },
+    //     shadowOpacity: 0.1,
+    //     shadowRadius: 2,
+    //   }}
+    //   renderItem={(item) => (
+    //     <TouchableOpacity
+    //       onPress={() => {
+    //         navigation.navigate("Checklist", {
+    //           screen: "ChecklistScreen",
+    //           params: { id: item.item.id },
+    //         });
+    //       }}
+    //       key={item.item.id}
+    //       style={styles.card}
+    //     >
+    //       <View
+    //         style={{
+    //           flexDirection: "row",
+    //           justifyContent: "space-between",
+    //           alignItems: "center",
+    //         }}
+    //       >
+    //         <Text style={styles.cardSid}>{item.item.sid}</Text>
+    //         <Badge status={item.item.status} />
+    //       </View>
+    //       <Text style={styles.cardTitle}>{item.item.property.name}</Text>
+    //       <View
+    //         style={{
+    //           flexDirection: "row",
+    //           gap: 16,
+    //           justifyContent: "space-between",
+    //         }}
+    //       >
+    //         <Text style={styles.cardText}>
+    //           {item.item.property.organization.name}
+    //         </Text>
+    //         <Text style={styles.cardText}>
+    //           {item.item.property.person?.name}
+    //         </Text>
+    //       </View>
+    //     </TouchableOpacity>
+    //   )}
+    // />
   );
 }
 
@@ -125,6 +139,8 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 8,
     gap: 8,
+    justifyContent: "center",
+    alignItems: "center",
   },
   cardTitle: {
     fontSize: 22,

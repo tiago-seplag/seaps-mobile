@@ -11,6 +11,7 @@ export default function RadioGroup({
   layout = "column",
   onPress,
   radioButtons,
+  disabled,
   selectedId,
   testID,
 }: RadioGroupProps) {
@@ -36,6 +37,7 @@ export default function RadioGroup({
       {radioButtons.map((button) => (
         <RadioButton
           {...button}
+          disabled={disabled}
           key={button.id}
           labelStyle={button.labelStyle || labelStyle}
           selected={button.id === selectedId}

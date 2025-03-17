@@ -5,17 +5,20 @@ import { PhotoObservationScreen } from "./photoObservation";
 import { ObservationScreen } from "./observation";
 
 export type ChecklistRoutesPrams = {
-  Checklist: {
+  ChecklistScreen: {
     id: string;
   };
   Photos: {
     checklistItem: any;
+    checklist: any;
   };
   PhotoObservation: {
     checklistItemPhoto: any;
+    checklist: any;
   };
   Observation: {
     checklistItem: any;
+    checklist: any;
   };
 };
 
@@ -28,7 +31,7 @@ export function ChecklistRoutes() {
         headerShown: false,
       }}
     >
-      <Stack.Screen name="Checklist" component={ChecklistScreen} />
+      <Stack.Screen name="ChecklistScreen" component={ChecklistScreen} />
       <Stack.Screen name="Photos" component={PhotosScreen} />
       <Stack.Screen name="Observation" component={ObservationScreen} />
       <Stack.Screen

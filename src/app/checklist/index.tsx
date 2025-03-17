@@ -61,12 +61,14 @@ export function ChecklistScreen({ route }: any) {
 
   const handleNavigateToImages = (item: ChecklistItem) => {
     navigation.push("Photos", {
+      checklist,
       checklistItem: item,
     });
   };
 
   const handleNavigateToObservation = (item: ChecklistItem) => {
     navigation.push("Observation", {
+      checklist,
       checklistItem: item,
     });
   };
@@ -109,6 +111,7 @@ export function ChecklistScreen({ route }: any) {
             <RadioGroup
               radioButtons={radioButtons}
               containerStyle={{ gap: 8 }}
+              disabled={checklist?.status === "CLOSED"}
               onPress={(value) => handlePressRadio(value, item.item.id)}
               layout="row"
               selectedId={String(item.item.score)}

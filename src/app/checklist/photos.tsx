@@ -42,6 +42,8 @@ interface checklistItem {
 }
 
 export function PhotosScreen({ route }: any) {
+  const checklist = route.params.checklist;
+
   const navigation =
     useNavigation<NativeStackNavigationProp<ChecklistRoutesPrams>>();
 
@@ -118,7 +120,7 @@ export function PhotosScreen({ route }: any) {
       }
 
       const { data } = await axios.post(
-        "http://172.16.146.58:3333/upload/images",
+        "http://http://172.16.146.58:3333/upload/images",
         form,
         {
           headers: {
@@ -165,7 +167,11 @@ export function PhotosScreen({ route }: any) {
         >
           {checklistItem?.item?.name}
         </Text>
-        <TouchableOpacity onPress={handleSelectOrigin}>
+        <TouchableOpacity
+          onPress={handleSelectOrigin}
+          disabled={checklist?.status === "CLOSED"}
+          style={{ opacity: checklist?.status === "CLOSED" ? 0.5 : 1 }}
+        >
           <Materialnicons name="add-a-photo" size={32} color={"#1A1A1A"} />
         </TouchableOpacity>
       </View>
@@ -190,7 +196,7 @@ export function PhotosScreen({ route }: any) {
           <View key={item.item.id} style={styles.card}>
             <Image
               source={{
-                uri: "http://172.16.146.58:3333/" + item.item.image,
+                uri: "http://http://172.16.146.58:3333/" + item.item.image,
               }}
               style={{
                 height: 220,
@@ -200,10 +206,15 @@ export function PhotosScreen({ route }: any) {
               }}
             />
             <TouchableOpacity
-              style={styles.observation}
+              style={[
+                styles.observation,
+                { opacity: checklist?.status === "CLOSED" ? 0.5 : 1 },
+              ]}
+              disabled={false}
               onPress={() => {
                 navigation.push("PhotoObservation", {
                   checklistItemPhoto: item.item,
+                  checklist,
                 });
               }}
             >

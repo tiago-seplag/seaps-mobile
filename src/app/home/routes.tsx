@@ -1,8 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { HomeScreen } from ".";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { HomeScreen } from ".";
 
-const Tab = createBottomTabNavigator();
+const Tab = createNativeStackNavigator();
 
 export function HomeRoutes() {
   return (
@@ -11,11 +12,11 @@ export function HomeRoutes() {
         name="Home"
         component={HomeScreen}
         options={{
-          headerTitle: "Checklists",
-          tabBarShowLabel: false,
-          tabBarIcon: () => (
-            <Materialnicons name="home" size={32} color={"#1A1A1A"} />
-          ),
+          headerTitle: "Home",
+          // tabBarShowLabel: false,
+          // tabBarIcon: () => (
+          //   <Materialnicons name="home" size={32} color={"#1A1A1A"} />
+          // ),
         }}
       />
     </Tab.Navigator>

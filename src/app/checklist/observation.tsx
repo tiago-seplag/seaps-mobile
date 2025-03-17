@@ -16,6 +16,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ChecklistRoutesPrams } from "./routes";
 
 export function ObservationScreen({ route }: any) {
+  const checklist = route.params.checklist;
+
   const navigation =
     useNavigation<NativeStackNavigationProp<ChecklistRoutesPrams>>();
 
@@ -66,14 +68,16 @@ export function ObservationScreen({ route }: any) {
           />
           <View>
             <TouchableOpacity
-              style={{
-                width: "100%",
-                backgroundColor: "green",
-                alignItems: "center",
-                padding: 12,
-                borderRadius: 4,
-              }}
-              disabled={loading}
+              style={[
+                {
+                  width: "100%",
+                  backgroundColor: "green",
+                  alignItems: "center",
+                  padding: 12,
+                  borderRadius: 4,
+                },
+                { opacity: checklist?.status === "CLOSED" ? 0.5 : 1 },
+              ]}
               onPress={handleUpdateObservation}
             >
               <Text
@@ -91,7 +95,8 @@ export function ObservationScreen({ route }: any) {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 32,
+    fontSize: 26,
+    fontWeight: "bold",
   },
   card: {
     paddingVertical: 16,

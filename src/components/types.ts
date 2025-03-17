@@ -32,4 +32,5 @@ export type RadioGroupProps = {
   radioButtons: RadioButtonProps[];
   selectedId?: string;
   testID?: string;
+  disabled?: boolean;
 };

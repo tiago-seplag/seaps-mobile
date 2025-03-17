@@ -73,7 +73,7 @@ export default function RadioButton({
         style={[
           styles.container,
           orientation,
-          { opacity: disabled ? 0.2 : 1 },
+          { opacity: disabled ? 0.5 : 1 },
           containerStyle,
           selected && { backgroundColor },
         ]}
