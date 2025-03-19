@@ -66,9 +66,7 @@ export function PhotoObservationScreen({ route }: any) {
       >
         <View key={image?.id} style={styles.card}>
           <Image
-            source={{
-              uri: "http://172.16.146.58:3333/" + image.image,
-            }}
+            source={{ uri: process.env.EXPO_PUBLIC_BUCKET_URL + image.image }}
             style={styles.cardImage}
           />
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>Observação:</Text>

@@ -147,6 +147,10 @@ export function PhotosScreen({ route }: any) {
       .finally(() => setLoading(false));
   };
 
+  const CHECKLIST_IS_CLOSED = checklist?.status === "CLOSED";
+
+  console.log(process.env.EXPO_PUBLIC_API_URL);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <View
@@ -169,8 +173,8 @@ export function PhotosScreen({ route }: any) {
         </Text>
         <TouchableOpacity
           onPress={handleSelectOrigin}
-          disabled={checklist?.status === "CLOSED"}
-          style={{ opacity: checklist?.status === "CLOSED" ? 0.5 : 1 }}
+          disabled={CHECKLIST_IS_CLOSED}
+          style={{ opacity: CHECKLIST_IS_CLOSED ? 0.5 : 1 }}
         >
           <Materialnicons name="add-a-photo" size={32} color={"#1A1A1A"} />
         </TouchableOpacity>
@@ -196,7 +200,7 @@ export function PhotosScreen({ route }: any) {
           <View key={item.item.id} style={styles.card}>
             <Image
               source={{
-                uri: "http://http://172.16.146.58:3333/" + item.item.image,
+                uri: "http://172.16.146.58:3333" + item.item.image,
               }}
               style={{
                 height: 220,
@@ -208,7 +212,7 @@ export function PhotosScreen({ route }: any) {
             <TouchableOpacity
               style={[
                 styles.observation,
-                { opacity: checklist?.status === "CLOSED" ? 0.5 : 1 },
+                { opacity: CHECKLIST_IS_CLOSED ? 0.5 : 1 },
               ]}
               disabled={false}
               onPress={() => {
@@ -218,8 +222,14 @@ export function PhotosScreen({ route }: any) {
                 });
               }}
             >
-              <Text>Adicionar Observação</Text>
-              <Materialnicons name="sms" size={26} color={"#1A1A1A"} />
+              {item.item.observation ? (
+                <Text style={{ flex: 1 }}>{item.item.observation}</Text>
+              ) : (
+                <>
+                  <Text>{"Adicionar Observação"}</Text>
+                  <Materialnicons name="sms" size={26} color={"#1A1A1A"} />
+                </>
+              )}
             </TouchableOpacity>
           </View>
         )}
@@ -255,6 +265,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 4,
     paddingVertical: 8,
+    paddingHorizontal: 8,
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",

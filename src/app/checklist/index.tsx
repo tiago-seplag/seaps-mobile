@@ -184,9 +184,9 @@ const radioButtonStyles = {
 
 const radioButtons = [
   {
-    id: "1",
+    id: "0",
     label: "Ruim",
-    value: "1",
+    value: "0",
     color: "#ef4444",
     backgroundColor: "#fecaca",
     containerStyle: {
@@ -195,22 +195,22 @@ const radioButtons = [
     },
   },
   {
-    id: "2",
+    id: "1",
     color: "#eab308",
     backgroundColor: "#fef08a",
     label: "Regular",
-    value: "2",
+    value: "1",
     containerStyle: {
       borderColor: "#eab308",
       ...radioButtonStyles,
     },
   },
   {
-    id: "3",
+    id: "2",
     color: "#22c55e",
     backgroundColor: "#bbf7d0",
     label: "Bom",
-    value: "3",
+    value: "2",
     containerStyle: {
       borderColor: "#22c55e",
       ...radioButtonStyles,
