@@ -16,7 +16,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function Index() {
   const { session, isLoading, signOut } = useSession();
 
-  return !session ? (
+  return session ? (
     <Stack.Navigator
       screenOptions={{
         headerShown: false,

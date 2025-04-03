@@ -16,31 +16,29 @@ const TOKEN_URL =
 const CLIENT_ID = "projeto-template-integracao"; // Seu client_id
 const REDIRECT_URI = AuthSession.makeRedirectUri({
   scheme: "http",
+  native: "http",
 });
+
+WebBrowser.maybeCompleteAuthSession();
 
 export function Login() {
   const { signIn } = useSession();
 
-  console.log(REDIRECT_URI);
-
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId: CLIENT_ID,
-      redirectUri: "http://172.16.146.58:8081",
+      redirectUri: REDIRECT_URI,
       responseType: "code",
-      state: "f7fa50c1-cd43-48f0-a2ed-da08434825f7",
       scopes: ["openid", "offline_access"],
     },
     { authorizationEndpoint: AUTH_URL }
   );
 
   async function exchangeCodeForToken(code: string) {
-    console.log("code,", code);
-
     const body = new URLSearchParams({
       grant_type: "authorization_code",
       client_id: CLIENT_ID,
-      redirect_uri: REDIRECT_URI,
+      redirect_uri: "http://192.168.15.14:3000/login",
       code,
     });
 
@@ -64,11 +62,9 @@ export function Login() {
   }
 
   useEffect(() => {
-    console.log("response", response);
-    console.log("request", request);
-
     if (response?.type === "success") {
       const { code } = response.params;
+      console.log(code);
       exchangeCodeForToken(code);
     }
   }, [response, request]);
