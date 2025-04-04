@@ -1,89 +1,171 @@
-import React, { useEffect } from "react";
-import { Button } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { useSession } from "../../contexts/authContext";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Controller, useForm } from "react-hook-form";
 
 import * as WebBrowser from "expo-web-browser";
-import * as AuthSession from "expo-auth-session";
+import { StatusBar } from "expo-status-bar";
+import { api } from "../../services/api";
+import Materialnicons from "@expo/vector-icons/MaterialIcons";
 
 WebBrowser.maybeCompleteAuthSession();
-
-const AUTH_URL =
-  "https://dev.login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/auth";
-const TOKEN_URL =
-  "https://dev.login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/token";
-
-const CLIENT_ID = "projeto-template-integracao"; // Seu client_id
-const REDIRECT_URI = AuthSession.makeRedirectUri({
-  scheme: "http",
-  native: "http",
-});
 
 WebBrowser.maybeCompleteAuthSession();
 
 export function Login() {
   const { signIn } = useSession();
 
-  const [request, response, promptAsync] = AuthSession.useAuthRequest(
-    {
-      clientId: CLIENT_ID,
-      redirectUri: REDIRECT_URI,
-      responseType: "code",
-      scopes: ["openid", "offline_access"],
-    },
-    { authorizationEndpoint: AUTH_URL }
-  );
+  const [showPassword, setShowPassword] = useState(false);
 
-  async function exchangeCodeForToken(code: string) {
-    const body = new URLSearchParams({
-      grant_type: "authorization_code",
-      client_id: CLIENT_ID,
-      redirect_uri: "http://192.168.15.14:3000/login",
-      code,
-    });
-
+  const submitLogin = async ({ email, password }: any) => {
     try {
-      const res = await fetch(TOKEN_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body.toString(),
+      const { data } = await api.post("api/auth/mobile/login", {
+        email: email.trim().toLowerCase(),
+        password: password.trim(),
       });
-
-      const data = await res.json();
-
-      if (data.access_token) {
-        signIn(data.access_token);
-      } else {
-        console.error("Erro ao obter o token:", data);
-      }
-    } catch (error) {
-      console.error("Erro na requisição:", error);
+      signIn(data.SESSION);
+    } catch (err: any) {
+      console.log(err);
     }
-  }
+  };
 
-  useEffect(() => {
-    if (response?.type === "success") {
-      const { code } = response.params;
-      console.log(code);
-      exchangeCodeForToken(code);
-    }
-  }, [response, request]);
+  const { handleSubmit, control } = useForm();
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-    >
-      <Button title="Login" disabled={!request} onPress={() => promptAsync()} />
-      {/* <WebView
-        source={{
-          uri: "http://172.16.146.58:3000/login",
-        }}
-        onMessage={onMessage}
-        pullToRefreshEnabled
-        sharedCookiesEnabled={false}
-        cacheEnabled={false}
-        bounces={false}
-      /> */}
-    </SafeAreaView>
+    <View style={styles.container}>
+      <StatusBar backgroundColor="#ffffff" translucent />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardView}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View>
+            {/* <Image source={Logo} style={styles.image} /> */}
+            <View style={{ marginVertical: 32, display: "flex", gap: 16 }}>
+              <Controller
+                control={control}
+                rules={{
+                  required: true,
+                }}
+                name={"email"}
+                render={({ field: { onChange, value } }) => (
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      placeholder="Email"
+                      keyboardType="email-address"
+                      value={value}
+                      onChangeText={onChange}
+                      onSubmitEditing={Keyboard.dismiss}
+                    />
+                  </View>
+                )}
+              />
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 3,
+                }}
+              >
+                <Controller
+                  control={control}
+                  rules={{
+                    required: true,
+                  }}
+                  name={"password"}
+                  render={({ field: { onChange, value } }) => (
+                    <View style={{ ...styles.inputContainer, width: "75%" }}>
+                      <TextInput
+                        placeholder="Senha"
+                        secureTextEntry={!showPassword}
+                        value={value}
+                        onChangeText={onChange}
+                        onSubmitEditing={Keyboard.dismiss}
+                      />
+                      <TouchableOpacity></TouchableOpacity>
+                    </View>
+                  )}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={[styles.button, { width: "24%", paddingVertical: 9 }]}
+                >
+                  <Materialnicons
+                    name={showPassword ? "visibility" : "visibility-off"}
+                    size={24}
+                    color={"#1A1A1A"}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={{ display: "flex", gap: 16 }}>
+              <TouchableOpacity
+                onPress={handleSubmit(submitLogin)}
+                style={styles.button}
+              >
+                <Text
+                  style={{
+                    fontSize: 16,
+                  }}
+                >
+                  Entrar
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  inputContainer: {
+    width: "100%",
+    display: "flex",
+    paddingHorizontal: 8,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: "#3b3b3b",
+  },
+  keyboardView: {
+    flex: 1,
+    display: "flex",
+    justifyContent: "center",
+    paddingHorizontal: 32,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+  },
+  image: {
+    width: "100%",
+    height: 72,
+    objectFit: "contain",
+  },
+  button: {
+    backgroundColor: "#d6ffd2",
+    borderColor: "#3b3b3b",
+    padding: 4,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignSelf: "flex-end",
+    width: "30%",
+    display: "flex",
+    alignItems: "center",
+  },
+});

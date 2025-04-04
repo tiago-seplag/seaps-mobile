@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useStorageState } from "../hooks/useAsyncState";
 import { api } from "../services/api";
 
@@ -23,17 +23,22 @@ export function useSession() {
 export function SessionProvider(props: React.PropsWithChildren) {
   const [[isLoading, session], setSession] = useStorageState("session");
 
+  useEffect(() => {
+    if (session !== null) {
+      api.defaults.headers.common["Cookie"] = "SESSION=" + session;
+    }
+  }, [session]);
+
   return (
     <AuthContext.Provider
       value={{
         signIn: (string) => {
-          api.defaults.headers.common["cookie"] = string;
+          api.defaults.headers.common["Cookie"] = "SESSION=" + string;
           setSession(string);
         },
-        signOut: async () => {
-          await api.post("http://172.16.146.58:3000/logout");
-          delete api.defaults.headers.common["Authorization"];
+        signOut: () => {
           setSession(null);
+          delete api.defaults.headers.common["Cookie"];
         },
         session,
         isLoading,

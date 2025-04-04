@@ -14,7 +14,7 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Index() {
-  const { session, isLoading, signOut } = useSession();
+  const { session } = useSession();
 
   return session ? (
     <Stack.Navigator

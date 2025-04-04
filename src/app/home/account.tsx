@@ -1,16 +1,11 @@
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../..";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useSession } from "../../contexts/authContext";
 
-export function HomeScreen() {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
-  const screen = useNavigation<NativeStackNavigationProp<any>>();
+export function AccountScreen() {
+  const { signOut } = useSession();
 
   return (
     <SafeAreaView
@@ -22,25 +17,9 @@ export function HomeScreen() {
         gap: 8,
       }}
     >
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate("Checklists", {
-            screen: "ChecklistsScreen",
-          });
-        }}
-        style={styles.card}
-      >
-        <Materialnicons name="list" size={36} color={"#1A1A1A"} />
-        <Text>Checklists</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          screen.push("Account");
-        }}
-        style={styles.card}
-      >
-        <Materialnicons name="person" size={36} color={"#1A1A1A"} />
-        <Text>Conta</Text>
+      <TouchableOpacity onPress={signOut} style={styles.card}>
+        <Materialnicons name="logout" size={36} color={"#1A1A1A"} />
+        <Text>Sair</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

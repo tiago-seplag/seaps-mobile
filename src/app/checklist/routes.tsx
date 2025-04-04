@@ -3,8 +3,12 @@ import { ChecklistScreen } from ".";
 import { PhotosScreen } from "./photos";
 import { PhotoObservationScreen } from "./photoObservation";
 import { ObservationScreen } from "./observation";
+import { ChecklistItemsScreen } from "./checklistItems";
 
 export type ChecklistRoutesPrams = {
+  ChecklistItems: {
+    checklist: any;
+  };
   ChecklistScreen: {
     id: string;
   };
@@ -32,6 +36,7 @@ export function ChecklistRoutes() {
       }}
     >
       <Stack.Screen name="ChecklistScreen" component={ChecklistScreen} />
+      <Stack.Screen name="ChecklistItems" component={ChecklistItemsScreen} />
       <Stack.Screen name="Photos" component={PhotosScreen} />
       <Stack.Screen name="Observation" component={ObservationScreen} />
       <Stack.Screen

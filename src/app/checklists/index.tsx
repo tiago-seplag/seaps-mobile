@@ -26,8 +26,8 @@ export function HomeScreen() {
   useEffect(() => {
     const getData = () => {
       api
-        .get("/api/checklists")
-        .then(({ data }) => setData(data))
+        .get("/api/checklists?page=1&per_page=100")
+        .then(({ data }) => setData(data.data))
         .catch((e) => console.log(e))
         .finally(() => setLoading(false));
     };
@@ -86,7 +86,7 @@ export function HomeScreen() {
               }}
             >
               <Text style={styles.cardText}>
-                {item.item.property.organization.name}
+                {item.item.organization.name}
               </Text>
               <Text style={styles.cardText}>
                 {item.item.property.person?.name}

@@ -1,20 +1,14 @@
 import { useEffect, useState } from "react";
-import {
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { api } from "../../services/api";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ChecklistRoutesPrams } from "./routes";
+import { api } from "../../services/api";
 
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
-import RadioGroup from "../../components/RadioGroup";
+import { Badge } from "../../components/CardBadge";
+import { Label } from "../../components/Label";
 
 export function ChecklistScreen({ route }: any) {
   const focus = useIsFocused();
@@ -22,9 +16,6 @@ export function ChecklistScreen({ route }: any) {
     useNavigation<NativeStackNavigationProp<ChecklistRoutesPrams>>();
 
   const [checklist, setChecklist] = useState<Checklist>();
-  const [refresh, setRefresh] = useState(true);
-  const [loading, setLoading] = useState(true);
-  const [lock, setLock] = useState(false);
 
   useEffect(() => {
     if (focus) {
@@ -34,44 +25,11 @@ export function ChecklistScreen({ route }: any) {
           .then(({ data }) => {
             setChecklist(data);
           })
-          .catch((e) => console.log(e))
-          .finally(() => setLoading(false));
+          .catch((e) => console.log(e));
       };
       getData();
     }
-  }, [refresh, focus]);
-
-  const handlePressRadio = async (value: string, id: string) => {
-    if (!lock) {
-      setLock(true);
-      await api
-        .put("/api/checklist-item/" + id, { score: value })
-        .then(() =>
-          setChecklist((oldValue: any) => ({
-            ...oldValue,
-            checklistItems: oldValue.checklistItems.map((item: any) =>
-              item.id === id ? { ...item, score: value } : item
-            ),
-          }))
-        )
-        .catch((e) => console.log(e))
-        .finally(() => setLock(false));
-    }
-  };
-
-  const handleNavigateToImages = (item: ChecklistItem) => {
-    navigation.push("Photos", {
-      checklist,
-      checklistItem: item,
-    });
-  };
-
-  const handleNavigateToObservation = (item: ChecklistItem) => {
-    navigation.push("Observation", {
-      checklist,
-      checklistItem: item,
-    });
-  };
+  }, [focus]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -80,45 +38,69 @@ export function ChecklistScreen({ route }: any) {
           {checklist?.property?.name}
         </Text>
       </View>
-      <FlatList
-        data={checklist?.checklistItems}
-        style={styles.flatList}
-        refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={() => setRefresh(!refresh)}
-          />
-        }
-        renderItem={(item) => (
-          <View key={item.item.id} style={styles.card}>
-            <Text style={styles.cardTitle}>{item.item.item.name}</Text>
-            <View style={styles.iconsView}>
-              <TouchableOpacity
-                style={styles.iconButton}
-                onPress={() => handleNavigateToImages(item.item)}
-              >
-                <Materialnicons name="camera-alt" size={32} color={"#1A1A1A"} />
-                <Text style={{ color: "#1A1A1A" }}>Imagens</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.iconButton}
-                onPress={() => handleNavigateToObservation(item.item)}
-              >
-                <Materialnicons name="sms" size={32} color={"#1A1A1A"} />
-                <Text style={{ color: "#1A1A1A" }}>Observação</Text>
-              </TouchableOpacity>
+      <View style={styles.flatList}>
+        <View
+          style={{
+            backgroundColor: "#fff",
+            borderRadius: 8,
+            padding: 8,
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <View style={{ display: "flex", gap: 8, marginBottom: 32 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 16,
+              }}
+            >
+              <Text style={styles.cardSid}>{checklist?.sid}</Text>
+              <Badge status={checklist?.status || ""} />
             </View>
-            <RadioGroup
-              radioButtons={radioButtons}
-              containerStyle={{ gap: 8 }}
-              disabled={checklist?.status === "CLOSED"}
-              onPress={(value) => handlePressRadio(value, item.item.id)}
-              layout="row"
-              selectedId={String(item.item.score)}
+            <Label title="ORGÃO" value={checklist?.organization.name} />
+            <Label
+              title="RESPONSÁVEL PELO IMÓVEL"
+              value={checklist?.property.person?.name}
+            />
+            <Label title="IMÓVEL" value={checklist?.property.name} />
+            <Label title="ENDEREÇO" value={checklist?.property.address} />
+            <Label
+              title="CRIADO EM"
+              value={new Date(checklist?.created_at || "").toLocaleDateString()}
             />
           </View>
-        )}
-      />
+          <TouchableOpacity
+            style={{
+              paddingVertical: 12,
+              backgroundColor: "#22c55e",
+              borderRadius: 8,
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() =>
+              navigation.push("ChecklistItems", {
+                checklist,
+              })
+            }
+          >
+            <Text
+              style={{
+                fontSize: 22,
+                fontWeight: "bold",
+                color: "#1A1A1A",
+              }}
+            >
+              ITENS
+            </Text>
+            <Materialnicons name="arrow-forward" size={24} color={"#1A1A1A"} />
+          </TouchableOpacity>
+        </View>
+      </View>
     </SafeAreaView>
   );
 }
@@ -129,13 +111,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: "#e8e8e8",
-    shadowColor: "black",
-    shadowOffset: {
-      height: 2,
-      width: 4,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
   },
   card: {
     padding: 8,
@@ -149,6 +124,13 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  cardText: {
+    color: "#1A1A1A",
+  },
+  cardSid: {
+    color: "#3b3b3b",
+    fontSize: 16,
   },
   cardImage: {
     height: 128,

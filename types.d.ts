@@ -1,6 +1,6 @@
 interface Checklist {
   user_id: string | null;
-  status: String;
+  status: string;
   id: string;
   sid: string;
   model_id: string;
@@ -11,6 +11,7 @@ interface Checklist {
   created_at: Date;
   updated_at: Date;
   property: Property;
+  organization?: any;
   checklistItems: ChecklistItem[];
 }
 

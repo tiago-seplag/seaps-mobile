@@ -39,6 +39,7 @@ export function useStorageState(key: string): UseStateHook<string> {
         await AsyncStorage.setItem(key, value);
       } else {
         await setStorageItemAsync(key, null);
+        setState(null);
       }
     },
     [key]
