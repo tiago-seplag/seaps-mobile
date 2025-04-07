@@ -1,11 +1,8 @@
 {
   "expo": {
-    "name": "checklists-app",
+    "name": "Sistema de Manutenção Predial",
     "scheme": "smartpass",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "slug": "checklists-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -24,7 +21,12 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1A3180"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA"
+      ],
+      "package": "com.smp.seplag.checklistsapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -47,6 +49,11 @@
         }
       ],
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "82b30c27-09ed-4611-84d2-c275842b1869"
+      }
+    }
   }
 }
