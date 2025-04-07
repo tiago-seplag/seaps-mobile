@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-  Button,
+  Image,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -14,14 +14,10 @@ import {
 import { useSession } from "../../contexts/authContext";
 import { Controller, useForm } from "react-hook-form";
 
-import * as WebBrowser from "expo-web-browser";
 import { StatusBar } from "expo-status-bar";
 import { api } from "../../services/api";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
-
-WebBrowser.maybeCompleteAuthSession();
-
-WebBrowser.maybeCompleteAuthSession();
+import Logo from "../../../assets/icon.png";
 
 export function Login() {
   const { signIn } = useSession();
@@ -44,14 +40,24 @@ export function Login() {
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor="#ffffff" translucent />
+      <StatusBar backgroundColor="#1a3180" translucent />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View>
-            {/* <Image source={Logo} style={styles.image} /> */}
+            <Image source={Logo} style={styles.image} />
+            <Text
+              style={{
+                fontSize: 32,
+                fontWeight: "bold",
+                textAlign: "center",
+                color: "white",
+              }}
+            >
+              Sistema de Manutenção Predial
+            </Text>
             <View style={{ marginVertical: 32, display: "flex", gap: 16 }}>
               <Controller
                 control={control}
@@ -136,6 +142,7 @@ const styles = StyleSheet.create({
     width: "100%",
     display: "flex",
     paddingHorizontal: 8,
+    backgroundColor: "white",
     paddingVertical: 12,
     borderWidth: 1,
     borderRadius: 8,
@@ -149,15 +156,15 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#1a3180",
   },
   image: {
     width: "100%",
-    height: 72,
+    height: 150,
     objectFit: "contain",
   },
   button: {
-    backgroundColor: "#d6ffd2",
+    backgroundColor: "white",
     borderColor: "#3b3b3b",
     padding: 4,
     borderWidth: 1,

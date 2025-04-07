@@ -15,6 +15,7 @@ import { ChecklistRoutesPrams } from "./routes";
 
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import RadioGroup from "../../components/RadioGroup";
+import { Toast } from "toastify-react-native";
 
 export function ChecklistItemsScreen({ route }: any) {
   const focus = useIsFocused();
@@ -34,7 +35,11 @@ export function ChecklistItemsScreen({ route }: any) {
           .then(({ data }) => {
             setChecklist(data);
           })
-          .catch((e) => console.log(e))
+          .catch((e) => {
+            if (e.response?.data?.message) {
+              Toast.error(e.response.data.message);
+            }
+          })
           .finally(() => setLoading(false));
       };
       getData();
@@ -54,10 +59,16 @@ export function ChecklistItemsScreen({ route }: any) {
             ),
           }))
         )
-        .catch((e) => console.log(e))
+        .catch((e) => {
+          if (e.response?.data?.message) {
+            Toast.error(e.response.data.message);
+          }
+        })
         .finally(() => setLock(false));
     }
   };
+
+  console.log(checklist.checklistItems)
 
   const handleNavigateToImages = (item: ChecklistItem) => {
     navigation.push("Photos", {
@@ -187,9 +198,9 @@ const radioButtonStyles = {
 
 const radioButtons = [
   {
-    id: "0",
+    id: "-2",
     label: "Ruim",
-    value: "0",
+    value: "-2",
     color: "#ef4444",
     backgroundColor: "#fecaca",
     containerStyle: {
@@ -209,11 +220,11 @@ const radioButtons = [
     },
   },
   {
-    id: "2",
+    id: "3",
     color: "#22c55e",
     backgroundColor: "#bbf7d0",
     label: "Bom",
-    value: "2",
+    value: "3",
     containerStyle: {
       borderColor: "#22c55e",
       ...radioButtonStyles,

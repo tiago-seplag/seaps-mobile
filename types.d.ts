@@ -53,3 +53,5 @@ interface Person {
   organization_id: string;
   phone: string | null;
 }
+
+declare module "*.png";

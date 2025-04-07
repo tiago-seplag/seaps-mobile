@@ -23,6 +23,7 @@ import { api } from "../../services/api";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ChecklistRoutesPrams } from "./routes";
+import { Toast } from "toastify-react-native";
 
 export function PhotoObservationScreen({ route }: any) {
   const navigation =
@@ -41,14 +42,19 @@ export function PhotoObservationScreen({ route }: any) {
     await api
       .put(
         "/api/checklist-item/" +
-          image.checklist_item_id +
-          "/images/" +
-          image.id,
+        image.checklist_item_id +
+        "/images/" +
+        image.id,
         {
           observation: text,
         }
       )
       .then(() => navigation.goBack())
+      .catch((e) => {
+        if (e.response?.data?.message) {
+          Toast.error(e.response.data.message);
+        }
+      })
       .finally(() => setLoading(false));
   };
 
@@ -88,8 +94,9 @@ export function PhotoObservationScreen({ route }: any) {
                 alignItems: "center",
                 padding: 12,
                 borderRadius: 4,
+                opacity: route.params.checklist.status === "CLOSED" ? 0.5 : 1,
               }}
-              disabled={loading}
+              disabled={loading || route.params.checklist.status === "CLOSED"}
               onPress={handleUpdateObservation}
             >
               <Text

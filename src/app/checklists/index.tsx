@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../..";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Toast } from "toastify-react-native";
 
 export function HomeScreen() {
   const [data, setData] = useState();
@@ -28,7 +29,11 @@ export function HomeScreen() {
       api
         .get("/api/checklists?page=1&per_page=100")
         .then(({ data }) => setData(data.data))
-        .catch((e) => console.log(e))
+        .catch((e) => {
+          if (e.response?.data?.message) {
+            Toast.error(e.response.data.message);
+          }
+        })
         .finally(() => setLoading(false));
     };
     getData();
@@ -85,9 +90,7 @@ export function HomeScreen() {
                 justifyContent: "space-between",
               }}
             >
-              <Text style={styles.cardText}>
-                {item.item.organization.name}
-              </Text>
+              <Text style={styles.cardText}>{item.item.organization.name}</Text>
               <Text style={styles.cardText}>
                 {item.item.property.person?.name}
               </Text>

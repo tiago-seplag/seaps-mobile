@@ -3,6 +3,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SessionProvider } from "./src/contexts/authContext";
 import Index from "./src";
+import ToastManager from 'toastify-react-native'
 
 export type RootStackParamList = {
   Initial: any;
@@ -17,6 +18,7 @@ export default function App() {
       <SessionProvider>
         <NavigationContainer>
           <Index />
+          <ToastManager />
         </NavigationContainer>
       </SessionProvider>
     </SafeAreaProvider>

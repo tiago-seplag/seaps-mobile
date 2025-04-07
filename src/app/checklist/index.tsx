@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ChecklistRoutesPrams } from "./routes";
 import { api } from "../../services/api";
+import ToastManager, { Toast } from "toastify-react-native";
 
-import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import { Badge } from "../../components/CardBadge";
 import { Label } from "../../components/Label";
 
@@ -25,11 +25,47 @@ export function ChecklistScreen({ route }: any) {
           .then(({ data }) => {
             setChecklist(data);
           })
-          .catch((e) => console.log(e));
+          .catch((e) => {
+            if (e.response?.data?.message) {
+              Toast.error(e.response.data.message);
+            }
+          });
       };
       getData();
     }
   }, [focus]);
+
+  const handleFinishChecklist = () => {
+    Alert.alert(
+      "Deseja finalizar o checklist?",
+      "",
+      [
+        {
+          text: "Sim",
+          onPress: () => finishChecklist(),
+        },
+        {
+          text: "Não",
+          onPress: () => "",
+        },
+      ],
+      {
+        cancelable: true,
+        onDismiss: () => 0,
+      }
+    );
+  };
+
+  const finishChecklist = async () => {
+    await api
+      .put("/api/checklists/" + route.params?.id + "/finish/")
+      .then(() => navigation.goBack())
+      .catch((e) => {
+        if (e.response?.data?.message) {
+          Toast.error(e.response.data.message);
+        }
+      });
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -72,33 +108,58 @@ export function ChecklistScreen({ route }: any) {
               value={new Date(checklist?.created_at || "").toLocaleDateString()}
             />
           </View>
-          <TouchableOpacity
-            style={{
-              paddingVertical: 12,
-              backgroundColor: "#22c55e",
-              borderRadius: 8,
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            onPress={() =>
-              navigation.push("ChecklistItems", {
-                checklist,
-              })
-            }
-          >
-            <Text
+          <View style={{ gap: 8 }}>
+            <TouchableOpacity
               style={{
-                fontSize: 22,
-                fontWeight: "bold",
-                color: "#1A1A1A",
+                paddingVertical: 12,
+                backgroundColor: "#22c55e",
+                borderRadius: 8,
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
               }}
+              onPress={() =>
+                navigation.push("ChecklistItems", {
+                  checklist,
+                })
+              }
             >
-              ITENS
-            </Text>
-            <Materialnicons name="arrow-forward" size={24} color={"#1A1A1A"} />
-          </TouchableOpacity>
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: "bold",
+                  color: "#1A1A1A",
+                }}
+              >
+                ITENS
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              disabled={!!checklist?.finished_at}
+              style={{
+                paddingVertical: 12,
+                backgroundColor: "#adadad",
+                opacity: checklist?.finished_at ? 0.5 : 1,
+                borderRadius: 8,
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onPress={handleFinishChecklist}
+            >
+              <Text
+                style={{
+                  fontSize: 22,
+                  fontWeight: "bold",
+                  color: "#1A1A1A",
+                }}
+              >
+                FINALIZAR CHECKLIST
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -154,48 +215,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
-const radioButtonStyles = {
-  padding: 10,
-  borderWidth: 1,
-  borderRadius: 4,
-  flex: 1,
-  marginHorizontal: 0,
-  margin: 0,
-};
-
-const radioButtons = [
-  {
-    id: "0",
-    label: "Ruim",
-    value: "0",
-    color: "#ef4444",
-    backgroundColor: "#fecaca",
-    containerStyle: {
-      borderColor: "#ef4444",
-      ...radioButtonStyles,
-    },
-  },
-  {
-    id: "1",
-    color: "#eab308",
-    backgroundColor: "#fef08a",
-    label: "Regular",
-    value: "1",
-    containerStyle: {
-      borderColor: "#eab308",
-      ...radioButtonStyles,
-    },
-  },
-  {
-    id: "2",
-    color: "#22c55e",
-    backgroundColor: "#bbf7d0",
-    label: "Bom",
-    value: "2",
-    containerStyle: {
-      borderColor: "#22c55e",
-      ...radioButtonStyles,
-    },
-  },
-];

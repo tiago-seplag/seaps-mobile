@@ -14,6 +14,7 @@ import { api } from "../../services/api";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ChecklistRoutesPrams } from "./routes";
+import { Toast } from "toastify-react-native";
 
 export function ObservationScreen({ route }: any) {
   const checklist = route.params.checklist;
@@ -34,6 +35,11 @@ export function ObservationScreen({ route }: any) {
         observation: text,
       })
       .then(() => navigation.goBack())
+      .catch((e) => {
+        if (e.response?.data?.message) {
+          Toast.error(e.response.data.message);
+        }
+      })
       .finally(() => setLoading(false));
   };
 
@@ -78,6 +84,7 @@ export function ObservationScreen({ route }: any) {
                 },
                 { opacity: checklist?.status === "CLOSED" ? 0.5 : 1 },
               ]}
+              disabled={checklist?.status === "CLOSED"}
               onPress={handleUpdateObservation}
             >
               <Text

@@ -18,6 +18,7 @@ import { api } from "../../services/api";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ChecklistRoutesPrams } from "./routes";
+import { Toast } from "toastify-react-native";
 
 interface checklistItem {
   id: string;
@@ -130,9 +131,15 @@ export function PhotosScreen({ route }: any) {
         }
       );
 
-      await api.put("/api/checklist-item/" + checklistItem.id + "/images", {
-        images: data.files.map((file: any) => file.url),
-      });
+      await api
+        .put("/api/checklist-item/" + checklistItem.id + "/images", {
+          images: data.files.map((file: any) => file.url),
+        })
+        .catch((e) => {
+          if (e.response?.data?.message) {
+            Toast.error(e.response.data.message);
+          }
+        });
     } finally {
       setLoading(false);
     }
@@ -144,6 +151,11 @@ export function PhotosScreen({ route }: any) {
     api
       .get("/api/checklist-item/" + checklistItem.id)
       .then(({ data }) => setChecklistItem(data))
+      .catch((e) => {
+        if (e.response?.data?.message) {
+          Toast.error(e.response.data.message);
+        }
+      })
       .finally(() => setLoading(false));
   };
 
