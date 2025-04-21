@@ -2,9 +2,12 @@
   "expo": {
     "name": "Sistema de Manutenção Predial",
     "scheme": "smartpass",
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "slug": "checklists-app",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",

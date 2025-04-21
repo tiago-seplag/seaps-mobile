@@ -17,7 +17,7 @@ import { Controller, useForm } from "react-hook-form";
 import { StatusBar } from "expo-status-bar";
 import { api } from "../../services/api";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
-import Logo from "../../../assets/icon.png";
+import Logo from "../../../assets/splash-icon-white.png";
 
 export function Login() {
   const { signIn } = useSession();
