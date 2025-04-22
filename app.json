@@ -2,13 +2,9 @@
   "expo": {
     "name": "Sistema de Manutenção Predial",
     "scheme": "smartpass",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "slug": "checklists-app",
     "version": "1.0.1",
-    "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
@@ -18,7 +14,11 @@
       "backgroundColor": "#1A3180"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "br.gov.mt.cepromat.mt-cidadao-gov.MTCidadao-NOTIFY",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -40,7 +40,7 @@
         {
           "photosPermission": "custom photos permission",
           "cameraPermission": "custom camera permission",
-          "recordAudioAndroid": true
+          "recordAudioAndroid": false
         }
       ],
       [
@@ -48,7 +48,7 @@
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
-          "recordAudioAndroid": true
+          "recordAudioAndroid": false
         }
       ],
       "expo-secure-store"
