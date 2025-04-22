@@ -6,16 +6,25 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "ios": {
+        "bundleIdentifier": "br.gov.mt.cepromat.mt-cidadao-gov.MTCidadao-NOTIFY"
+      }
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "ios": {
+        "bundleIdentifier": "br.gov.mt.cepromat.mt-cidadao-gov.MTCidadao-NOTIFY"
       }
     },
     "production": {
       "autoIncrement": true
+    },
+    "ios": {
+      "bundleIdentifier": "br.gov.mt.cepromat.mt-cidadao-gov.MTCidadao-NOTIFY"
     }
   },
   "submit": {
