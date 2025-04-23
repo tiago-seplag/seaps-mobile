@@ -18,6 +18,7 @@ import { StatusBar } from "expo-status-bar";
 import { api } from "../../services/api";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import Logo from "../../../assets/splash-icon-white.png";
+import { Toast } from "toastify-react-native";
 
 export function Login() {
   const { signIn } = useSession();
@@ -32,7 +33,10 @@ export function Login() {
       });
       signIn(data.SESSION);
     } catch (err: any) {
-      console.log(err);
+      if (err.response?.data?.message) {
+        Toast.error(err.response.data.message);
+      }
+      Toast.error("Error");
     }
   };
 
