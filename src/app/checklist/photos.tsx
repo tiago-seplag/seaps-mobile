@@ -120,16 +120,12 @@ export function PhotosScreen({ route }: any) {
         } as unknown as Blob);
       }
 
-      const { data } = await axios.post(
-        "http://http://172.16.146.58:3333/upload/images",
-        form,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const { data } = await api.post("/api/upload", form, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       await api
         .put("/api/checklist-item/" + checklistItem.id + "/images", {
@@ -212,7 +208,7 @@ export function PhotosScreen({ route }: any) {
           <View key={item.item.id} style={styles.card}>
             <Image
               source={{
-                uri: "http://172.16.146.58:3333" + item.item.image,
+                uri: process.env.EXPO_PUBLIC_BUCKET_URL + item.item.image,
               }}
               style={{
                 height: 220,
