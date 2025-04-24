@@ -13,12 +13,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
-import axios from "axios";
-import { api } from "../../services/api";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ChecklistRoutesPrams } from "./routes";
 import { Toast } from "toastify-react-native";
+import { api } from "../../services/api";
 
 interface checklistItem {
   id: string;
@@ -83,6 +82,7 @@ export function PhotosScreen({ route }: any) {
       result = await ImagePicker.launchCameraAsync({
         mediaTypes: ["images"],
         allowsMultipleSelection: true,
+        quality: 0.5,
         allowsEditing: false,
         selectionLimit: 10,
         aspect: [4, 3],
@@ -93,6 +93,7 @@ export function PhotosScreen({ route }: any) {
       result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
         allowsMultipleSelection: true,
+        quality: 0.5,
         selectionLimit: 10,
         allowsEditing: false,
         aspect: [4, 3],
@@ -108,11 +109,11 @@ export function PhotosScreen({ route }: any) {
   const uploadFiles = async (result: ImagePicker.ImagePickerSuccessResult) => {
     try {
       const form = new FormData();
-      form.append("folder", "images");
+      form.append("folder", "photos");
       for (let image of result.assets) {
         form.append("file", {
           type: "image/*",
-          name: "fotoimage",
+          name: Date.now().toString(),
           uri:
             Platform.OS === "ios"
               ? image.uri.replace("file://", "")
@@ -127,15 +128,14 @@ export function PhotosScreen({ route }: any) {
         },
       });
 
-      await api
-        .put("/api/checklist-item/" + checklistItem.id + "/images", {
-          images: data.files.map((file: any) => file.url),
-        })
-        .catch((e) => {
-          if (e.response?.data?.message) {
-            Toast.error(e.response.data.message);
-          }
-        });
+      await api.put("/api/checklist-item/" + checklistItem.id + "/images", {
+        images: data.files.map((file: any) => file.url),
+      });
+    } catch (e: any) {
+      if (e.response?.data?.message) {
+        return Toast.error(e.response.data.message);
+      }
+      Toast.error(`Erro ao subir a imagem`);
     } finally {
       setLoading(false);
     }
@@ -156,8 +156,6 @@ export function PhotosScreen({ route }: any) {
   };
 
   const CHECKLIST_IS_CLOSED = checklist?.status === "CLOSED";
-
-  console.log(process.env.EXPO_PUBLIC_API_URL);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
