@@ -33,8 +33,8 @@ export function Login() {
       });
       signIn(data.SESSION);
     } catch (err: any) {
-      if (err.response?.data?.message) {
-        Toast.error(err.response.data.message);
+      if (err.response.data?.message) {
+        return Toast.error(err.response.data.message);
       }
       Toast.error("Error");
     }

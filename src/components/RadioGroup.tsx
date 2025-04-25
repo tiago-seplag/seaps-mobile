@@ -8,7 +8,6 @@ export default function RadioGroup({
   accessibilityLabel,
   containerStyle,
   labelStyle,
-  layout = "column",
   onPress,
   radioButtons,
   disabled,
@@ -31,7 +30,7 @@ export default function RadioGroup({
     <View
       accessibilityLabel={accessibilityLabel}
       accessibilityRole="radiogroup"
-      style={[styles.container, { flexDirection: layout }, containerStyle]}
+      style={[styles.container, containerStyle]}
       testID={testID}
     >
       {radioButtons.map((button) => (
@@ -51,5 +50,7 @@ export default function RadioGroup({
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
 });

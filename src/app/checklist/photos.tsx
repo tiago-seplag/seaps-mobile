@@ -109,10 +109,9 @@ export function PhotosScreen({ route }: any) {
   const uploadFiles = async (result: ImagePicker.ImagePickerSuccessResult) => {
     try {
       const form = new FormData();
-      form.append("folder", "photos");
       for (let image of result.assets) {
         form.append("file", {
-          type: "image/*",
+          type: image.mimeType || "image/jpeg",
           name: Date.now().toString(),
           uri:
             Platform.OS === "ios"
@@ -120,6 +119,7 @@ export function PhotosScreen({ route }: any) {
               : image.uri,
         } as unknown as Blob);
       }
+      form.append("folder", "photos");
 
       const { data } = await api.post("/api/upload", form, {
         headers: {

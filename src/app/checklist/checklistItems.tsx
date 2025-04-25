@@ -68,8 +68,6 @@ export function ChecklistItemsScreen({ route }: any) {
     }
   };
 
-  console.log(checklist.checklistItems)
-
   const handleNavigateToImages = (item: ChecklistItem) => {
     navigation.push("Photos", {
       checklist,
@@ -122,14 +120,15 @@ export function ChecklistItemsScreen({ route }: any) {
                 <Text style={{ color: "#1A1A1A" }}>Observação</Text>
               </TouchableOpacity>
             </View>
-            <RadioGroup
-              radioButtons={radioButtons}
-              containerStyle={{ gap: 8 }}
-              disabled={checklist?.status === "CLOSED"}
-              onPress={(value) => handlePressRadio(value, item.item.id)}
-              layout="row"
-              selectedId={String(item.item.score)}
-            />
+            <View style={{ flex: 1 }}>
+              <RadioGroup
+                radioButtons={radioButtons}
+                containerStyle={{ gap: 8 }}
+                disabled={checklist?.status === "CLOSED"}
+                onPress={(value) => handlePressRadio(value, item.item.id)}
+                selectedId={String(item.item.score)}
+              />
+            </View>
           </View>
         )}
       />
@@ -191,7 +190,6 @@ const radioButtonStyles = {
   padding: 10,
   borderWidth: 1,
   borderRadius: 4,
-  flex: 1,
   marginHorizontal: 0,
   margin: 0,
 };
@@ -206,6 +204,7 @@ const radioButtons = [
     containerStyle: {
       borderColor: "#ef4444",
       ...radioButtonStyles,
+      flex: 1,
     },
   },
   {
@@ -217,6 +216,7 @@ const radioButtons = [
     containerStyle: {
       borderColor: "#eab308",
       ...radioButtonStyles,
+      flex: 1,
     },
   },
   {
@@ -228,6 +228,20 @@ const radioButtons = [
     containerStyle: {
       borderColor: "#22c55e",
       ...radioButtonStyles,
+      flex: 1,
+    },
+  },
+  {
+    id: "0",
+    color: "#71717a",
+    backgroundColor: "#e4e4e7",
+    label: "Não se Aplica",
+    value: "0",
+    containerStyle: {
+      borderColor: "#71717a",
+      ...radioButtonStyles,
+      marginVertical: 0,
+      width: `100%` as any,
     },
   },
 ];
