@@ -84,7 +84,9 @@ export function PhotoObservationScreen({ route }: any) {
             onChangeText={(e) => setText(e)}
             scrollEnabled={false}
             numberOfLines={4}
+            autoCapitalize="characters"
             maxLength={255}
+            editable={route.params.checklist.status !== "CLOSED"}
           />
           <View>
             <TouchableOpacity

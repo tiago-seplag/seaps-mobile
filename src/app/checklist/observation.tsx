@@ -70,6 +70,8 @@ export function ObservationScreen({ route }: any) {
             onChangeText={(e) => setText(e)}
             scrollEnabled={false}
             numberOfLines={4}
+            autoCapitalize="characters"
+            editable={checklist.status === "OPEN"}
             maxLength={255}
           />
           <View>

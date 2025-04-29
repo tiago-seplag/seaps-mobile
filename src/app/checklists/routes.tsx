@@ -12,7 +12,7 @@ export function ChecklistsRoutes() {
         name="ChecklistsScreen"
         component={HomeScreen}
         options={{
-          headerTitle: "Checklists",
+          headerShown: false,
         }}
       />
     </Tab.Navigator>

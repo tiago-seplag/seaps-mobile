@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -13,7 +13,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ChecklistRoutesPrams } from "./routes";
 import { Toast } from "toastify-react-native";
@@ -42,6 +42,8 @@ interface checklistItem {
 }
 
 export function PhotosScreen({ route }: any) {
+  const focus = useIsFocused();
+
   const checklist = route.params.checklist;
 
   const navigation =
@@ -50,6 +52,7 @@ export function PhotosScreen({ route }: any) {
   const [checklistItem, setChecklistItem] = useState<checklistItem>(
     route.params.checklistItem || []
   );
+  const [refresh, setRefresh] = useState(true);
 
   const [loading, setLoading] = useState(false);
 
@@ -155,6 +158,66 @@ export function PhotosScreen({ route }: any) {
       .finally(() => setLoading(false));
   };
 
+  useEffect(() => {
+    if (focus && !loading) {
+      getData();
+    }
+  }, [refresh, focus]);
+
+  const handleDeleteImage = (imageId: string) => {
+    Alert.alert(
+      "Você tem certeza absoluta?",
+      "Esta ação não pode ser desfeita. Isso excluirá permanentemente essa imagem.",
+      [
+        {
+          text: "Sim",
+          onPress: () => onDeleteImage(imageId),
+        },
+        {
+          text: "Não",
+          onPress: () => "",
+        },
+      ],
+      {
+        cancelable: true,
+        onDismiss: () => 0,
+      }
+    );
+  };
+
+  async function onDeleteImage(imageId: string) {
+    setLoading(true);
+
+    await api
+      .delete("/api/checklist-item/" + checklistItem.id + "/images/" + imageId)
+      .then(() => {
+        Toast.success("Imagem deletada com sucesso");
+        getData();
+      })
+      .catch((e) => {
+        if (e.response?.data?.message) {
+          Toast.error(e.response.data.message);
+        }
+      })
+      .finally(() => setLoading(false));
+  }
+
+  async function handleUpdateChecklistImage(image: string) {
+    api
+      .put("/api/checklist-item/" + checklistItem.id, {
+        image: image,
+      })
+      .then(() => {
+        Toast.success("Item atulizado com sucesso");
+        getData();
+      })
+      .catch((e) => {
+        if (e.response?.data?.message) {
+          Toast.error(e.response.data.message);
+        }
+      });
+  }
+
   const CHECKLIST_IS_CLOSED = checklist?.status === "CLOSED";
 
   return (
@@ -200,45 +263,74 @@ export function PhotosScreen({ route }: any) {
           shadowRadius: 2,
         }}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={() => getData()} />
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={() => setRefresh(!refresh)}
+          />
         }
-        renderItem={(item) => (
-          <View key={item.item.id} style={styles.card}>
-            <Image
-              source={{
-                uri: process.env.EXPO_PUBLIC_BUCKET_URL + item.item.image,
-              }}
-              style={{
-                height: 220,
-                flex: 1,
-                borderRadius: 4,
-                marginBottom: 8,
-              }}
-            />
-            <TouchableOpacity
-              style={[
-                styles.observation,
-                { opacity: CHECKLIST_IS_CLOSED ? 0.5 : 1 },
-              ]}
-              disabled={false}
-              onPress={() => {
-                navigation.push("PhotoObservation", {
-                  checklistItemPhoto: item.item,
-                  checklist,
-                });
-              }}
-            >
-              {item.item.observation ? (
-                <Text style={{ flex: 1 }}>{item.item.observation}</Text>
-              ) : (
+        renderItem={(item) => {
+          const IS_PRINCIPAL_IMAGE = checklistItem?.image === item.item?.image;
+
+          return (
+            <View key={item.item.id} style={styles.card}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  paddingVertical: 8,
+                }}
+              >
+                <TouchableOpacity
+                  disabled={IS_PRINCIPAL_IMAGE || CHECKLIST_IS_CLOSED}
+                  style={{ opacity: CHECKLIST_IS_CLOSED ? 0.5 : 1 }}
+                  onPress={() => handleUpdateChecklistImage(item.item.image)}
+                >
+                  <Materialnicons
+                    name="star"
+                    size={32}
+                    color={IS_PRINCIPAL_IMAGE ? "#e4c204" : "#1A1A1A"}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  disabled={CHECKLIST_IS_CLOSED}
+                  style={{ opacity: CHECKLIST_IS_CLOSED ? 0.5 : 1 }}
+                  onPress={() => handleDeleteImage(item.item.id)}
+                >
+                  <Materialnicons name="delete" size={32} color={"#ef4444"} />
+                </TouchableOpacity>
+              </View>
+              <Image
+                source={{
+                  uri: process.env.EXPO_PUBLIC_BUCKET_URL + item.item.image,
+                }}
+                style={{
+                  height: 220,
+                  flex: 1,
+                  borderRadius: 4,
+                  marginBottom: 8,
+                }}
+              />
+              <TouchableOpacity
+                style={[
+                  styles.observation,
+                  { opacity: CHECKLIST_IS_CLOSED ? 0.5 : 1 },
+                ]}
+                disabled={false}
+                onPress={() => {
+                  navigation.push("PhotoObservation", {
+                    checklistItemPhoto: item.item,
+                    checklist,
+                  });
+                }}
+              >
                 <>
                   <Text>{"Adicionar Observação"}</Text>
                   <Materialnicons name="sms" size={26} color={"#1A1A1A"} />
                 </>
-              )}
-            </TouchableOpacity>
-          </View>
-        )}
+              </TouchableOpacity>
+            </View>
+          );
+        }}
       />
     </SafeAreaView>
   );
@@ -249,7 +341,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
   },
   card: {
-    paddingVertical: 16,
+    paddingBottom: 16,
     paddingHorizontal: 16,
     borderWidth: 1,
     borderColor: "#c8ccda",

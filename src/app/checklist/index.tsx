@@ -1,11 +1,20 @@
 import { useEffect, useState } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ChecklistRoutesPrams } from "./routes";
 import { api } from "../../services/api";
-import ToastManager, { Toast } from "toastify-react-native";
+import { Toast } from "toastify-react-native";
 
 import { Badge } from "../../components/CardBadge";
 import { Label } from "../../components/Label";
@@ -16,21 +25,24 @@ export function ChecklistScreen({ route }: any) {
     useNavigation<NativeStackNavigationProp<ChecklistRoutesPrams>>();
 
   const [checklist, setChecklist] = useState<Checklist>();
+  const [loading, setLoading] = useState(true);
+
+  const getData = () => {
+    api
+      .get("/api/checklists/" + route.params?.id)
+      .then(({ data }) => {
+        setChecklist(data);
+      })
+      .catch((e) => {
+        if (e.response?.data?.message) {
+          Toast.error(e.response.data.message);
+        }
+      })
+      .finally(() => setLoading(false));
+  };
 
   useEffect(() => {
     if (focus) {
-      const getData = () => {
-        api
-          .get("/api/checklists/" + route.params?.id)
-          .then(({ data }) => {
-            setChecklist(data);
-          })
-          .catch((e) => {
-            if (e.response?.data?.message) {
-              Toast.error(e.response.data.message);
-            }
-          });
-      };
       getData();
     }
   }, [focus]);
@@ -67,6 +79,19 @@ export function ChecklistScreen({ route }: any) {
       });
   };
 
+  if (loading) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+        <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+          <ActivityIndicator />
+        </View>
+        <View style={styles.flatList}>
+          <ActivityIndicator size={"large"} />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
@@ -74,7 +99,12 @@ export function ChecklistScreen({ route }: any) {
           {checklist?.property?.name}
         </Text>
       </View>
-      <View style={styles.flatList}>
+      <ScrollView
+        style={styles.flatList}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={getData} />
+        }
+      >
         <View
           style={{
             backgroundColor: "#fff",
@@ -89,8 +119,8 @@ export function ChecklistScreen({ route }: any) {
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 16,
+                alignItems: "flex-end",
+                paddingBottom: 4,
               }}
             >
               <Text style={styles.cardSid}>{checklist?.sid}</Text>
@@ -136,11 +166,11 @@ export function ChecklistScreen({ route }: any) {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              disabled={!!checklist?.finished_at}
+              disabled={checklist?.status !== "OPEN"}
               style={{
                 paddingVertical: 12,
                 backgroundColor: "#adadad",
-                opacity: checklist?.finished_at ? 0.5 : 1,
+                opacity: checklist?.status !== "OPEN" ? 0.5 : 1,
                 borderRadius: 8,
                 display: "flex",
                 flexDirection: "row",
@@ -161,7 +191,7 @@ export function ChecklistScreen({ route }: any) {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -191,7 +221,8 @@ const styles = StyleSheet.create({
   },
   cardSid: {
     color: "#3b3b3b",
-    fontSize: 16,
+    fontWeight: "bold",
+    fontSize: 22,
   },
   cardImage: {
     height: 128,

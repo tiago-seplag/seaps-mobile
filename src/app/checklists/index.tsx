@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   FlatList,
-  Pressable,
   RefreshControl,
   StyleSheet,
   Text,
@@ -10,14 +9,16 @@ import {
 } from "react-native";
 
 import { api } from "../../services/api";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../..";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Toast } from "toastify-react-native";
 
 export function HomeScreen() {
+  const focus = useIsFocused();
   const [data, setData] = useState();
+
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -36,11 +37,16 @@ export function HomeScreen() {
         })
         .finally(() => setLoading(false));
     };
-    getData();
-  }, [refresh]);
+    if (focus) getData();
+  }, [refresh, focus]);
 
   return (
-    <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+        <Text style={styles.title} numberOfLines={1}>
+          Checklists
+        </Text>
+      </View>
       <FlatList
         data={data}
         refreshControl={
@@ -120,7 +126,8 @@ const Badge = ({ status }: { status: string }) => {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 32,
+    fontSize: 26,
+    fontWeight: "bold",
   },
   card: {
     paddingVertical: 16,
