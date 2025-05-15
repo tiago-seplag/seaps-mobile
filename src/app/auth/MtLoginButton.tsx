@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
-import { Button } from "react-native";
+import { Button, Image, Text, TouchableOpacity } from "react-native";
 import { useSession } from "../../contexts/authContext";
-import { SafeAreaView } from "react-native-safe-area-context";
+import MtLoginLogo from "../../../assets/mt-login-icon.png";
 
 import * as WebBrowser from "expo-web-browser";
 import * as AuthSession from "expo-auth-session";
+import { api } from "../../services/api";
+import { Toast } from "toastify-react-native";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -15,13 +17,12 @@ const TOKEN_URL =
 
 const CLIENT_ID = "projeto-template-integracao"; // Seu client_id
 const REDIRECT_URI = AuthSession.makeRedirectUri({
-  scheme: "http",
-  native: "http",
+  scheme: "ssp",
 });
 
 WebBrowser.maybeCompleteAuthSession();
 
-export function Login() {
+export function MtLogginButton() {
   const { signIn } = useSession();
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
@@ -35,29 +36,22 @@ export function Login() {
   );
 
   async function exchangeCodeForToken(code: string) {
-    const body = new URLSearchParams({
-      grant_type: "authorization_code",
-      client_id: CLIENT_ID,
-      redirect_uri: "http://192.168.15.14:3000/login",
-      code,
-    });
-
     try {
-      const res = await fetch(TOKEN_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: body.toString(),
+      const response = await api.post("/api/auth/login?code=" + code, {
+        body: new URLSearchParams({ code: code }),
       });
 
-      const data = await res.json();
-
-      if (data.access_token) {
-        signIn(data.access_token);
+      if (response?.data.SESSION) {
+        signIn(response.data.SESSION);
       } else {
-        console.error("Erro ao obter o token:", data);
+        Toast.error(
+          "Erro ao fazer login pelo MT-Cidadão, tente novamente mais tarde."
+        );
       }
     } catch (error) {
-      console.error("Erro na requisição:", error);
+      Toast.error(
+        "Erro ao fazer login pelo MT-Cidadão, tente novamente mais tarde."
+      );
     }
   }
 
@@ -70,20 +64,26 @@ export function Login() {
   }, [response, request]);
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+    <TouchableOpacity
+      disabled={!request}
+      onPress={() => promptAsync()}
+      style={{
+        display: "flex",
+        padding: 8,
+        borderRadius: 8,
+        flexDirection: "row",
+        justifyContent: "center",
+        width: "100%",
+        backgroundColor: "white",
+        alignItems: "center",
+        gap: 16,
+      }}
     >
-      <Button title="Login" disabled={!request} onPress={() => promptAsync()} />
-      {/* <WebView
-        source={{
-          uri: "http://172.16.146.58:3000/login",
-        }}
-        onMessage={onMessage}
-        pullToRefreshEnabled
-        sharedCookiesEnabled={false}
-        cacheEnabled={false}
-        bounces={false}
-      /> */}
-    </SafeAreaView>
+      <Text style={{ color: "black", fontWeight: "600" }}>ENTRAR COM</Text>
+      <Image
+        style={{ height: 50, width: 50, objectFit: "contain" }}
+        source={MtLoginLogo}
+      />
+    </TouchableOpacity>
   );
 }
