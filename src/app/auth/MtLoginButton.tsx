@@ -11,13 +11,11 @@ import { Toast } from "toastify-react-native";
 WebBrowser.maybeCompleteAuthSession();
 
 const AUTH_URL =
-  "https://dev.login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/auth";
-const TOKEN_URL =
-  "https://dev.login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/token";
+  "https://login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/auth";
 
-const CLIENT_ID = "projeto-template-integracao"; // Seu client_id
+const CLIENT_ID = "seplag-manutencao-predial"; // Seu client_id
 const REDIRECT_URI = AuthSession.makeRedirectUri({
-  scheme: "ssp",
+  scheme: "smp",
 });
 
 WebBrowser.maybeCompleteAuthSession();
