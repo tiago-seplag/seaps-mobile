@@ -19,6 +19,7 @@ export function HomeScreen() {
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
+        flexWrap: "wrap",
         gap: 8,
       }}
     >
@@ -31,7 +32,18 @@ export function HomeScreen() {
         style={styles.card}
       >
         <Materialnicons name="list" size={36} color={"#1A1A1A"} />
-        <Text>Checklists</Text>
+        <Text style={{ fontSize: 16 }}>Checklists</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("Properties", {
+            screen: "PropertiesScreen",
+          });
+        }}
+        style={styles.card}
+      >
+        <Materialnicons name="apartment" size={36} color={"#1A1A1A"} />
+        <Text style={{ fontSize: 16 }}>Imóveis</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
@@ -40,7 +52,7 @@ export function HomeScreen() {
         style={styles.card}
       >
         <Materialnicons name="person" size={36} color={"#1A1A1A"} />
-        <Text>Conta</Text>
+        <Text style={{ fontSize: 16 }}>Conta</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
