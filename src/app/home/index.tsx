@@ -34,7 +34,7 @@ export function HomeScreen() {
         <Materialnicons name="list" size={36} color={"#1A1A1A"} />
         <Text style={{ fontSize: 16 }}>Checklists</Text>
       </TouchableOpacity>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => {
           navigation.navigate("Properties", {
             screen: "PropertiesScreen",
@@ -44,7 +44,7 @@ export function HomeScreen() {
       >
         <Materialnicons name="apartment" size={36} color={"#1A1A1A"} />
         <Text style={{ fontSize: 16 }}>Imóveis</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity
         onPress={() => {
           screen.push("Account");
