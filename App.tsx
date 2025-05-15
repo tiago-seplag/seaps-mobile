@@ -10,8 +10,6 @@ export type RootStackParamList = {
   Checklists: any;
 };
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
-
 export default function App() {
   return (
     <SafeAreaProvider>
