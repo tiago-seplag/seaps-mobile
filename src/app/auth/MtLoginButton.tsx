@@ -14,10 +14,10 @@ const AUTH_URL =
   "https://login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/auth";
 
 const CLIENT_ID = "seplag-manutencao-predial"; // Seu client_id
-const REDIRECT_URI =
-  AuthSession.makeRedirectUri({
-    scheme: "smp",
-  }) + "redirect";
+const REDIRECT_URI = AuthSession.makeRedirectUri({
+  scheme: "smp",
+  path: "redirect",
+});
 
 WebBrowser.maybeCompleteAuthSession();
 
