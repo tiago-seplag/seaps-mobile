@@ -28,7 +28,7 @@ export function ChecklistItemsScreen({ route }: any) {
   const [lock, setLock] = useState(false);
 
   useEffect(() => {
-    if (focus && loading) {
+    if (focus && !loading) {
       const getData = () => {
         api
           .get("/api/checklists/" + checklist.id)
@@ -44,7 +44,7 @@ export function ChecklistItemsScreen({ route }: any) {
       };
       getData();
     }
-  }, [refresh, focus]);
+  }, [refresh, focus, loading]);
 
   const handlePressRadio = async (value: string, id: string) => {
     if (!lock) {

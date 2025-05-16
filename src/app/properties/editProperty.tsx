@@ -19,6 +19,7 @@ import { api } from "../../services/api";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
+import { PropertyRoutesPrams } from "./routes";
 
 interface PropertyForm {
   name: string;
@@ -28,27 +29,31 @@ interface PropertyForm {
   type: string;
 }
 
-export function CreateProperty() {
+export function EditProperty({ route }: any) {
   const focus = useIsFocused();
 
+  const [property] = useState<any>(route.params.property);
   const [organizations, setOrganizations] = useState<any[]>([]);
   const [responsible, setResponsible] = useState<any[]>([]);
-  const screen = useNavigation<NativeStackNavigationProp<any>>();
+  const screen =
+    useNavigation<NativeStackNavigationProp<PropertyRoutesPrams>>();
 
   const {
-    reset,
     watch,
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<PropertyForm>();
+  } = useForm<PropertyForm>({
+    defaultValues: {
+      address: property.address,
+      name: property.name,
+      organization_id: property.organization_id,
+      person_id: property.person_id,
+      type: property.type,
+    },
+  });
 
   useEffect(() => {
-    if (focus) {
-      reset({
-        organization_id: "",
-      });
-    }
     api.get("/api/organizations").then(({ data }) => setOrganizations(data));
   }, [focus]);
 
@@ -70,9 +75,9 @@ export function CreateProperty() {
     };
 
     return api
-      .post("/api/properties", data)
+      .put("/api/properties/" + property.id, data)
       .then(() => screen.goBack())
-      .catch((e) => console.log(e));
+      .catch((e) => console.log(e.response.data));
   };
 
   return (
@@ -86,7 +91,7 @@ export function CreateProperty() {
         }}
       >
         <Text style={styles.title} numberOfLines={1}>
-          Criar Propriedade
+          {property.name}
         </Text>
       </View>
       <KeyboardAvoidingView
@@ -163,7 +168,7 @@ export function CreateProperty() {
                   fontWeight: 600,
                 }}
               >
-                CRIAR
+                SALVAR
               </Text>
             </TouchableOpacity>
           </View>

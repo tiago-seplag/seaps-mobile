@@ -12,15 +12,14 @@ import {
 import { api } from "../../services/api";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Toast } from "toastify-react-native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
+import { getFirstAndLastName } from "../../utils";
 
 export function HomeScreen() {
   const focus = useIsFocused();
   const [data, setData] = useState<any>([]);
 
-  const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isFirstPageReceived, setIsFirstPageReceived] = useState(false);
 
@@ -28,65 +27,57 @@ export function HomeScreen() {
 
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-  // const fetchData = () => {
-  //   setLoading(true);
-  //   getDataFromApi(nextPageIdentifierRef.current).then((response) => {
-  //     const { data: newData, next_page } = parseResponse(response);
-  //     setData([...data, newData]);
-  //     nextPageIdentifierRef.current = next_page;
-  //     setLoading(false);
-  //     !isFirstPageReceived && setIsFirstPageReceived(true);
-  //   });
-  // };
+  const fetchData = () => {
+    setLoading(true);
+    getDataFromApi(nextPageIdentifierRef.current).then(({ data }) => {
+      setData((prev: any) => [...prev, ...data.data]);
+      nextPageIdentifierRef.current = data.meta.next_page.split("=")[1];
+      setLoading(false);
+      !isFirstPageReceived && setIsFirstPageReceived(true);
+    });
+  };
 
-  // const fetchNextPage = () => {
-  //   if (nextPageIdentifierRef.current == null) {
-  //     // End of data.
-  //     return;
-  //   }
-  //   fetchData();
-  // };
+  const fetchNextPage = () => {
+    if (nextPageIdentifierRef.current == null) {
+      return;
+    }
+    fetchData();
+  };
 
-  // const parseResponse = (response: any) => {
-  //   let data = response.data;
-  //   let next_page = response.next_page;
-  //   // parse response and return list and nextPage identifier.
-  //   return {
-  //     data,
-  //     next_page,
-  //   };
-  // };
+  const getDataFromApi = (page: number | null = 1) => {
+    return api.get(
+      `/api/properties?page=${page === null ? 1 : page}&per_page=20`
+    );
+  };
 
-  // const getDataFromApi = (page: number) => {
-  //   return api.get(`/api/properties?page=${page}&per_page=100`);
-  // };
-
-  // const ListEndLoader = () => {
-  //   if (!isFirstPageReceived && loading) {
-  //     // Show loader at the end of list when fetching next page data.
-  //     return <ActivityIndicator size={"large"} />;
-  //   }
-  // };
+  const refreshData = () => {
+    getDataFromApi().then(({ data }) => {
+      setData(data.data);
+      nextPageIdentifierRef.current = data.meta.next_page.split("=")[1];
+      setLoading(false);
+    });
+  };
 
   useEffect(() => {
-    const getData = () => {
-      api
-        .get("/api/properties?page=1&per_page=100")
-        .then(({ data }) => setData(data.data))
-        .catch((e) => {
-          if (e.response?.data?.message) {
-            Toast.error(e.response.data.message);
-          }
-        })
-        .finally(() => setLoading(false));
-    };
-    if (focus) getData();
-  }, [refresh, focus]);
+    if (focus) refreshData();
+  }, [focus]);
+
+  const ListEndLoader = () => {
+    if (!isFirstPageReceived && loading) {
+      // Show loader at the end of list when fetching next page data.
+      return <ActivityIndicator size={"large"} />;
+    }
+  };
 
   if (!isFirstPageReceived && loading) {
-    // Show loader when fetching first page data.
     return <ActivityIndicator size={"small"} />;
   }
+
+  const handleEditProperty = (property: any) => {
+    navigation.push("EditProperty", {
+      property,
+    });
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -108,11 +99,11 @@ export function HomeScreen() {
       <FlatList
         data={data}
         refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={() => setRefresh(!refresh)}
-          />
+          <RefreshControl refreshing={loading} onRefresh={refreshData} />
         }
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={ListEndLoader}
+        onEndReached={fetchNextPage}
         style={{
           flex: 1,
           padding: 16,
@@ -126,7 +117,11 @@ export function HomeScreen() {
           shadowRadius: 2,
         }}
         renderItem={(item) => (
-          <View key={item.item.id} style={styles.card}>
+          <TouchableOpacity
+            key={item.item.id}
+            style={styles.card}
+            onPress={() => handleEditProperty(item.item)}
+          >
             <View
               style={{
                 flexDirection: "row",
@@ -134,15 +129,46 @@ export function HomeScreen() {
                 alignItems: "center",
               }}
             >
-              <Text style={styles.cardSid}>{item.item.organization.name}</Text>
+              <Text style={styles.cardSid}>{item.item.organization?.name}</Text>
+              <Badge type={item.item.type} />
             </View>
-            <Text style={styles.cardTitle}>{item.item.name}</Text>
-          </View>
+            <Text style={styles.cardTitle} numberOfLines={1}>
+              {item.item.name}
+            </Text>
+            <Text style={styles.cardText} numberOfLines={1}>
+              {item.item.address}
+            </Text>
+          </TouchableOpacity>
         )}
       />
     </SafeAreaView>
   );
 }
+
+const Badge = ({ type }: { type: string }) => {
+  return (
+    <View
+      style={{
+        padding: 4,
+        backgroundColor:
+          type === "RENTED"
+            ? "#ca8a04"
+            : type === "GRANT"
+              ? "#dc2626"
+              : "#1a3280",
+        borderRadius: 4,
+      }}
+    >
+      <Text style={{ color: "white" }}>
+        {type === "RENTED"
+          ? "ALUGADO"
+          : type === "GRANT"
+            ? "CONCESSÃO"
+            : "PRÓPRIO"}
+      </Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   title: {
@@ -157,7 +183,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 16,
     marginBottom: 8,
-    gap: 8,
+    gap: 4,
   },
   cardTitle: {
     fontSize: 22,

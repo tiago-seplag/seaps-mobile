@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { Control, Controller, FieldErrors } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -13,6 +14,8 @@ export const Select = ({
   errorMessage,
   onValueChange,
   isRequired = true,
+  options,
+  button,
 }: {
   name: string;
   label: string;
@@ -23,6 +26,8 @@ export const Select = ({
   errors: FieldErrors;
   onValueChange?: (value: string) => void;
   isRequired?: boolean;
+  options: any[];
+  button?: ReactNode;
 }) => {
   return (
     <View>
@@ -37,7 +42,7 @@ export const Select = ({
           <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
             <View style={[styles.picker]}>
               <RNPickerSelect
-                value={value}
+                value={value || ""}
                 onValueChange={(e) => {
                   onChange(e);
                   if (onValueChange) {
@@ -63,13 +68,14 @@ export const Select = ({
                 }}
                 darkTheme
                 textInputProps={{ pointerEvents: "none" }}
-                items={[
-                  { label: "Football", value: "football" },
-                  { label: "Baseball", value: "baseball" },
-                  { label: "Hockey", value: "hockey" },
-                ]}
+                items={options?.map((option) => ({
+                  key: option.id,
+                  label: option.name,
+                  value: option.id,
+                }))}
               />
             </View>
+            {button}
           </View>
         )}
       />

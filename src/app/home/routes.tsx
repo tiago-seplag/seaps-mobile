@@ -12,10 +12,10 @@ export function HomeRoutes() {
         component={HomeScreen}
         options={{
           headerTitle: "Home",
-          // tabBarShowLabel: false,
-          // tabBarIcon: () => (
-          //   <Materialnicons name="home" size={32} color={"#1A1A1A"} />
-          // ),
+          headerTitleStyle: {
+            fontSize: 26,
+            fontWeight: "bold",
+          },
         }}
       />
       <Tab.Screen
@@ -23,11 +23,7 @@ export function HomeRoutes() {
         component={AccountScreen}
         options={{
           headerTitle: "Conta",
-          headerBackVisible: false
-          // tabBarShowLabel: false,
-          // tabBarIcon: () => (
-          //   <Materialnicons name="home" size={32} color={"#1A1A1A"} />
-          // ),
+          headerBackVisible: false,
         }}
       />
     </Tab.Navigator>

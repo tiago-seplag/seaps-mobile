@@ -7,11 +7,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Materialnicons from "@expo/vector-icons/MaterialIcons";
 
 import { api } from "../../services/api";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../..";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Toast } from "toastify-react-native";
 
@@ -22,8 +21,7 @@ export function HomeScreen() {
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<any>();
 
   useEffect(() => {
     const getData = () => {
@@ -42,10 +40,20 @@ export function HomeScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
+      <View
+        style={{
+          paddingHorizontal: 16,
+          paddingVertical: 8,
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
         <Text style={styles.title} numberOfLines={1}>
           Checklists
         </Text>
+        <TouchableOpacity onPress={() => navigation.push("CreateChecklist")}>
+          <Materialnicons name="add-chart" size={32} color={"#1A1A1A"} />
+        </TouchableOpacity>
       </View>
       <FlatList
         data={data}
@@ -137,7 +145,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 16,
     marginBottom: 8,
-    gap: 8,
+    gap: 4,
   },
   cardTitle: {
     fontSize: 22,

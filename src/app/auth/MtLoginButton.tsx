@@ -14,9 +14,10 @@ const AUTH_URL =
   "https://login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/auth";
 
 const CLIENT_ID = "seplag-manutencao-predial"; // Seu client_id
-const REDIRECT_URI = AuthSession.makeRedirectUri({
-  scheme: "smp",
-});
+const REDIRECT_URI =
+  AuthSession.makeRedirectUri({
+    scheme: "smp",
+  }) + "redirect";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -35,9 +36,12 @@ export function MtLogginButton() {
 
   async function exchangeCodeForToken(code: string) {
     try {
-      const response = await api.post("/api/auth/login?code=" + code, {
-        body: new URLSearchParams({ code: code }),
-      });
+      const response = await api.post(
+        "/api/auth/login?code=" + code + "&redirect_uri=" + REDIRECT_URI,
+        {
+          body: new URLSearchParams({ code: code }),
+        }
+      );
 
       if (response?.data.SESSION) {
         signIn(response.data.SESSION);

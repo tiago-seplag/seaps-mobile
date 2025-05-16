@@ -16,63 +16,44 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Input } from "../../components/form/input";
 import { Select } from "../../components/form/select";
 import { api } from "../../services/api";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import Materialnicons from "@expo/vector-icons/MaterialIcons";
 
-interface PropertyForm {
-  name: string;
-  address: string;
+interface ResponsibleForm {
   organization_id: string;
-  person_id: string;
-  type: string;
+  name: string;
+  role: string;
+  email: string;
+  phone: string;
 }
 
-export function CreateProperty() {
-  const focus = useIsFocused();
-
+export function CreateResponsible() {
   const [organizations, setOrganizations] = useState<any[]>([]);
-  const [responsible, setResponsible] = useState<any[]>([]);
   const screen = useNavigation<NativeStackNavigationProp<any>>();
 
   const {
-    reset,
-    watch,
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<PropertyForm>();
+  } = useForm<ResponsibleForm>();
 
   useEffect(() => {
-    if (focus) {
-      reset({
-        organization_id: "",
-      });
-    }
     api.get("/api/organizations").then(({ data }) => setOrganizations(data));
-  }, [focus]);
+  }, []);
 
-  const [organization_id] = watch(["organization_id"]);
-
-  useEffect(() => {
-    if (organization_id) {
-      api
-        .get("/api/organizations/" + organization_id + "/responsible")
-        .then(({ data }) => setResponsible(data));
-    }
-  }, [organization_id]);
-
-  const submit = async (values: PropertyForm) => {
+  const submit = async (values: ResponsibleForm) => {
     const data = {
       ...values,
-      address: values.address.toUpperCase().trim(),
+      role: values.role.toUpperCase().trim(),
       name: values.name.toUpperCase().trim(),
+      email: values.email.toUpperCase().trim(),
+      phone: values.phone.replace(/\D/g, ""),
     };
 
     return api
-      .post("/api/properties", data)
+      .post("/api/responsible", data)
       .then(() => screen.goBack())
-      .catch((e) => console.log(e));
+      .catch((e) => console.log(e.response.data));
   };
 
   return (
@@ -86,7 +67,7 @@ export function CreateProperty() {
         }}
       >
         <Text style={styles.title} numberOfLines={1}>
-          Criar Propriedade
+          Criar Responsável
         </Text>
       </View>
       <KeyboardAvoidingView
@@ -102,56 +83,42 @@ export function CreateProperty() {
               errors={errors}
               name="organization_id"
               label="Orgão"
-              placeholder="Selecione o orgão"
-              errorMessage="Insira o orgão do imóvel"
-            />
-            {organization_id && (
-              <Select
-                label="Responsável"
-                placeholder="Selecione o Responsável do imóvel"
-                control={control}
-                errors={errors}
-                name="person_id"
-                errorMessage="Selecione o Responsável do imóvel"
-                options={responsible}
-                button={
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => screen.push("CreateResponsible")}
-                  >
-                    <Materialnicons name="add" size={24} color={"#1a3180"} />
-                  </TouchableOpacity>
-                }
-              />
-            )}
-            <Select
-              label="Tipo de Imóvel"
-              placeholder="Selecione o tipo do imóvel"
-              control={control}
-              errors={errors}
-              name="type"
-              errorMessage="Selecione o tipo do imóvel"
-              options={[
-                { id: "OWN", name: "PRÓPRIO" },
-                { id: "RENTED", name: "ALUGADO" },
-                { id: "GRANT", name: "CONCESSÃO" },
-              ]}
+              placeholder="Selecione o responsável"
+              errorMessage="Insira o orgão do responsável"
             />
             <Input
               control={control}
               errors={errors}
               label="Nome"
               name="name"
-              placeholder="Nome do local"
-              errorMessage="Insira o nome do imóvel"
+              placeholder="Nome do responsável"
+              errorMessage="Insira o nome do responsável"
             />
             <Input
               control={control}
               errors={errors}
-              label="Endereço"
-              name="address"
-              placeholder="ex.: R. C, S/N - Centro Político Administrativo..."
-              errorMessage="Insira o endereço do imóvel"
+              label="Cargo"
+              name="role"
+              placeholder="Cargo do responsável"
+              errorMessage="Insira o cargo do responsável"
+            />
+            <Input
+              control={control}
+              errors={errors}
+              label="Email"
+              name="email"
+              placeholder="Email do responsável"
+              errorMessage="Insira o Email do responsável"
+              keyboardType="email-address"
+            />
+            <Input
+              control={control}
+              errors={errors}
+              label="Telefone"
+              name="phone"
+              placeholder="Telefone do responsável"
+              errorMessage="Insira o Telefone do imóvel"
+              keyboardType="phone-pad"
             />
             <TouchableOpacity
               onPress={handleSubmit(submit)}
@@ -163,7 +130,7 @@ export function CreateProperty() {
                   fontWeight: 600,
                 }}
               >
-                CRIAR
+                SALVAR
               </Text>
             </TouchableOpacity>
           </View>

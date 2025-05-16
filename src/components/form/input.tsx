@@ -1,5 +1,11 @@
 import { Control, Controller, FieldErrors } from "react-hook-form";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TextInputProps,
+  View,
+} from "react-native";
 
 export const Input = ({
   control,
@@ -8,6 +14,7 @@ export const Input = ({
   name,
   placeholder,
   errorMessage,
+  ...props
 }: {
   name: string;
   label: string;
@@ -15,7 +22,7 @@ export const Input = ({
   placeholder: string;
   control: Control<any>;
   errors: FieldErrors;
-}) => {
+} & Partial<TextInputProps>) => {
   return (
     <View>
       <Text style={styles.label}>{label}</Text>
@@ -27,10 +34,12 @@ export const Input = ({
         name={name}
         render={({ field: { onChange, value } }) => (
           <TextInput
+            {...props}
             placeholder={placeholder}
             value={value}
             style={styles.input}
             onChangeText={onChange}
+            autoCapitalize="characters"
           />
         )}
       />

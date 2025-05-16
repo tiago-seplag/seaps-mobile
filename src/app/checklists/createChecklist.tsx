@@ -20,19 +20,20 @@ import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 
-interface PropertyForm {
-  name: string;
-  address: string;
+interface ChecklistForm {
+  model_id: string;
   organization_id: string;
-  person_id: string;
-  type: string;
+  property_id: string;
+  user_id: string;
 }
 
-export function CreateProperty() {
+export function CreateChecklist() {
   const focus = useIsFocused();
 
   const [organizations, setOrganizations] = useState<any[]>([]);
-  const [responsible, setResponsible] = useState<any[]>([]);
+  const [models, setModels] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const screen = useNavigation<NativeStackNavigationProp<any>>();
 
   const {
@@ -41,7 +42,7 @@ export function CreateProperty() {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<PropertyForm>();
+  } = useForm<ChecklistForm>();
 
   useEffect(() => {
     if (focus) {
@@ -50,6 +51,8 @@ export function CreateProperty() {
       });
     }
     api.get("/api/organizations").then(({ data }) => setOrganizations(data));
+    api.get("/api/models").then(({ data }) => setModels(data));
+    api.get("/api/users").then(({ data }) => setUsers(data));
   }, [focus]);
 
   const [organization_id] = watch(["organization_id"]);
@@ -57,20 +60,18 @@ export function CreateProperty() {
   useEffect(() => {
     if (organization_id) {
       api
-        .get("/api/organizations/" + organization_id + "/responsible")
-        .then(({ data }) => setResponsible(data));
+        .get("/api/organizations/" + organization_id + "/properties")
+        .then(({ data }) => setProperties(data));
     }
   }, [organization_id]);
 
-  const submit = async (values: PropertyForm) => {
+  const submit = async (values: ChecklistForm) => {
     const data = {
       ...values,
-      address: values.address.toUpperCase().trim(),
-      name: values.name.toUpperCase().trim(),
     };
 
     return api
-      .post("/api/properties", data)
+      .post("/api/checklists", data)
       .then(() => screen.goBack())
       .catch((e) => console.log(e));
   };
@@ -86,7 +87,7 @@ export function CreateProperty() {
         }}
       >
         <Text style={styles.title} numberOfLines={1}>
-          Criar Propriedade
+          Criar Checklist
         </Text>
       </View>
       <KeyboardAvoidingView
@@ -97,61 +98,42 @@ export function CreateProperty() {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.form}>
             <Select
+              options={models}
+              control={control}
+              errors={errors}
+              name="model_id"
+              label="Modelo"
+              placeholder="Selecione um modelo"
+              errorMessage="Selecione o modelo do checklist"
+            />
+            <Select
               options={organizations}
               control={control}
               errors={errors}
               name="organization_id"
               label="Orgão"
-              placeholder="Selecione o orgão"
-              errorMessage="Insira o orgão do imóvel"
+              placeholder="Selecione um orgão"
+              errorMessage="Selecione o orgão do checklist"
             />
             {organization_id && (
               <Select
-                label="Responsável"
-                placeholder="Selecione o Responsável do imóvel"
+                options={properties}
                 control={control}
                 errors={errors}
-                name="person_id"
-                errorMessage="Selecione o Responsável do imóvel"
-                options={responsible}
-                button={
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => screen.push("CreateResponsible")}
-                  >
-                    <Materialnicons name="add" size={24} color={"#1a3180"} />
-                  </TouchableOpacity>
-                }
+                name="property_id"
+                label="Propriedade"
+                placeholder="Selecione uma propriedade"
+                errorMessage="Selecione a propriedade do checklist"
               />
             )}
             <Select
-              label="Tipo de Imóvel"
-              placeholder="Selecione o tipo do imóvel"
+              options={users}
               control={control}
               errors={errors}
-              name="type"
-              errorMessage="Selecione o tipo do imóvel"
-              options={[
-                { id: "OWN", name: "PRÓPRIO" },
-                { id: "RENTED", name: "ALUGADO" },
-                { id: "GRANT", name: "CONCESSÃO" },
-              ]}
-            />
-            <Input
-              control={control}
-              errors={errors}
-              label="Nome"
-              name="name"
-              placeholder="Nome do local"
-              errorMessage="Insira o nome do imóvel"
-            />
-            <Input
-              control={control}
-              errors={errors}
-              label="Endereço"
-              name="address"
-              placeholder="ex.: R. C, S/N - Centro Político Administrativo..."
-              errorMessage="Insira o endereço do imóvel"
+              name="user_id"
+              label="Responsável"
+              placeholder="Selecione um responsável"
+              errorMessage="Selecione o responsável do checklist"
             />
             <TouchableOpacity
               onPress={handleSubmit(submit)}

@@ -111,7 +111,14 @@ export function Login() {
             />
             <TouchableOpacity
               onPress={() => setShowPassword(!showPassword)}
-              style={[styles.button]}
+              style={[
+                styles.button,
+                {
+                  width: "20%",
+                  paddingVertical: 0,
+                  justifyContent: "center",
+                },
+              ]}
             >
               <Materialnicons
                 name={showPassword ? "visibility" : "visibility-off"}

@@ -1,9 +1,13 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { HomeScreen } from ".";
-import Materialnicons from "@expo/vector-icons/MaterialIcons";
+import { CreateChecklist } from "./createChecklist";
 
-const Tab = createNativeStackNavigator();
+export type ChecklistsRoutesPrams = {
+  ChecklistsScreen: any;
+  CreateChecklist: any;
+};
+
+const Tab = createNativeStackNavigator<ChecklistsRoutesPrams>();
 
 export function ChecklistsRoutes() {
   return (
@@ -11,6 +15,13 @@ export function ChecklistsRoutes() {
       <Tab.Screen
         name="ChecklistsScreen"
         component={HomeScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen
+        name="CreateChecklist"
+        component={CreateChecklist}
         options={{
           headerShown: false,
         }}
