@@ -1,26 +1,23 @@
-import React, { useEffect } from "react";
-import { Button, Image, Text, TouchableOpacity } from "react-native";
-import { useSession } from "../../contexts/authContext";
-import MtLoginLogo from "../../../assets/mt-login-icon.png";
-
 import * as WebBrowser from "expo-web-browser";
 import * as AuthSession from "expo-auth-session";
-import { api } from "../../services/api";
+import { useSession } from "../contexts/authContext";
 import { Toast } from "toastify-react-native";
-
-WebBrowser.maybeCompleteAuthSession();
+import { api } from "../services/api";
 
 const CLIENT_ID = "seplag-manutencao-predial";
 
 const AUTH_URL =
   "https://login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/auth";
 
+const LOGOUT_URL =
+  "https://login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/logout";
+
 const REDIRECT_URI = AuthSession.makeRedirectUri({
   scheme: "smp",
   path: "redirect",
 });
 
-export function MtLogginButton() {
+const useMTLogin = () => {
   const { signIn } = useSession();
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
@@ -28,11 +25,9 @@ export function MtLogginButton() {
       clientId: CLIENT_ID,
       redirectUri: REDIRECT_URI,
       responseType: "code",
-      scopes: ["offline_access", "openid"],
+      scopes: ["openid", "offline_access"],
     },
-    {
-      authorizationEndpoint: AUTH_URL,
-    }
+    { authorizationEndpoint: AUTH_URL, endSessionEndpoint: LOGOUT_URL }
   );
 
   async function exchangeCodeForToken(code: string) {
@@ -62,36 +57,4 @@ export function MtLogginButton() {
       );
     }
   }
-
-  useEffect(() => {
-    if (response?.type === "success") {
-      const { code } = response.params;
-      AuthSession.dismiss();
-      exchangeCodeForToken(code);
-    }
-  }, [response, request]);
-
-  return (
-    <TouchableOpacity
-      disabled={!request}
-      onPress={() => promptAsync()}
-      style={{
-        display: "flex",
-        padding: 8,
-        borderRadius: 8,
-        flexDirection: "row",
-        justifyContent: "center",
-        width: "100%",
-        backgroundColor: "white",
-        alignItems: "center",
-        gap: 16,
-      }}
-    >
-      <Text style={{ color: "black", fontWeight: "600" }}>ENTRAR COM</Text>
-      <Image
-        style={{ height: 50, width: 50, objectFit: "contain" }}
-        source={MtLoginLogo}
-      />
-    </TouchableOpacity>
-  );
-}
+};
