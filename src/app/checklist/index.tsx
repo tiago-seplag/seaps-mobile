@@ -18,6 +18,7 @@ import { Toast } from "toastify-react-native";
 
 import { Badge } from "../../components/CardBadge";
 import { Label } from "../../components/Label";
+import { PDFButtonModal } from "./PDFButtonModal";
 
 export function ChecklistScreen({ route }: any) {
   const focus = useIsFocused();
@@ -140,15 +141,12 @@ export function ChecklistScreen({ route }: any) {
           </View>
           <View style={{ gap: 8 }}>
             <TouchableOpacity
-              style={{
-                paddingVertical: 12,
-                backgroundColor: "#22c55e",
-                borderRadius: 8,
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              style={[
+                styles.button,
+                {
+                  backgroundColor: "#22c55e",
+                },
+              ]}
               onPress={() =>
                 navigation.push("ChecklistItems", {
                   checklist,
@@ -167,16 +165,13 @@ export function ChecklistScreen({ route }: any) {
             </TouchableOpacity>
             <TouchableOpacity
               disabled={checklist?.status !== "OPEN"}
-              style={{
-                paddingVertical: 12,
-                backgroundColor: "#adadad",
-                opacity: checklist?.status !== "OPEN" ? 0.5 : 1,
-                borderRadius: 8,
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              style={[
+                styles.button,
+                {
+                  backgroundColor: "#adadad",
+                  opacity: checklist?.status !== "OPEN" ? 0.5 : 1,
+                },
+              ]}
               onPress={handleFinishChecklist}
             >
               <Text
@@ -189,6 +184,17 @@ export function ChecklistScreen({ route }: any) {
                 FINALIZAR CHECKLIST
               </Text>
             </TouchableOpacity>
+            <PDFButtonModal
+              disabled={checklist?.status === "OPEN"}
+              style={[
+                styles.button,
+                {
+                  backgroundColor: "#6f91ff",
+                  opacity: checklist?.status === "OPEN" ? 0.5 : 1,
+                },
+              ]}
+              id={checklist?.id}
+            />
           </View>
         </View>
       </ScrollView>
@@ -244,5 +250,14 @@ const styles = StyleSheet.create({
     borderColor: "#1A1A1A",
     borderRadius: 3,
     flex: 1,
+  },
+  button: {
+    paddingVertical: 12,
+    minHeight: 50,
+    borderRadius: 8,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
