@@ -33,7 +33,8 @@
     "react-native-screens": "~4.10.0",
     "react-native-webview": "^13.13.2",
     "toastify-react-native": "^7.2.0",
-    "expo-sharing": "~13.1.5"
+    "expo-sharing": "~13.1.5",
+    "expo-crypto": "~14.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
