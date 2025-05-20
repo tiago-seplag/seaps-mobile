@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Image, Text, TouchableOpacity } from "react-native";
+import { Image, Text, TouchableOpacity } from "react-native";
 import { useSession } from "../../contexts/authContext";
 import MtLoginLogo from "../../../assets/mt-login-icon.png";
 

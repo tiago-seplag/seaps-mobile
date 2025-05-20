@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useStorageState } from "../hooks/useAsyncState";
 import { api } from "../services/api";
 import * as AuthSession from "expo-auth-session";
-import * as WebBrowser from "expo-web-browser";
 
 const AuthContext = React.createContext<{
   signIn: (session: string) => void;
@@ -49,17 +48,10 @@ export function SessionProvider(props: React.PropsWithChildren) {
     }
   );
 
-  useEffect(() => {
-    if (session !== null) {
-      api.defaults.headers.common["Cookie"] = "SESSION=" + session;
-    }
-  }, [session]);
-
   return (
     <AuthContext.Provider
       value={{
         signIn: (string) => {
-          api.defaults.headers.common["Cookie"] = "SESSION=" + string;
           setSession(string);
         },
         signOut: async () => {
