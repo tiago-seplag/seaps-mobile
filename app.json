@@ -17,7 +17,8 @@
       "supportsTablet": false,
       "bundleIdentifier": "br.gov.mt.cepromat.mt-cidadao-gov.MTCidadao-NOTIFY",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "buildNumber": "2"
       }
     },
     "android": {
@@ -41,16 +42,16 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "custom photos permission",
-          "cameraPermission": "custom camera permission",
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your camera to capture checklist photos",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your gallery to get checklist photos",
           "recordAudioAndroid": false
         }
       ],
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to capture checklist photos",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone for camera use",
           "recordAudioAndroid": false
         }
       ],
