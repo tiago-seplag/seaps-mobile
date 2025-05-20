@@ -17,9 +17,9 @@
       "supportsTablet": false,
       "bundleIdentifier": "br.gov.mt.cepromat.mt-cidadao-gov.MTCidadao-NOTIFY",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false,
-        "buildNumber": "2"
-      }
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "buildNumber": "3"
     },
     "android": {
       "adaptiveIcon": {
