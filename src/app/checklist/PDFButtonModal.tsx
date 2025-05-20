@@ -114,6 +114,8 @@ export const PDFButtonModal: React.FC<PDFButtonModalProps> = ({
           <WebView
             source={{ uri: localUri }}
             style={styles.webview}
+            allowFileAccess={true}
+            allowUniversalAccessFromFileURLs={true}
             originWhitelist={["*"]}
           />
         ) : (
