@@ -66,7 +66,6 @@ export function MtLogginButton() {
   useEffect(() => {
     if (response?.type === "success") {
       const { code } = response.params;
-      AuthSession.dismiss();
       exchangeCodeForToken(code);
     }
   }, [response, request]);

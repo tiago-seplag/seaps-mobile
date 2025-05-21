@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Text,
   TouchableOpacityProps,
+  Platform,
 } from "react-native";
 import { WebView } from "react-native-webview";
 import { useSession } from "../../contexts/authContext";
@@ -17,9 +18,11 @@ import * as Sharing from "expo-sharing";
 
 interface PDFButtonModalProps extends TouchableOpacityProps {
   id?: string;
+  checklist?: any;
 }
 
 export const PDFButtonModal: React.FC<PDFButtonModalProps> = ({
+  checklist,
   id,
   ...props
 }) => {
@@ -29,12 +32,17 @@ export const PDFButtonModal: React.FC<PDFButtonModalProps> = ({
   const { session } = useSession();
 
   const downloadPdfFromApi = async () => {
-    if (!id) return;
+    if (!checklist) return;
 
     try {
       setLoading(true);
 
-      const fileName = id.replaceAll("-", "") + ".pdf" || "file.pdf";
+      const fileName =
+        checklist.property.name.replaceAll(" ", "") +
+        "_" +
+        checklist.sid.replace("/", "_") +
+        ".pdf";
+
       const localPath = FileSystem.documentDirectory + fileName;
 
       const fileInfo = await FileSystem.getInfoAsync(localPath);
@@ -42,7 +50,7 @@ export const PDFButtonModal: React.FC<PDFButtonModalProps> = ({
       if (!fileInfo.exists) {
         const download = await FileSystem.downloadAsync(
           process.env.EXPO_PUBLIC_API_URL + "/api/reports/" + id,
-          FileSystem.documentDirectory + id.replaceAll("-", "") + ".pdf",
+          FileSystem.documentDirectory + fileName,
           {
             headers: {
               Cookie: "SESSION=" + session,
@@ -60,8 +68,17 @@ export const PDFButtonModal: React.FC<PDFButtonModalProps> = ({
         setLocalUri(fileInfo.uri);
       }
 
-      setModalVisible(true);
+      if (Platform.OS === "android") {
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(FileSystem.documentDirectory + fileName);
+        } else {
+          Toast.error("Compartilhamento não disponível no dispositivo.");
+        }
+      } else {
+        setModalVisible(true); // iOS: exibe modal com WebView, por exemplo
+      }
     } catch (err) {
+      console.log(err);
       Toast.error("Erro! Não foi possível baixar o PDF.");
     } finally {
       setLoading(false);

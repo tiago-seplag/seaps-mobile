@@ -15,7 +15,6 @@ api.interceptors.response.use(undefined, async (data: AxiosError<any>) => {
 });
 
 api.interceptors.request.use(async (config) => {
-  console.log(config.headers.get("Cookies"));
   if (!config.headers.get("Cookie")) {
     const token = await AsyncStorage.getItem("session");
     config.headers["Cookie"] = `SESSION=${token}`;

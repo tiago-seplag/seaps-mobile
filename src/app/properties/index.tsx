@@ -90,7 +90,7 @@ export function HomeScreen() {
         }}
       >
         <Text style={styles.title} numberOfLines={1}>
-          Propriedades
+          Imóveis
         </Text>
         <TouchableOpacity onPress={() => navigation.push("CreateProperty")}>
           <Materialnicons name="add-home" size={32} color={"#1A1A1A"} />
@@ -154,8 +154,8 @@ const Badge = ({ type }: { type: string }) => {
           type === "RENTED"
             ? "#ca8a04"
             : type === "GRANT"
-              ? "#dc2626"
-              : "#1a3280",
+            ? "#dc2626"
+            : "#1a3280",
         borderRadius: 4,
       }}
     >
@@ -163,8 +163,8 @@ const Badge = ({ type }: { type: string }) => {
         {type === "RENTED"
           ? "ALUGADO"
           : type === "GRANT"
-            ? "CONCESSÃO"
-            : "PRÓPRIO"}
+          ? "CONCESSÃO"
+          : "PRÓPRIO"}
       </Text>
     </View>
   );

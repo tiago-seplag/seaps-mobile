@@ -71,13 +71,45 @@ export function ChecklistScreen({ route }: any) {
 
   const finishChecklist = async () => {
     await api
-      .put("/api/checklists/" + route.params?.id + "/finish/")
-      .then(() => navigation.goBack())
+      .put("/api/checklists/" + route.params?.id + "/finish")
+      .then(() => getData())
       .catch((e) => {
         if (e.response?.data?.message) {
           Toast.error(e.response.data.message);
         }
       });
+  };
+
+  const reopenChecklist = async () => {
+    await api
+      .post("/api/checklists/" + route.params?.id + "/re-open")
+      .then(() => getData())
+      .catch((e) => {
+        if (e.response?.data?.message) {
+          Toast.error(e.response.data.message);
+        }
+      });
+  };
+
+  const handleReopenChecklist = () => {
+    Alert.alert(
+      "Deseja reabrir o checklist?",
+      "",
+      [
+        {
+          text: "Sim",
+          onPress: () => reopenChecklist(),
+        },
+        {
+          text: "Não",
+          onPress: () => "",
+        },
+      ],
+      {
+        cancelable: true,
+        onDismiss: () => 0,
+      }
+    );
   };
 
   if (loading) {
@@ -163,27 +195,47 @@ export function ChecklistScreen({ route }: any) {
                 ITENS
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              disabled={checklist?.status !== "OPEN"}
-              style={[
-                styles.button,
-                {
-                  backgroundColor: "#adadad",
-                  opacity: checklist?.status !== "OPEN" ? 0.5 : 1,
-                },
-              ]}
-              onPress={handleFinishChecklist}
-            >
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: "bold",
-                  color: "#1A1A1A",
-                }}
+            {checklist?.status !== "OPEN" ? (
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  {
+                    backgroundColor: "#adadad",
+                  },
+                ]}
+                onPress={handleReopenChecklist}
               >
-                FINALIZAR CHECKLIST
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 22,
+                    fontWeight: "bold",
+                    color: "#1A1A1A",
+                  }}
+                >
+                  REABRIR CHECKLIST
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  {
+                    backgroundColor: "#adadad",
+                  },
+                ]}
+                onPress={handleFinishChecklist}
+              >
+                <Text
+                  style={{
+                    fontSize: 22,
+                    fontWeight: "bold",
+                    color: "#1A1A1A",
+                  }}
+                >
+                  FINALIZAR CHECKLIST
+                </Text>
+              </TouchableOpacity>
+            )}
             <PDFButtonModal
               disabled={checklist?.status === "OPEN"}
               style={[
@@ -193,6 +245,7 @@ export function ChecklistScreen({ route }: any) {
                   opacity: checklist?.status === "OPEN" ? 0.5 : 1,
                 },
               ]}
+              checklist={checklist}
               id={checklist?.id}
             />
           </View>
