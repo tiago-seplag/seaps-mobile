@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "Sistema de Manutenção Predial",
+    "displayName": "Sistema de Manutenção Predial",
     "scheme": "ssp",
     "platforms": ["ios", "android"],
     "slug": "checklists-app",
@@ -17,7 +18,8 @@
       "supportsTablet": false,
       "bundleIdentifier": "br.gov.mt.cepromat.mt-cidadao-gov.MTCidadao-NOTIFY",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "CFBundleDisplayName": "Sistema de Manutenção Predial"
       },
       "buildNumber": "3"
     },
