@@ -2,7 +2,7 @@
   "expo": {
     "name": "Sistema de Manutenção Predial",
     "displayName": "Sistema de Manutenção Predial",
-    "scheme": "ssp",
+    "scheme": "smp",
     "platforms": ["ios", "android"],
     "slug": "checklists-app",
     "version": "1.0.3",
