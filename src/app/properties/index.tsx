@@ -14,7 +14,6 @@ import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
-import { getFirstAndLastName } from "../../utils";
 
 export function HomeScreen() {
   const focus = useIsFocused();
@@ -46,7 +45,7 @@ export function HomeScreen() {
 
   const getDataFromApi = (page: number | null = 1) => {
     return api.get(
-      `/api/properties?page=${page === null ? 1 : page}&per_page=20`
+      `/api/properties?page=${page === null ? 1 : page}&per_page=100`
     );
   };
 
@@ -59,7 +58,10 @@ export function HomeScreen() {
   };
 
   useEffect(() => {
-    if (focus) refreshData();
+    if (focus) {
+      refreshData();
+      setLoading(false);
+    }
   }, [focus]);
 
   const ListEndLoader = () => {
@@ -101,9 +103,6 @@ export function HomeScreen() {
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={refreshData} />
         }
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={ListEndLoader}
-        onEndReached={fetchNextPage}
         style={{
           flex: 1,
           padding: 16,
