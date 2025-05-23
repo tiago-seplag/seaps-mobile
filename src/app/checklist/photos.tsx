@@ -87,7 +87,7 @@ export function PhotosScreen({ route }: any) {
         allowsMultipleSelection: true,
         quality: 0.5,
         allowsEditing: false,
-        selectionLimit: 10,
+        selectionLimit: 10 - checklistItem.images.length,
         aspect: [4, 3],
       });
     } else {
@@ -97,20 +97,20 @@ export function PhotosScreen({ route }: any) {
         mediaTypes: ["images"],
         allowsMultipleSelection: true,
         quality: 0.5,
-        selectionLimit: 10,
+        selectionLimit: 10 - checklistItem.images.length,
         allowsEditing: false,
         aspect: [4, 3],
       });
     }
 
     if (!result.canceled) {
-      setLoading(true);
       uploadFiles(result);
     }
   };
 
   const uploadFiles = async (result: ImagePicker.ImagePickerSuccessResult) => {
     try {
+      setLoading(true);
       const form = new FormData();
       for (let image of result.assets) {
         form.append("file", {
@@ -242,8 +242,13 @@ export function PhotosScreen({ route }: any) {
         </Text>
         <TouchableOpacity
           onPress={handleSelectOrigin}
-          disabled={CHECKLIST_IS_CLOSED}
-          style={{ opacity: CHECKLIST_IS_CLOSED ? 0.5 : 1 }}
+          disabled={CHECKLIST_IS_CLOSED || checklistItem.images.length >= 10}
+          style={{
+            opacity:
+              CHECKLIST_IS_CLOSED || checklistItem.images.length >= 10
+                ? 0.5
+                : 1,
+          }}
         >
           <Materialnicons name="add-a-photo" size={32} color={"#1A1A1A"} />
         </TouchableOpacity>
