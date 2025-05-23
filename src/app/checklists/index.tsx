@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   RefreshControl,
   StyleSheet,
@@ -10,33 +11,67 @@ import {
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 
 import { api } from "../../services/api";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Toast } from "toastify-react-native";
 
-export function HomeScreen() {
-  const focus = useIsFocused();
-  const [data, setData] = useState();
-
-  const [refresh, setRefresh] = useState(false);
-  const [loading, setLoading] = useState(true);
-
+export function HomeScreen({ route }: any) {
   const navigation = useNavigation<any>();
 
+  const [data, setData] = useState<any[]>([]);
+
+  const [loading, setLoading] = useState(false);
+  const [lastPage, setLastPage] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  const currentPageRef = useRef(1);
+
+  const fetchData = async (pageToLoad = 1) => {
+    if (loading || loadingMore) return;
+
+    pageToLoad === 1 ? setLoading(true) : setLoadingMore(true);
+
+    try {
+      const response = await api.get(
+        `/api/checklists?page=${pageToLoad}&per_page=20`
+      );
+      const responseData = response.data;
+
+      if (pageToLoad === 1) {
+        setData(responseData.data);
+      } else {
+        setData((prev) => [...prev, ...responseData.data]);
+      }
+
+      currentPageRef.current = responseData.meta.current_page;
+      setLastPage(responseData.meta.last_page);
+    } catch (error) {
+      console.log("Erro ao buscar dados:", error);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  const loadMore = () => {
+    if (!loadingMore && currentPageRef.current < lastPage) {
+      fetchData(currentPageRef.current + 1);
+    }
+  };
+
   useEffect(() => {
-    const getData = () => {
-      api
-        .get("/api/checklists?page=1&per_page=100")
-        .then(({ data }) => setData(data.data))
-        .catch((e) => {
-          if (e.response?.data?.message) {
-            Toast.error(e.response.data.message);
-          }
-        })
-        .finally(() => setLoading(false));
-    };
-    if (focus) getData();
-  }, [refresh, focus]);
+    fetchData(1);
+  }, []);
+
+  useEffect(() => {
+    if (route?.params?.refresh) {
+      fetchData(1);
+    }
+  }, [route?.params?.refresh]);
+
+  const renderFooter = () => {
+    if (!loadingMore) return null;
+    return <ActivityIndicator style={{ marginVertical: 16 }} />;
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -55,63 +90,63 @@ export function HomeScreen() {
           <Materialnicons name="add-chart" size={32} color={"#1A1A1A"} />
         </TouchableOpacity>
       </View>
-      <FlatList
-        data={data}
-        refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={() => setRefresh(!refresh)}
-          />
-        }
-        style={{
-          flex: 1,
-          padding: 16,
-          backgroundColor: "#e8e8e8",
-          shadowColor: "black",
-          shadowOffset: {
-            height: 2,
-            width: 4,
-          },
-          shadowOpacity: 0.1,
-          shadowRadius: 2,
-        }}
-        renderItem={(item) => (
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("Checklist", {
-                screen: "ChecklistScreen",
-                params: { id: item.item.id },
-              });
-            }}
-            key={item.item.id}
-            style={styles.card}
-          >
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
+      {loading ? (
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <ActivityIndicator size="large" />
+        </View>
+      ) : (
+        <FlatList
+          data={data}
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={() => fetchData(1)}
+            />
+          }
+          style={styles.list}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderFooter}
+          renderItem={(item) => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Checklist", {
+                  screen: "ChecklistScreen",
+                  params: { id: item.item.id },
+                });
               }}
+              key={item.item.id}
+              style={styles.card}
             >
-              <Text style={styles.cardSid}>{item.item.sid}</Text>
-              <Badge status={item.item.status} />
-            </View>
-            <Text style={styles.cardTitle}>{item.item.property.name}</Text>
-            <View
-              style={{
-                flexDirection: "row",
-                gap: 16,
-                justifyContent: "space-between",
-              }}
-            >
-              <Text style={styles.cardText}>{item.item.organization.name}</Text>
-              <Text style={styles.cardText}>
-                {item.item.property.person?.name}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        )}
-      />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={styles.cardSid}>{item.item.sid}</Text>
+                <Badge status={item.item.status} />
+              </View>
+              <Text style={styles.cardTitle}>{item.item.property.name}</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: 16,
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text style={styles.cardText}>
+                  {item.item.organization.name}
+                </Text>
+                <Text style={styles.cardText}>
+                  {item.item.property.person?.name}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -133,6 +168,18 @@ const Badge = ({ status }: { status: string }) => {
 };
 
 const styles = StyleSheet.create({
+  list: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: "#e8e8e8",
+    shadowColor: "black",
+    shadowOffset: {
+      height: 2,
+      width: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
   title: {
     fontSize: 26,
     fontWeight: "bold",

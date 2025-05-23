@@ -110,6 +110,7 @@ export function CreateResponsible() {
               placeholder="Email do responsável"
               errorMessage="Insira o Email do responsável"
               keyboardType="email-address"
+              autoCapitalize="none"
             />
             <Input
               control={control}

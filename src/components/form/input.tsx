@@ -34,12 +34,12 @@ export const Input = ({
         name={name}
         render={({ field: { onChange, value } }) => (
           <TextInput
-            {...props}
-            placeholder={placeholder}
-            value={value}
-            style={styles.input}
-            onChangeText={onChange}
-            autoCapitalize="characters"
+          placeholder={placeholder}
+          value={value}
+          style={styles.input}
+          onChangeText={onChange}
+          autoCapitalize="characters"
+          {...props}
           />
         )}
       />

@@ -72,7 +72,11 @@ export function CreateChecklist() {
 
     return api
       .post("/api/checklists", data)
-      .then(() => screen.goBack())
+      .then(() =>
+        screen.popTo("ChecklistsScreen", {
+          refresh: true,
+        })
+      )
       .catch((e) => console.log(e));
   };
 

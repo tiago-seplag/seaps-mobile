@@ -3,9 +3,11 @@ import { Text, View } from "react-native";
 export const Label = ({
   title,
   value,
+  children,
 }: {
   title: string;
   value?: string | number | any;
+  children?: any;
 }) => {
   return (
     <View>
@@ -17,13 +19,17 @@ export const Label = ({
       >
         {title}:
       </Text>
-      <Text
-        style={{
-          fontSize: 18,
-        }}
-      >
-        {value}
-      </Text>
+      {children ? (
+        children
+      ) : (
+        <Text
+          style={{
+            fontSize: 18,
+          }}
+        >
+          {value}
+        </Text>
+      )}
     </View>
   );
 };

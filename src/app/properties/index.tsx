@@ -10,70 +10,63 @@ import {
 } from "react-native";
 
 import { api } from "../../services/api";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 
 export function HomeScreen() {
-  const focus = useIsFocused();
-  const [data, setData] = useState<any>([]);
+  const [data, setData] = useState<any[]>([]);
 
-  const [loading, setLoading] = useState(true);
-  const [isFirstPageReceived, setIsFirstPageReceived] = useState(false);
-
-  const nextPageIdentifierRef = useRef<any>();
+  const [loading, setLoading] = useState(false);
+  const [lastPage, setLastPage] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const navigation = useNavigation<NativeStackNavigationProp<any>>();
 
-  const fetchData = () => {
-    setLoading(true);
-    getDataFromApi(nextPageIdentifierRef.current).then(({ data }) => {
-      setData((prev: any) => [...prev, ...data.data]);
-      nextPageIdentifierRef.current = data.meta.next_page.split("=")[1];
-      setLoading(false);
-      !isFirstPageReceived && setIsFirstPageReceived(true);
-    });
-  };
+  const currentPageRef = useRef(1);
 
-  const fetchNextPage = () => {
-    if (nextPageIdentifierRef.current == null) {
-      return;
+  const fetchData = async (pageToLoad = 1) => {
+    if (loading || loadingMore) return;
+
+    pageToLoad === 1 ? setLoading(true) : setLoadingMore(true);
+
+    try {
+      const response = await api.get(
+        `/api/properties?page=${pageToLoad}&per_page=20`
+      );
+      const responseData = response.data;
+
+      if (pageToLoad === 1) {
+        setData(responseData.data);
+      } else {
+        setData((prev) => [...prev, ...responseData.data]);
+      }
+
+      currentPageRef.current = responseData.meta.current_page;
+      setLastPage(responseData.meta.last_page);
+    } catch (error) {
+      console.error("Erro ao buscar dados:", error);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
     }
-    fetchData();
   };
 
-  const getDataFromApi = (page: number | null = 1) => {
-    return api.get(
-      `/api/properties?page=${page === null ? 1 : page}&per_page=100`
-    );
-  };
-
-  const refreshData = () => {
-    getDataFromApi().then(({ data }) => {
-      setData(data.data);
-      nextPageIdentifierRef.current = data.meta.next_page.split("=")[1];
-      setLoading(false);
-    });
+  const loadMore = () => {
+    if (!loadingMore && currentPageRef.current < lastPage) {
+      fetchData(currentPageRef.current + 1);
+    }
   };
 
   useEffect(() => {
-    if (focus) {
-      refreshData();
-      setLoading(false);
-    }
-  }, [focus]);
+    fetchData(1);
+  }, []);
 
-  const ListEndLoader = () => {
-    if (!isFirstPageReceived && loading) {
-      // Show loader at the end of list when fetching next page data.
-      return <ActivityIndicator size={"large"} />;
-    }
+  const renderFooter = () => {
+    if (!loadingMore) return null;
+    return <ActivityIndicator style={{ marginVertical: 16 }} />;
   };
-
-  if (!isFirstPageReceived && loading) {
-    return <ActivityIndicator size={"small"} />;
-  }
 
   const handleEditProperty = (property: any) => {
     navigation.push("EditProperty", {
@@ -98,48 +91,62 @@ export function HomeScreen() {
           <Materialnicons name="add-home" size={32} color={"#1A1A1A"} />
         </TouchableOpacity>
       </View>
-      <FlatList
-        data={data}
-        refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={refreshData} />
-        }
-        style={{
-          flex: 1,
-          padding: 16,
-          backgroundColor: "#e8e8e8",
-          shadowColor: "black",
-          shadowOffset: {
-            height: 2,
-            width: 4,
-          },
-          shadowOpacity: 0.1,
-          shadowRadius: 2,
-        }}
-        renderItem={(item) => (
-          <TouchableOpacity
-            key={item.item.id}
-            style={styles.card}
-            onPress={() => handleEditProperty(item.item)}
-          >
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
+      {loading ? (
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          <ActivityIndicator size="large" />
+        </View>
+      ) : (
+        <FlatList
+          data={data}
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={() => fetchData(1)}
+            />
+          }
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderFooter}
+          style={{
+            flex: 1,
+            padding: 16,
+            backgroundColor: "#e8e8e8",
+            shadowColor: "black",
+            shadowOffset: {
+              height: 2,
+              width: 4,
+            },
+            shadowOpacity: 0.1,
+            shadowRadius: 2,
+          }}
+          renderItem={(item) => (
+            <TouchableOpacity
+              key={item.item.id}
+              style={styles.card}
+              onPress={() => handleEditProperty(item.item)}
             >
-              <Text style={styles.cardSid}>{item.item.organization?.name}</Text>
-              <Badge type={item.item.type} />
-            </View>
-            <Text style={styles.cardTitle} numberOfLines={1}>
-              {item.item.name}
-            </Text>
-            <Text style={styles.cardText} numberOfLines={1}>
-              {item.item.address}
-            </Text>
-          </TouchableOpacity>
-        )}
-      />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={styles.cardSid}>
+                  {item.item.organization?.name}
+                </Text>
+                <Badge type={item.item.type} />
+              </View>
+              <Text style={styles.cardTitle} numberOfLines={1}>
+                {item.item.name}
+              </Text>
+              <Text style={styles.cardText} numberOfLines={1}>
+                {item.item.address}
+              </Text>
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 }

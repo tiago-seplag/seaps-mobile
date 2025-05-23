@@ -5,7 +5,7 @@
     "scheme": "smp",
     "platforms": ["ios", "android"],
     "slug": "checklists-app",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
