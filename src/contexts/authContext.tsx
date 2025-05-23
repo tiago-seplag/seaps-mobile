@@ -1,16 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useStorageState } from "../hooks/useAsyncState";
 import { api } from "../services/api";
 import * as AuthSession from "expo-auth-session";
 
 const AuthContext = React.createContext<{
+  user: any;
   signIn: (session: string) => void;
   signOut: () => void;
+  refreshUserData: () => Promise<void>;
   session?: string | null;
   isLoading: boolean;
 }>({
+  user: null,
   signIn: (session: string) => null,
   signOut: () => null,
+  refreshUserData: async () => {},
   session: null,
   isLoading: false,
 });
@@ -34,6 +38,7 @@ export function useSession() {
 }
 
 export function SessionProvider(props: React.PropsWithChildren) {
+  const [user, setUser] = useState();
   const [[isLoading, session], setSession] = useStorageState("session");
 
   const [, , promptAsync] = AuthSession.useAuthRequest(
@@ -48,6 +53,19 @@ export function SessionProvider(props: React.PropsWithChildren) {
     }
   );
 
+  const getData = async () => {
+    api
+      .get("/api/auth/me")
+      .then(({ data }) => setUser(data))
+      .catch((e) => console.log(e));
+  };
+
+  useEffect(() => {
+    if (session) {
+      getData();
+    }
+  }, [session]);
+
   return (
     <AuthContext.Provider
       value={{
@@ -59,8 +77,10 @@ export function SessionProvider(props: React.PropsWithChildren) {
           setSession(null);
           delete api.defaults.headers.common["Cookie"];
         },
+        refreshUserData: getData,
         session,
         isLoading,
+        user,
       }}
     >
       {props.children}

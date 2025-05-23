@@ -22,8 +22,7 @@ export function HomeRoutes() {
         name="Account"
         component={AccountScreen}
         options={{
-          headerTitle: "Conta",
-          headerBackVisible: false,
+          headerShown: false,
         }}
       />
     </Tab.Navigator>
