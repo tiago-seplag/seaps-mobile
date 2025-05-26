@@ -13,6 +13,7 @@ export const Select = ({
   defaultValue,
   errorMessage,
   onValueChange,
+  onClose,
   isRequired = true,
   options,
   button,
@@ -25,6 +26,7 @@ export const Select = ({
   control: Control<any>;
   errors: FieldErrors;
   onValueChange?: (value: string) => void;
+  onClose?: (donePressed: boolean) => void;
   isRequired?: boolean;
   options: any[];
   button?: ReactNode;
@@ -73,6 +75,7 @@ export const Select = ({
                   label: option.name,
                   value: option.id,
                 }))}
+                onClose={onClose}
               />
             </View>
             {button}

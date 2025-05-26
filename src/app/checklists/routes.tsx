@@ -19,13 +19,13 @@ export function ChecklistsRoutes() {
           headerShown: false,
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="CreateChecklist"
         component={CreateChecklist}
         options={{
           headerShown: false,
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 }

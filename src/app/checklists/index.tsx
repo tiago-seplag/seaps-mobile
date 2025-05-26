@@ -86,7 +86,13 @@ export function HomeScreen({ route }: any) {
         <Text style={styles.title} numberOfLines={1}>
           Checklists
         </Text>
-        <TouchableOpacity onPress={() => navigation.push("CreateChecklist")}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("CreateChecklist", {
+              screen: "CreateChecklistScreen",
+            })
+          }
+        >
           <Materialnicons name="add-chart" size={32} color={"#1A1A1A"} />
         </TouchableOpacity>
       </View>

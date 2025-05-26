@@ -40,6 +40,7 @@ interface Property {
   address: string | null;
   organization_id: string;
   location: string | null;
+  organization?: any;
   person?: Person;
 }
 
