@@ -13,49 +13,57 @@ import { useForm } from "react-hook-form";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { Input } from "../../components/form/input";
 import { Select } from "../../components/form/select";
 import { api } from "../../services/api";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useChecklistForm } from "../../contexts/checklistContext";
-import { useSession } from "../../contexts/authContext";
-import { getFirstAndLastName } from "../../utils";
 
-export function CreateChecklist() {
-  const { form, setChecklist } = useChecklistForm();
-  const { user } = useSession();
+interface ResponsibleForm {
+  organization_id: string;
+  name: string;
+  role: string;
+  email: string;
+  phone: string;
+}
 
+export function CreateResponsible() {
   const [organizations, setOrganizations] = useState<any[]>([]);
-  const [models, setModels] = useState<any[]>([]);
-  const [users, setUsers] = useState<any[]>([]);
-
   const screen = useNavigation<NativeStackNavigationProp<any>>();
+  const { checklist } = useChecklistForm();
 
   const {
+    reset,
     handleSubmit,
     control,
     formState: { errors },
-  } = form;
+  } = useForm<ResponsibleForm>();
 
   useEffect(() => {
-    form.clearErrors();
+    reset({
+      organization_id: checklist?.organization?.id,
+    });
     api.get("/api/organizations").then(({ data }) => setOrganizations(data));
-    api.get("/api/models").then(({ data }) => setModels(data));
-    api.get("/api/users").then(({ data }) => setUsers(data));
   }, []);
 
-  const submit = async () => {
-    screen.push("SelectProperty");
-  };
+  const submit = async (values: ResponsibleForm) => {
+    const data = {
+      ...values,
+      role: values.role.toUpperCase().trim(),
+      name: values.name.toUpperCase().trim(),
+      email: values.email.toLocaleLowerCase().trim(),
+      phone: values.phone.replace(/\D/g, ""),
+    };
 
-  const onCloseOrganizationSelect = () => {
-    const organization_id = form.getValues("organization_id");
-
-    const organization = organizations.find(
-      (item) => item.id === organization_id
-    );
-
-    setChecklist((prev: any) => ({ ...prev, organization }));
+    return api
+      .post("/api/responsible", data)
+      .then(() =>
+        screen.popTo("CreateProperty", {
+          refresh: Date.now(),
+        })
+      )
+      .catch((e) => console.log(e.response.data));
   };
 
   return (
@@ -69,7 +77,7 @@ export function CreateChecklist() {
         }}
       >
         <Text style={styles.title} numberOfLines={1}>
-          Criar Checklist
+          Criar Responsável
         </Text>
       </View>
       <KeyboardAvoidingView
@@ -80,36 +88,48 @@ export function CreateChecklist() {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.form}>
             <Select
-              options={models}
-              control={control}
-              errors={errors}
-              name="model_id"
-              label="Modelo"
-              placeholder="Selecione um modelo"
-              errorMessage="Selecione o modelo do checklist"
-            />
-            <Select
               options={organizations}
               control={control}
               errors={errors}
               name="organization_id"
               label="Orgão"
-              placeholder="Selecione um orgão"
-              errorMessage="Selecione o orgão do checklist"
-              onClose={onCloseOrganizationSelect}
+              placeholder="Selecione o responsável"
+              errorMessage="Insira o orgão do responsável"
             />
-            <Select
-              options={users.map((user) => ({
-                ...user,
-                name: getFirstAndLastName(user.name),
-              }))}
-              defaultValue={user.id}
+            <Input
               control={control}
               errors={errors}
-              name="user_id"
-              label="Responsável"
-              placeholder="Selecione um responsável"
-              errorMessage="Selecione o responsável do checklist"
+              label="Nome"
+              name="name"
+              placeholder="Nome do responsável"
+              errorMessage="Insira o nome do responsável"
+            />
+            <Input
+              control={control}
+              errors={errors}
+              label="Cargo"
+              name="role"
+              placeholder="Cargo do responsável"
+              errorMessage="Insira o cargo do responsável"
+            />
+            <Input
+              control={control}
+              errors={errors}
+              label="Email"
+              name="email"
+              placeholder="Email do responsável"
+              errorMessage="Insira o Email do responsável"
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            <Input
+              control={control}
+              errors={errors}
+              label="Telefone"
+              name="phone"
+              placeholder="Telefone do responsável"
+              errorMessage="Insira o Telefone do imóvel"
+              keyboardType="phone-pad"
             />
             <TouchableOpacity
               onPress={handleSubmit(submit)}
@@ -121,7 +141,7 @@ export function CreateChecklist() {
                   fontWeight: 600,
                 }}
               >
-                PROXIMO
+                SALVAR
               </Text>
             </TouchableOpacity>
           </View>

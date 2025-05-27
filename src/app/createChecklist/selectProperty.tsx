@@ -19,6 +19,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useChecklistForm } from "../../contexts/checklistContext";
 import { Input } from "../../components/form/input";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
+import { useForm } from "react-hook-form";
 
 interface ChecklistForm {
   model_id: string;
@@ -27,18 +28,15 @@ interface ChecklistForm {
   user_id: string;
 }
 
-export function SelectProperty() {
+export function SelectProperty({ route }: any) {
+  const { control, watch } = useForm();
   const { form, setChecklist, checklist } = useChecklistForm();
-  const focus = useIsFocused();
-
   const [properties, setProperties] = useState<Property[]>([]);
 
   const screen = useNavigation<NativeStackNavigationProp<any>>();
 
   const {
-    reset,
     handleSubmit,
-    control,
     formState: { errors },
   } = form;
 
@@ -58,6 +56,15 @@ export function SelectProperty() {
       .then(({ data }) => setProperties(data));
   }, []);
 
+  useEffect(() => {
+    if (route?.params?.refresh) {
+      const organization_id = form.getValues("organization_id");
+      api
+        .get("/api/organizations/" + organization_id + "/properties")
+        .then(({ data }) => setProperties(data));
+    }
+  }, [route?.params?.refresh]);
+
   const submit = async (values: ChecklistForm) => {
     if (!checklist?.property?.id) {
       form.setError("property_id", {
@@ -68,7 +75,11 @@ export function SelectProperty() {
 
     console.log(values);
 
-    screen.push("ChecklistsScreen");
+    form.reset();
+
+    screen.popTo("Checklists", {
+      screen: "ChecklistsScreen",
+    });
   };
 
   const onSelectProperty = (property: any) => {
@@ -80,7 +91,10 @@ export function SelectProperty() {
     }
 
     setChecklist((prev: any) => ({ ...prev, property }));
+    form.setValue("property_id", property.id);
   };
+
+  const name = watch("name");
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -93,7 +107,7 @@ export function SelectProperty() {
         }}
       >
         <Text style={styles.title} numberOfLines={1}>
-          Selecione o Imóveis
+          Selecione o Imóvel
         </Text>
       </View>
       <KeyboardAvoidingView
@@ -103,16 +117,20 @@ export function SelectProperty() {
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.form}>
-            {/* <Input
+            <Input
               control={control}
               errors={errors}
-              label="Nome"
+              label="Filtro"
               name="name"
               placeholder="Procure pelo nome do local"
               errorMessage="Insira o nome do imóvel"
-            /> */}
+            />
             <FlatList
-              data={properties}
+              data={
+                name
+                  ? properties.filter((item) => item.name.startsWith(name))
+                  : properties
+              }
               ListFooterComponent={
                 <TouchableOpacity
                   style={[
@@ -125,6 +143,7 @@ export function SelectProperty() {
                       alignItems: "center",
                     },
                   ]}
+                  onPress={() => screen.push("CreateProperty")}
                 >
                   <Text
                     style={[

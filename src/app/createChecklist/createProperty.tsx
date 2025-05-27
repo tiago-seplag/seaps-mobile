@@ -13,49 +13,72 @@ import { useForm } from "react-hook-form";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { Input } from "../../components/form/input";
 import { Select } from "../../components/form/select";
 import { api } from "../../services/api";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import { useChecklistForm } from "../../contexts/checklistContext";
-import { useSession } from "../../contexts/authContext";
-import { getFirstAndLastName } from "../../utils";
 
-export function CreateChecklist() {
-  const { form, setChecklist } = useChecklistForm();
-  const { user } = useSession();
+interface PropertyForm {
+  name: string;
+  address: string;
+  organization_id: string;
+  person_id: string;
+  type: string;
+}
+
+export function CreateProperty() {
+  const focus = useIsFocused();
+  const { checklist } = useChecklistForm();
 
   const [organizations, setOrganizations] = useState<any[]>([]);
-  const [models, setModels] = useState<any[]>([]);
-  const [users, setUsers] = useState<any[]>([]);
-
+  const [responsible, setResponsible] = useState<any[]>([]);
   const screen = useNavigation<NativeStackNavigationProp<any>>();
 
   const {
+    reset,
+    watch,
     handleSubmit,
     control,
     formState: { errors },
-  } = form;
+  } = useForm<PropertyForm>();
 
   useEffect(() => {
-    form.clearErrors();
+    if (focus) {
+      reset({
+        organization_id: checklist?.organization?.id,
+      });
+    }
     api.get("/api/organizations").then(({ data }) => setOrganizations(data));
-    api.get("/api/models").then(({ data }) => setModels(data));
-    api.get("/api/users").then(({ data }) => setUsers(data));
-  }, []);
+  }, [focus]);
 
-  const submit = async () => {
-    screen.push("SelectProperty");
-  };
+  const [organization_id] = watch(["organization_id"]);
 
-  const onCloseOrganizationSelect = () => {
-    const organization_id = form.getValues("organization_id");
+  useEffect(() => {
+    if (organization_id) {
+      api
+        .get("/api/organizations/" + organization_id + "/responsible")
+        .then(({ data }) => setResponsible(data));
+    }
+  }, [organization_id]);
 
-    const organization = organizations.find(
-      (item) => item.id === organization_id
-    );
+  const submit = async (values: PropertyForm) => {
+    const data = {
+      ...values,
+      address: values.address.toUpperCase().trim(),
+      name: values.name.toUpperCase().trim(),
+    };
 
-    setChecklist((prev: any) => ({ ...prev, organization }));
+    return api
+      .post("/api/properties", data)
+      .then(() =>
+        screen.popTo("SelectProperty", {
+          refresh: Date.now(),
+        })
+      )
+      .catch((e) => console.log(e));
   };
 
   return (
@@ -69,7 +92,7 @@ export function CreateChecklist() {
         }}
       >
         <Text style={styles.title} numberOfLines={1}>
-          Criar Checklist
+          Criar Propriedade
         </Text>
       </View>
       <KeyboardAvoidingView
@@ -80,36 +103,61 @@ export function CreateChecklist() {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.form}>
             <Select
-              options={models}
-              control={control}
-              errors={errors}
-              name="model_id"
-              label="Modelo"
-              placeholder="Selecione um modelo"
-              errorMessage="Selecione o modelo do checklist"
-            />
-            <Select
               options={organizations}
               control={control}
               errors={errors}
               name="organization_id"
               label="Orgão"
-              placeholder="Selecione um orgão"
-              errorMessage="Selecione o orgão do checklist"
-              onClose={onCloseOrganizationSelect}
+              placeholder="Selecione o orgão"
+              errorMessage="Insira o orgão do imóvel"
             />
+            {organization_id && (
+              <Select
+                label="Responsável"
+                placeholder="Selecione o Responsável do imóvel"
+                control={control}
+                errors={errors}
+                name="person_id"
+                errorMessage="Selecione o Responsável do imóvel"
+                options={responsible}
+                button={
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => screen.push("CreateResponsible")}
+                  >
+                    <Materialnicons name="add" size={24} color={"#1a3180"} />
+                  </TouchableOpacity>
+                }
+              />
+            )}
             <Select
-              options={users.map((user) => ({
-                ...user,
-                name: getFirstAndLastName(user.name),
-              }))}
-              defaultValue={user.id}
+              label="Tipo de Imóvel"
+              placeholder="Selecione o tipo do imóvel"
               control={control}
               errors={errors}
-              name="user_id"
-              label="Responsável"
-              placeholder="Selecione um responsável"
-              errorMessage="Selecione o responsável do checklist"
+              name="type"
+              errorMessage="Selecione o tipo do imóvel"
+              options={[
+                { id: "OWN", name: "PRÓPRIO" },
+                { id: "RENTED", name: "ALUGADO" },
+                { id: "GRANT", name: "CONCESSÃO" },
+              ]}
+            />
+            <Input
+              control={control}
+              errors={errors}
+              label="Nome"
+              name="name"
+              placeholder="Nome do local"
+              errorMessage="Insira o nome do imóvel"
+            />
+            <Input
+              control={control}
+              errors={errors}
+              label="Endereço"
+              name="address"
+              placeholder="ex.: R. C, S/N - Centro Político Administrativo..."
+              errorMessage="Insira o endereço do imóvel"
             />
             <TouchableOpacity
               onPress={handleSubmit(submit)}
@@ -121,7 +169,7 @@ export function CreateChecklist() {
                   fontWeight: 600,
                 }}
               >
-                PROXIMO
+                CRIAR
               </Text>
             </TouchableOpacity>
           </View>
