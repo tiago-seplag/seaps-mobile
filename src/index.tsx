@@ -6,6 +6,7 @@ import { Login } from "./app/auth/login";
 import { ChecklistsRoutes } from "./app/checklists/routes";
 import { PropertiesRoutes } from "./app/properties/routes";
 import { CreateChecklistsRoutes } from "./app/createChecklist/routes";
+import { AccountRoutes } from "./app/account/route";
 
 export type RootStackParamList = {
   Initial: any;
@@ -13,6 +14,7 @@ export type RootStackParamList = {
   Checklist: any;
   Properties: any;
   CreateChecklist: any;
+  AccountRoutes: any;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -32,6 +34,7 @@ export default function Index() {
       <Stack.Screen name="Checklist" component={ChecklistRoutes} />
       <Stack.Screen name="Properties" component={PropertiesRoutes} />
       <Stack.Screen name="CreateChecklist" component={CreateChecklistsRoutes} />
+      <Stack.Screen name="AccountRoutes" component={AccountRoutes} />
     </Stack.Navigator>
   ) : (
     <Stack.Navigator

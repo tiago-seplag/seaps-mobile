@@ -12,7 +12,13 @@ const ChecklistContext = React.createContext<{
   checklist: any;
   setChecklist: Dispatch<any>;
   form: UseFormReturn<ChecklistForm, any, undefined>;
-}>({ checklist: null, form: {} as any, setChecklist: () => null });
+  reset: () => void;
+}>({
+  checklist: null,
+  form: {} as any,
+  setChecklist: () => null,
+  reset: () => null,
+});
 
 export function useChecklistForm() {
   const context = React.useContext(ChecklistContext);
@@ -25,10 +31,17 @@ export function useChecklistForm() {
 export function ChecklistProvider(props: React.PropsWithChildren) {
   const form = useForm<ChecklistForm>();
 
-  const [checklist, setChecklist] = useState<any>({});
+  const [checklist, setChecklist] = useState<Checklist | undefined>();
 
   return (
-    <ChecklistContext.Provider value={{ checklist, form, setChecklist }}>
+    <ChecklistContext.Provider
+      value={{
+        checklist,
+        form,
+        setChecklist,
+        reset: () => setChecklist(undefined),
+      }}
+    >
       {props.children}
     </ChecklistContext.Provider>
   );

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   View,
-  Button,
   Modal,
   ActivityIndicator,
   StyleSheet,
@@ -9,12 +8,14 @@ import {
   Text,
   TouchableOpacityProps,
   Platform,
+  Button as ButtonNative,
 } from "react-native";
 import { WebView } from "react-native-webview";
 import { useSession } from "../../contexts/authContext";
 import { Toast } from "toastify-react-native";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
+import { Button } from "../../components/ui/button";
 
 interface PDFButtonModalProps extends TouchableOpacityProps {
   id?: string;
@@ -87,25 +88,14 @@ export const PDFButtonModal: React.FC<PDFButtonModalProps> = ({
 
   return (
     <>
-      <TouchableOpacity
+      <Button
+        icon="description"
+        title="RELATÓRIO"
+        disabled={checklist?.status === "OPEN" || loading}
+        loading={loading}
+        text="Gerar relatório do checklist"
         onPress={downloadPdfFromApi}
-        disabled={loading}
-        {...props}
-      >
-        {loading ? (
-          <ActivityIndicator size="small" color="#000" />
-        ) : (
-          <Text
-            style={{
-              fontSize: 22,
-              fontWeight: "bold",
-              color: "#1A1A1A",
-            }}
-          >
-            GERAR RELATÓRIO
-          </Text>
-        )}
-      </TouchableOpacity>
+      />
 
       <Modal
         visible={modalVisible}
@@ -113,7 +103,7 @@ export const PDFButtonModal: React.FC<PDFButtonModalProps> = ({
         onRequestClose={() => setModalVisible(false)}
       >
         <View style={styles.modalHeader}>
-          <Button
+          <ButtonNative
             title="Compartilhar"
             onPress={async () =>
               localUri &&
@@ -124,7 +114,7 @@ export const PDFButtonModal: React.FC<PDFButtonModalProps> = ({
               })
             }
           />
-          <Button title="Fechar" onPress={() => setModalVisible(false)} />
+          <ButtonNative title="Fechar" onPress={() => setModalVisible(false)} />
         </View>
 
         {localUri ? (

@@ -9,7 +9,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ChecklistRoutesPrams } from "./routes";
@@ -19,6 +22,11 @@ import { Toast } from "toastify-react-native";
 import { Badge } from "../../components/CardBadge";
 import { Label } from "../../components/Label";
 import { PDFButtonModal } from "./PDFButtonModal";
+import { Header } from "../../components/ui/header";
+import { ChecklistBadge } from "../../components/checklist-badge";
+import { Row } from "../../components/row";
+import { getFirstAndLastName } from "../../utils";
+import { Button } from "../../components/ui/button";
 
 export function ChecklistScreen({ route }: any) {
   const focus = useIsFocused();
@@ -114,7 +122,7 @@ export function ChecklistScreen({ route }: any) {
 
   if (loading) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "#1a3280" }}>
         <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
           <ActivityIndicator />
         </View>
@@ -126,12 +134,15 @@ export function ChecklistScreen({ route }: any) {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
-        <Text style={styles.title} numberOfLines={1}>
-          {checklist?.property?.name}
-        </Text>
-      </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#1a3280" }}>
+      <Header
+        backButton
+        title={"CHECKLIST"}
+        style={{
+          borderBottomColor:
+            checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
+        }}
+      />
       <ScrollView
         style={styles.flatList}
         refreshControl={
@@ -145,9 +156,16 @@ export function ChecklistScreen({ route }: any) {
             padding: 8,
             display: "flex",
             justifyContent: "space-between",
+            shadowColor: "#000000",
+            shadowRadius: 3,
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.3,
           }}
         >
-          <View style={{ display: "flex", gap: 8, marginBottom: 32 }}>
+          <View style={{ display: "flex", gap: 8 }}>
             <View
               style={{
                 flexDirection: "row",
@@ -157,98 +175,76 @@ export function ChecklistScreen({ route }: any) {
               }}
             >
               <Text style={styles.cardSid}>{checklist?.sid}</Text>
-              <Badge status={checklist?.status || ""} />
+              <ChecklistBadge status={checklist?.status} />
             </View>
             <Label title="ORGÃO" value={checklist?.organization.name} />
+            <Label title="LOCAL" value={checklist?.property.name} />
             <Label
               title="RESPONSÁVEL PELO IMÓVEL"
               value={checklist?.property.person?.name}
             />
             <Label title="IMÓVEL" value={checklist?.property.name} />
             <Label title="ENDEREÇO" value={checklist?.property.address} />
-            <Label
-              title="CRIADO EM"
-              value={new Date(checklist?.created_at || "").toLocaleDateString()}
-            />
-          </View>
-          <View style={{ gap: 8 }}>
-            <TouchableOpacity
-              style={[
-                styles.button,
-                {
-                  backgroundColor: "#22c55e",
-                },
-              ]}
-              onPress={() =>
-                navigation.push("ChecklistItems", {
-                  checklist,
-                })
-              }
+            <Row />
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: "bold",
-                  color: "#1A1A1A",
-                }}
-              >
-                ITENS
-              </Text>
-            </TouchableOpacity>
-            {checklist?.status !== "OPEN" ? (
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  {
-                    backgroundColor: "#adadad",
-                  },
-                ]}
-                onPress={handleReopenChecklist}
-              >
-                <Text
-                  style={{
-                    fontSize: 22,
-                    fontWeight: "bold",
-                    color: "#1A1A1A",
-                  }}
-                >
-                  REABRIR CHECKLIST
-                </Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  {
-                    backgroundColor: "#adadad",
-                  },
-                ]}
-                onPress={handleFinishChecklist}
-              >
-                <Text
-                  style={{
-                    fontSize: 22,
-                    fontWeight: "bold",
-                    color: "#1A1A1A",
-                  }}
-                >
-                  FINALIZAR CHECKLIST
-                </Text>
-              </TouchableOpacity>
-            )}
-            <PDFButtonModal
-              disabled={checklist?.status === "OPEN"}
-              style={[
-                styles.button,
-                {
-                  backgroundColor: "#6f91ff",
-                  opacity: checklist?.status === "OPEN" ? 0.5 : 1,
-                },
-              ]}
-              checklist={checklist}
-              id={checklist?.id}
+              <Label
+                title="CRIADO EM"
+                value={new Date(
+                  checklist?.created_at || ""
+                ).toLocaleDateString()}
+                style={{ flex: 1 }}
+              />
+              <Label
+                style={{ flex: 1 }}
+                title="FINALIZADO EM"
+                value={
+                  checklist?.finished_at
+                    ? new Date(checklist?.finished_at).toLocaleDateString()
+                    : "--"
+                }
+              />
+            </View>
+            <Label
+              title="RESPONSÁVEL PELO CHECKLIST"
+              value={getFirstAndLastName(checklist?.user?.name)}
             />
           </View>
+        </View>
+        <View style={{ gap: 12, marginTop: 16 }}>
+          <Text style={{ color: "#1A3180", fontSize: 16, fontWeight: 400 }}>
+            AÇÕES RÁPIDAS:
+          </Text>
+          <Button
+            icon="add-task"
+            title="ITENS"
+            text="Listar itens do checklist"
+            onPress={() =>
+              navigation.push("ChecklistItems", {
+                checklist,
+              })
+            }
+          />
+          <PDFButtonModal
+            disabled={checklist?.status === "OPEN"}
+            checklist={checklist}
+            id={checklist?.id}
+          />
+          <Button
+            icon="check"
+            title={checklist?.status === "OPEN" ? "FINALIZAR" : "REABRIR"}
+            text={
+              checklist?.status === "OPEN"
+                ? "Finalizar o checklist"
+                : "Reabrir o checklist para alterações"
+            }
+            onPress={() =>
+              checklist?.status === "OPEN"
+                ? handleFinishChecklist()
+                : handleReopenChecklist()
+            }
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -256,53 +252,16 @@ export function ChecklistScreen({ route }: any) {
 }
 
 const styles = StyleSheet.create({
-  title: { fontSize: 26, fontWeight: "bold" },
   flatList: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#e8e8e8",
-  },
-  card: {
-    padding: 8,
-    gap: 8,
-    borderWidth: 1,
-    borderColor: "#c8ccda",
-    backgroundColor: "white",
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  cardText: {
-    color: "#1A1A1A",
+    backgroundColor: "#F1F2F4",
   },
   cardSid: {
-    color: "#3b3b3b",
+    color: "#485A99",
+    fontFamily: "MonoBold",
     fontWeight: "bold",
-    fontSize: 22,
-  },
-  cardImage: {
-    height: 128,
-    marginVertical: 8,
-    borderRadius: 4,
-  },
-  iconsView: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  iconButton: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 4,
-    borderWidth: 1,
-    borderColor: "#1A1A1A",
-    borderRadius: 3,
-    flex: 1,
+    fontSize: 18,
   },
   button: {
     paddingVertical: 12,

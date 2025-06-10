@@ -42,9 +42,9 @@ export function PhotoObservationScreen({ route }: any) {
     await api
       .put(
         "/api/checklist-item/" +
-        image.checklist_item_id +
-        "/images/" +
-        image.id,
+          image.checklist_item_id +
+          "/images/" +
+          image.id,
         {
           observation: text,
         }
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     objectFit: "cover",
     justifyContent: "flex-start",
-    flex: 1,
+    height: 370,
   },
   input: {
     borderRadius: 4,

@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { HomeScreen } from ".";
+import { PropertiesScreen } from ".";
 import { CreateProperty } from "./createProperty";
 import { CreateResponsible } from "./createResponsible";
 import { EditProperty } from "./editProperty";
@@ -18,13 +18,13 @@ const Tab = createNativeStackNavigator<PropertyRoutesPrams>();
 export function PropertiesRoutes() {
   return (
     <Tab.Navigator>
-      <Tab.Screen
+      {/* <Tab.Screen
         name="PropertiesScreen"
-        component={HomeScreen}
+        component={PropertiesScreen}
         options={{
           headerShown: false,
         }}
-      />
+      /> */}
       <Tab.Screen
         name="CreateProperty"
         component={CreateProperty}

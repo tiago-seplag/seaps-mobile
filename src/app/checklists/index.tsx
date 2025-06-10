@@ -74,7 +74,10 @@ export function HomeScreen({ route }: any) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: "#1A3180" }}
+      edges={["top"]}
+    >
       <View
         style={{
           paddingHorizontal: 16,
@@ -93,7 +96,7 @@ export function HomeScreen({ route }: any) {
             })
           }
         >
-          <Materialnicons name="add-chart" size={32} color={"#1A1A1A"} />
+          <Materialnicons name="add-chart" size={32} color={"#E8E8E8"} />
         </TouchableOpacity>
       </View>
       {loading ? (
@@ -113,6 +116,7 @@ export function HomeScreen({ route }: any) {
           onEndReached={loadMore}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
+          contentContainerStyle={{ paddingBottom: 92 }}
           renderItem={(item) => (
             <TouchableOpacity
               onPress={() => {
@@ -131,24 +135,24 @@ export function HomeScreen({ route }: any) {
                   alignItems: "center",
                 }}
               >
-                <Text style={styles.cardSid}>{item.item.sid}</Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 8,
+                  }}
+                >
+                  <Text style={styles.cardSid}>{item.item.sid}</Text>
+                  <Text style={styles.cardText}>-</Text>
+                  <Text style={styles.cardText}>
+                    {item.item.organization.name}
+                  </Text>
+                </View>
                 <Badge status={item.item.status} />
               </View>
-              <Text style={styles.cardTitle}>{item.item.property.name}</Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  gap: 16,
-                  justifyContent: "space-between",
-                }}
-              >
-                <Text style={styles.cardText}>
-                  {item.item.organization.name}
-                </Text>
-                <Text style={styles.cardText}>
-                  {item.item.property.person?.name}
-                </Text>
-              </View>
+              <Text style={styles.cardTitle} numberOfLines={1}>
+                {item.item.property.name}
+              </Text>
             </TouchableOpacity>
           )}
         />
@@ -162,11 +166,21 @@ const Badge = ({ status }: { status: string }) => {
     <View
       style={{
         padding: 4,
-        backgroundColor: status === "OPEN" ? "green" : "red",
-        borderRadius: 4,
+        backgroundColor: status === "OPEN" ? "#067C0320" : "#FD000620",
+        borderColor: status === "OPEN" ? "#067C03" : "#FD0006",
+        width: 72,
+        borderWidth: 1,
+        borderRadius: 6,
       }}
     >
-      <Text style={{ color: "white" }}>
+      <Text
+        style={{
+          color: status === "OPEN" ? "#067C03" : "#FD0006",
+          fontWeight: "bold",
+          fontSize: 12,
+          textAlign: "center",
+        }}
+      >
         {status === "OPEN" ? "ABERTO" : "FECHADO"}
       </Text>
     </View>
@@ -177,22 +191,15 @@ const styles = StyleSheet.create({
   list: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#e8e8e8",
-    shadowColor: "black",
-    shadowOffset: {
-      height: 2,
-      width: 4,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    backgroundColor: "#F1F2F4",
   },
   title: {
     fontSize: 26,
+    color: "#E8E8E8",
     fontWeight: "bold",
   },
   card: {
-    paddingVertical: 16,
-    paddingHorizontal: 8,
+    padding: 8,
     borderWidth: 1,
     borderColor: "#c8ccda",
     backgroundColor: "white",
@@ -202,14 +209,17 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 22,
+    color: "#0E1B46",
     fontWeight: "bold",
   },
   cardText: {
-    color: "#1A1A1A",
+    color: "#485A99",
+    fontFamily: "Inter300",
   },
   cardSid: {
-    color: "#3b3b3b",
-    fontSize: 16,
+    fontFamily: "mono",
+    color: "#485A99",
+    fontSize: 14,
   },
   cardImage: {
     height: 128,

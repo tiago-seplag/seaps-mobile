@@ -30,7 +30,7 @@ interface ChecklistForm {
 
 export function SelectProperty({ route }: any) {
   const { control, watch } = useForm();
-  const { form, setChecklist, checklist } = useChecklistForm();
+  const { form, setChecklist, checklist, reset } = useChecklistForm();
   const [properties, setProperties] = useState<Property[]>([]);
 
   const screen = useNavigation<NativeStackNavigationProp<any>>();
@@ -73,13 +73,22 @@ export function SelectProperty({ route }: any) {
       return;
     }
 
-    console.log(values);
+    const data = {
+      ...values,
+    };
 
-    form.reset();
+    form.reset({});
+    reset();
 
-    screen.popTo("Checklists", {
-      screen: "ChecklistsScreen",
-    });
+    return api
+      .post("/api/checklists", data)
+      .then(() =>
+        screen.popTo("Initial", {
+          screen: "ChecklistsHomeScreen",
+          params: { refresh: true },
+        })
+      )
+      .catch((e) => console.log(e));
   };
 
   const onSelectProperty = (property: any) => {

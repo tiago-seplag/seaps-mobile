@@ -12,6 +12,7 @@ interface Checklist {
   updated_at: Date;
   property: Property;
   organization?: any;
+  user?: any;
   checklistItems: ChecklistItem[];
 }
 

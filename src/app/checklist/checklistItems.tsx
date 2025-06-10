@@ -16,6 +16,7 @@ import { ChecklistRoutesPrams } from "./routes";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import RadioGroup from "../../components/RadioGroup";
 import { Toast } from "toastify-react-native";
+import { Header } from "../../components/ui/header";
 
 export function ChecklistItemsScreen({ route }: any) {
   const focus = useIsFocused();
@@ -28,7 +29,7 @@ export function ChecklistItemsScreen({ route }: any) {
   const [lock, setLock] = useState(false);
 
   useEffect(() => {
-    if (focus && !loading) {
+    if (focus) {
       const getData = () => {
         api
           .get("/api/checklists/" + checklist.id)
@@ -44,7 +45,7 @@ export function ChecklistItemsScreen({ route }: any) {
       };
       getData();
     }
-  }, [refresh, focus, loading]);
+  }, [refresh, focus]);
 
   const handlePressRadio = async (value: string, id: string) => {
     if (!lock) {
@@ -83,12 +84,15 @@ export function ChecklistItemsScreen({ route }: any) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
-        <Text style={styles.title} numberOfLines={1}>
-          {checklist?.property?.name}
-        </Text>
-      </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#1a3280" }}>
+      <Header
+        backButton
+        title={"CHECKLIST"}
+        style={{
+          borderBottomColor:
+            checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
+        }}
+      />
       <FlatList
         data={checklist?.checklistItems}
         style={styles.flatList}
@@ -104,29 +108,31 @@ export function ChecklistItemsScreen({ route }: any) {
         renderItem={(item) => (
           <View key={item.item.id} style={styles.card}>
             <Text style={styles.cardTitle}>{item.item.item.name}</Text>
-            <View style={styles.iconsView}>
-              <TouchableOpacity
-                style={styles.iconButton}
-                onPress={() => handleNavigateToImages(item.item)}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <View
+                style={{
+                  width: 72,
+                  backgroundColor: "#EAB308",
+                  borderRadius: 6,
+                  paddingVertical: 4,
+                  alignItems: "center",
+                }}
               >
-                <Materialnicons name="camera-alt" size={32} color={"#1A1A1A"} />
-                <Text style={{ color: "#1A1A1A" }}>Imagens</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.iconButton}
-                onPress={() => handleNavigateToObservation(item.item)}
-              >
-                <Materialnicons name="sms" size={32} color={"#1A1A1A"} />
-                <Text style={{ color: "#1A1A1A" }}>Observação</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={{ flex: 1 }}>
-              <RadioGroup
-                radioButtons={radioButtons}
-                containerStyle={{ gap: 8 }}
-                disabled={checklist?.status === "CLOSED"}
-                onPress={(value) => handlePressRadio(value, item.item.id)}
-                selectedId={String(item.item.score)}
+                <Text
+                  style={{ fontWeight: "bold", fontSize: 12, color: "#FFFFFF" }}
+                >
+                  REGULAR
+                </Text>
+              </View>
+              <Materialnicons
+                name="chevron-right"
+                size={32}
+                color={"#1A1A1A"}
               />
             </View>
           </View>
@@ -141,27 +147,32 @@ const styles = StyleSheet.create({
   flatList: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#e8e8e8",
-    shadowColor: "black",
-    shadowOffset: {
-      height: 2,
-      width: 4,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    backgroundColor: "#F1F2F4",
   },
   card: {
+    height: 74,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
     padding: 8,
     gap: 8,
     borderWidth: 1,
     borderColor: "#c8ccda",
     backgroundColor: "white",
-    borderRadius: 8,
+    borderRadius: 16,
     marginBottom: 8,
+    shadowColor: "black",
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#0E1B46",
   },
   cardImage: {
     height: 128,
