@@ -16,7 +16,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Input } from "../../components/form/input";
 import { Select } from "../../components/form/select";
 import { api } from "../../services/api";
-import { useNavigation } from "@react-navigation/native";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useChecklistForm } from "../../contexts/checklistContext";
 
@@ -28,7 +28,9 @@ interface ResponsibleForm {
   phone: string;
 }
 
-export function CreateResponsible() {
+type Props = StaticScreenProps<undefined>;
+
+export function CreateResponsible({}: Props) {
   const [organizations, setOrganizations] = useState<any[]>([]);
   const screen = useNavigation<NativeStackNavigationProp<any>>();
   const { checklist } = useChecklistForm();

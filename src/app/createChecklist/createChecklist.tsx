@@ -9,19 +9,20 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { useForm } from "react-hook-form";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Select } from "../../components/form/select";
 import { api } from "../../services/api";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useChecklistForm } from "../../contexts/checklistContext";
 import { useSession } from "../../contexts/authContext";
 import { getFirstAndLastName } from "../../utils";
 
-export function CreateChecklist() {
+type Props = StaticScreenProps<undefined>;
+
+export function CreateChecklist({}: Props) {
   const { form, setChecklist } = useChecklistForm();
   const { user } = useSession();
 

@@ -16,10 +16,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Input } from "../../components/form/input";
 import { Select } from "../../components/form/select";
 import { api } from "../../services/api";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import {
+  StaticScreenProps,
+  useIsFocused,
+  useNavigation,
+} from "@react-navigation/native";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
-import { PropertyRoutesPrams } from "./routes";
+import { PropertiesScreenNavigationProp } from "./routes";
 
 interface PropertyForm {
   name: string;
@@ -29,14 +32,17 @@ interface PropertyForm {
   type: string;
 }
 
-export function EditProperty({ route }: any) {
+type Props = StaticScreenProps<{
+  property: any;
+}>;
+
+export function EditProperty({ route }: Props) {
   const focus = useIsFocused();
 
   const [property] = useState<any>(route.params.property);
   const [organizations, setOrganizations] = useState<any[]>([]);
   const [responsible, setResponsible] = useState<any[]>([]);
-  const screen =
-    useNavigation<NativeStackNavigationProp<PropertyRoutesPrams>>();
+  const screen = useNavigation<PropertiesScreenNavigationProp>();
 
   const {
     watch,

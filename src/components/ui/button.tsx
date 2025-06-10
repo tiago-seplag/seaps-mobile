@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 
-import Materialnicons from "@expo/vector-icons/MaterialIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export const Button = ({
   title,
@@ -22,9 +22,9 @@ export const Button = ({
   text?: string;
   color?: string;
   loading?: boolean;
-  icon: any;
+  icon: keyof typeof MaterialIcons.glyphMap;
 }) => {
-  let COLOR = color || "#0B1536";
+  const COLOR = color || "#0B1536";
 
   const DISABLED = props.disabled || loading;
 
@@ -37,11 +37,11 @@ export const Button = ({
       <View
         style={{ backgroundColor: "#FFFFFF", padding: 14, borderRadius: 12 }}
       >
-        <Materialnicons name={icon} size={24} color={"#0B1536"} />
+        <MaterialIcons name={icon} size={24} color={COLOR} />
       </View>
       <View>
-        <Text style={[styles.title]}>{title}</Text>
-        {text && <Text style={[styles.text]}>{text}</Text>}
+        <Text style={[styles.title, { color: COLOR }]}>{title}</Text>
+        {text && <Text style={[styles.text, { color: COLOR }]}>{text}</Text>}
       </View>
       {loading && <ActivityIndicator style={{ marginLeft: "auto" }} />}
     </TouchableOpacity>

@@ -1,51 +1,23 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { PropertiesScreen } from ".";
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
 import { CreateProperty } from "./createProperty";
 import { CreateResponsible } from "./createResponsible";
 import { EditProperty } from "./editProperty";
+import { StaticParamList } from "@react-navigation/native";
 
-export type PropertyRoutesPrams = {
-  PropertiesScreen: any;
-  CreateProperty: any;
-  CreateResponsible: any;
-  EditProperty: {
-    property: any;
-  };
-};
+type PropertiesParamList = StaticParamList<typeof PropertiesRoutes>;
 
-const Tab = createNativeStackNavigator<PropertyRoutesPrams>();
+export type PropertiesScreenNavigationProp = NativeStackNavigationProp<
+  PropertiesParamList,
+  "CreateProperty"
+>;
 
-export function PropertiesRoutes() {
-  return (
-    <Tab.Navigator>
-      {/* <Tab.Screen
-        name="PropertiesScreen"
-        component={PropertiesScreen}
-        options={{
-          headerShown: false,
-        }}
-      /> */}
-      <Tab.Screen
-        name="CreateProperty"
-        component={CreateProperty}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Tab.Screen
-        name="CreateResponsible"
-        component={CreateResponsible}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Tab.Screen
-        name="EditProperty"
-        component={EditProperty}
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Tab.Navigator>
-  );
-}
+export const PropertiesRoutes = createNativeStackNavigator({
+  screens: {
+    CreateProperty,
+    CreateResponsible,
+    EditProperty,
+  },
+});

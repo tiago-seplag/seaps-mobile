@@ -14,12 +14,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { api } from "../../services/api";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useChecklistForm } from "../../contexts/checklistContext";
 import { Input } from "../../components/form/input";
-import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import { useForm } from "react-hook-form";
+import Materialnicons from "@expo/vector-icons/MaterialIcons";
 
 interface ChecklistForm {
   model_id: string;
@@ -28,7 +28,11 @@ interface ChecklistForm {
   user_id: string;
 }
 
-export function SelectProperty({ route }: any) {
+type Props = StaticScreenProps<{
+  refresh?: boolean;
+}>;
+
+export function SelectProperty({ route }: Props) {
   const { control, watch } = useForm();
   const { form, setChecklist, checklist, reset } = useChecklistForm();
   const [properties, setProperties] = useState<Property[]>([]);

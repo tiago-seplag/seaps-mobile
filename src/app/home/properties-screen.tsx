@@ -9,7 +9,6 @@ import {
 import { api } from "../../services/api";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import { Card, CardText, CardTitle } from "../../components/ui/card";
 import { Header } from "../../components/ui/header";
@@ -22,7 +21,7 @@ export function PropertiesScreen() {
   const [lastPage, setLastPage] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  const navigation = useNavigation<NativeStackNavigationProp<any>>();
+  const navigation = useNavigation();
 
   const currentPageRef = useRef(1);
 

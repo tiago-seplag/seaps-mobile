@@ -6,8 +6,9 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
+
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export const Header = ({
   backButton,
@@ -16,9 +17,9 @@ export const Header = ({
   style,
 }: {
   title?: string;
-  icon?: any;
+  icon?: keyof typeof MaterialIcons.glyphMap;
   actionProps?: {
-    icon: any;
+    icon: keyof typeof MaterialIcons.glyphMap;
     action: () => void;
   };
   style?: StyleProp<ViewStyle>;
@@ -49,7 +50,7 @@ export const Header = ({
           }}
           onPress={() => navigation.goBack()}
         >
-          <Materialnicons name="arrow-back" size={32} color={"#E8E8E8"} />
+          <MaterialIcons name="arrow-back" size={32} color={"#E8E8E8"} />
         </TouchableOpacity>
       )}
       <View
@@ -64,7 +65,7 @@ export const Header = ({
         </Text>
         {actionProps && (
           <TouchableOpacity onPress={actionProps.action}>
-            <Materialnicons
+            <MaterialIcons
               name={actionProps.icon}
               size={32}
               color={"#E8E8E8"}

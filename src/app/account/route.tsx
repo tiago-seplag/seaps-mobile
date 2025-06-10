@@ -1,22 +1,10 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AccountScreen } from "./account-screen";
 
-export type AccountRoutesPrams = {
-  AccountScreen: any;
-};
+const AccountRoutes = createNativeStackNavigator({
+  screens: {
+    Account: AccountScreen,
+  },
+});
 
-const Tab = createNativeStackNavigator<AccountRoutesPrams>();
-
-export function AccountRoutes() {
-  return (
-    <Tab.Navigator>
-      <Tab.Screen
-        name="AccountScreen"
-        component={AccountScreen}
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Tab.Navigator>
-  );
-}
+export { AccountRoutes };

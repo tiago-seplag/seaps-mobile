@@ -16,7 +16,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Input } from "../../components/form/input";
 import { Select } from "../../components/form/select";
 import { api } from "../../services/api";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import {
+  StaticScreenProps,
+  useIsFocused,
+  useNavigation,
+} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import { useChecklistForm } from "../../contexts/checklistContext";
@@ -29,7 +33,9 @@ interface PropertyForm {
   type: string;
 }
 
-export function CreateProperty() {
+type Props = StaticScreenProps<undefined>;
+
+export function CreateProperty({}: Props) {
   const focus = useIsFocused();
   const { checklist } = useChecklistForm();
 

@@ -7,35 +7,40 @@ import { ChecklistsRoutes } from "./app/checklists/routes";
 import { PropertiesRoutes } from "./app/properties/routes";
 import { CreateChecklistsRoutes } from "./app/createChecklist/routes";
 import { AccountRoutes } from "./app/account/route";
+import { StaticParamList } from "@react-navigation/native";
 
-export type RootStackParamList = {
-  Initial: any;
-  Checklists: any;
-  Checklist: any;
-  Properties: any;
-  CreateChecklist: any;
-  AccountRoutes: any;
-};
+// export type RootStackParamList = {
+//   Initial: any;
+//   Checklists: any;
+//   Checklist: any;
+//   Properties: any;
+//   CreateChecklist: any;
+//   AccountRoutes: any;
+// };
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator({
+  screens: {
+    Home: HomeRoutes,
+    AccountRoutes: AccountRoutes,
+    Checklists: ChecklistsRoutes,
+    Properties: PropertiesRoutes,
+    CreateChecklist: CreateChecklistsRoutes,
+  },
+});
+
+type RootStackParamList = StaticParamList<typeof Stack>;
+
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends RootStackParamList {}
+  }
+}
 
 export default function Index() {
   const { session } = useSession();
 
   return session ? (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-      initialRouteName="Initial"
-    >
-      <Stack.Screen name="Initial" component={HomeRoutes} />
-      <Stack.Screen name="Checklists" component={ChecklistsRoutes} />
-      <Stack.Screen name="Checklist" component={ChecklistRoutes} />
-      <Stack.Screen name="Properties" component={PropertiesRoutes} />
-      <Stack.Screen name="CreateChecklist" component={CreateChecklistsRoutes} />
-      <Stack.Screen name="AccountRoutes" component={AccountRoutes} />
-    </Stack.Navigator>
+    Stack
   ) : (
     <Stack.Navigator
       screenOptions={{
