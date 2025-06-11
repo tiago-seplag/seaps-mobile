@@ -4,6 +4,7 @@ import { PhotosScreen } from "./photos";
 import { PhotoObservationScreen } from "./photoObservation";
 import { ObservationScreen } from "./observation";
 import { ChecklistItemsScreen } from "./checklistItems";
+import { ChecklistItemScreen } from "./checklist-item";
 
 export type ChecklistRoutesPrams = {
   ChecklistItems: {
@@ -11,6 +12,10 @@ export type ChecklistRoutesPrams = {
   };
   ChecklistScreen: {
     id: string;
+  };
+  ChecklistItem: {
+    checklistItem: any;
+    checklist: any;
   };
   Photos: {
     checklistItem: any;
@@ -36,6 +41,7 @@ export function ChecklistRoutes() {
       }}
     >
       <Stack.Screen name="ChecklistScreen" component={ChecklistScreen} />
+      <Stack.Screen name="ChecklistItem" component={ChecklistItemScreen} />
       <Stack.Screen name="ChecklistItems" component={ChecklistItemsScreen} />
       <Stack.Screen name="Photos" component={PhotosScreen} />
       <Stack.Screen name="Observation" component={ObservationScreen} />

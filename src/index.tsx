@@ -1,13 +1,16 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { HomeRoutes } from "./app/home/routes";
 import { ChecklistRoutes } from "./app/checklist/routes";
-import { useSession } from "./contexts/authContext";
+import { useIsSignedIn, useIsSignedOut } from "./contexts/authContext";
 import { Login } from "./app/auth/login";
 import { ChecklistsRoutes } from "./app/checklists/routes";
 import { PropertiesRoutes } from "./app/properties/routes";
 import { CreateChecklistsRoutes } from "./app/createChecklist/routes";
 import { AccountRoutes } from "./app/account/route";
-import { StaticParamList } from "@react-navigation/native";
+import {
+  createStaticNavigation,
+  StaticParamList,
+} from "@react-navigation/native";
 
 // export type RootStackParamList = {
 //   Initial: any;
@@ -19,10 +22,19 @@ import { StaticParamList } from "@react-navigation/native";
 // };
 
 const Stack = createNativeStackNavigator({
+  screenOptions: { headerShown: false },
   screens: {
-    Home: HomeRoutes,
+    Auth: {
+      if: useIsSignedOut,
+      screen: Login,
+    },
+    Home: {
+      if: useIsSignedIn,
+      screen: HomeRoutes,
+    },
     AccountRoutes: AccountRoutes,
     Checklists: ChecklistsRoutes,
+    Checklist: ChecklistRoutes,
     Properties: PropertiesRoutes,
     CreateChecklist: CreateChecklistsRoutes,
   },
@@ -37,18 +49,7 @@ declare global {
 }
 
 export default function Index() {
-  const { session } = useSession();
-
-  return session ? (
-    Stack
-  ) : (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-      initialRouteName="Initial"
-    >
-      <Stack.Screen name="Initial" component={Login} />
-    </Stack.Navigator>
-  );
+  return <Navigation />;
 }
+
+const Navigation = createStaticNavigation(Stack);

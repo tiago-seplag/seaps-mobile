@@ -5,8 +5,6 @@ import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
-  const { buildHref } = useLinkBuilder();
-
   return (
     <SafeAreaView
       style={{
@@ -58,7 +56,6 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 
           return (
             <PlatformPressable
-              href={buildHref(route.name, route.params)}
               accessibilityState={isFocused ? { selected: true } : {}}
               accessibilityLabel={options.tabBarAccessibilityLabel}
               testID={options.tabBarButtonTestID}

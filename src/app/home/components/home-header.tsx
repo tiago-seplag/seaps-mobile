@@ -14,7 +14,7 @@ export function HomeHeader() {
   return (
     <View style={styles.header}>
       <View style={styles.container}>
-        <Icon icon={"person"} size={32} />
+        <Icon icon={"person"} size={32} style={{ borderRadius: "100%" }} />
         <View style={{ gap: 2 }}>
           <Text style={styles.name} numberOfLines={1}>
             {getFirstAndLastName(user?.name)}
@@ -24,17 +24,18 @@ export function HomeHeader() {
           </Text>
         </View>
       </View>
-      <View style={{ padding: 12 }}>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("AccountRoutes", {
-              screen: "Account",
-            })
-          }
-        >
-          <MaterialIcons name="settings" size={24} color={"#E8E8E8"} />
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate("AccountRoutes", {
+            screen: "Account",
+          })
+        }
+        style={{
+          justifyContent: "center",
+        }}
+      >
+        <MaterialIcons name="settings" size={24} color={"#E8E8E8"} />
+      </TouchableOpacity>
     </View>
   );
 }

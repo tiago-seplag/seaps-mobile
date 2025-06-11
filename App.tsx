@@ -5,7 +5,10 @@ import Index from "./src";
 import ToastManager from "toastify-react-native";
 import { ChecklistProvider } from "./src/contexts/checklistContext";
 import { Inter_300Light, useFonts } from "@expo-google-fonts/inter";
-import { RobotoMono_300Light, RobotoMono_700Bold } from "@expo-google-fonts/dev";
+import {
+  RobotoMono_300Light,
+  RobotoMono_700Bold,
+} from "@expo-google-fonts/dev";
 import { StatusBar } from "expo-status-bar";
 
 export type RootStackParamList = {
@@ -28,11 +31,11 @@ export default function App() {
     <SafeAreaProvider>
       <SessionProvider>
         <ChecklistProvider>
-          <NavigationContainer>
+          {/* <NavigationContainer> */}
             <Index />
             <StatusBar style="light" backgroundColor="#1A3180" />
             <ToastManager useModal={false} />
-          </NavigationContainer>
+          {/* </NavigationContainer> */}
         </ChecklistProvider>
       </SessionProvider>
     </SafeAreaProvider>

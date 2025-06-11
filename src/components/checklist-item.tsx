@@ -15,6 +15,7 @@ export const ChecklistItem = ({ item }: any) => {
           params: { id: item.item.id },
         });
       }}
+      style={{ gap: 8 }}
       key={item.item.id}
     >
       <View
@@ -28,7 +29,7 @@ export const ChecklistItem = ({ item }: any) => {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            gap: 8,
+            gap: 4,
           }}
         >
           <CardText style={{ fontFamily: "mono", fontSize: 12 }}>
@@ -43,8 +44,8 @@ export const ChecklistItem = ({ item }: any) => {
         <CardTitle numberOfLines={2}>{item.item.property.name}</CardTitle>
         <View
           style={{
-            // backgroundColor: "#E8EAF2",
-            padding: 16,
+            backgroundColor: "#E8EAF2",
+            padding: 10,
             borderRadius: 12,
           }}
         >

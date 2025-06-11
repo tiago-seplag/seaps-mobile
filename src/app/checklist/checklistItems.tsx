@@ -17,6 +17,7 @@ import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import RadioGroup from "../../components/RadioGroup";
 import { Toast } from "toastify-react-native";
 import { Header } from "../../components/ui/header";
+import { ScoreBadge } from "../../components/score-badge";
 
 export function ChecklistItemsScreen({ route }: any) {
   const focus = useIsFocused();
@@ -87,7 +88,7 @@ export function ChecklistItemsScreen({ route }: any) {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#1a3280" }}>
       <Header
         backButton
-        title={"CHECKLIST"}
+        title={checklist.property.name}
         style={{
           borderBottomColor:
             checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
@@ -106,36 +107,34 @@ export function ChecklistItemsScreen({ route }: any) {
           />
         }
         renderItem={(item) => (
-          <View key={item.item.id} style={styles.card}>
-            <Text style={styles.cardTitle}>{item.item.item.name}</Text>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
+          <TouchableOpacity
+            key={item.item.id}
+            onPress={() =>
+              navigation.push("ChecklistItem", {
+                checklist,
+                checklistItem: item.item,
+              })
+            }
+          >
+            <View key={item.item.id} style={styles.card}>
+              <Text style={styles.cardTitle}>{item.item.item.name}</Text>
               <View
                 style={{
-                  width: 72,
-                  backgroundColor: "#EAB308",
-                  borderRadius: 6,
-                  paddingVertical: 4,
+                  flexDirection: "row",
                   alignItems: "center",
                 }}
               >
-                <Text
-                  style={{ fontWeight: "bold", fontSize: 12, color: "#FFFFFF" }}
-                >
-                  REGULAR
-                </Text>
+                {item.item.score !== null ? (
+                  <ScoreBadge score={item.item.score} />
+                ) : null}
+                <Materialnicons
+                  name="chevron-right"
+                  size={32}
+                  color={"#1A1A1A"}
+                />
               </View>
-              <Materialnicons
-                name="chevron-right"
-                size={32}
-                color={"#1A1A1A"}
-              />
             </View>
-          </View>
+          </TouchableOpacity>
         )}
       />
     </SafeAreaView>

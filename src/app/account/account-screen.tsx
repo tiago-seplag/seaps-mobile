@@ -33,7 +33,7 @@ export function AccountScreen({}: Props) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#1A3180" }}>
       <Header title="Conta" icon="person" />
       <ScrollView
         style={styles.flatList}
@@ -46,9 +46,9 @@ export function AccountScreen({}: Props) {
           <Label title="EMAIL" value={user?.email} />
           <Label title="PERFIL" value={user?.role} />
           <Label title="STATUS DA CONTA">
-            <View style={[label(user.is_active)]}>
+            <View style={[label(user?.is_active)]}>
               <Text style={{ color: "white" }}>
-                {user.is_active ? "ATIVADA" : "DESATIVADA"}
+                {user?.is_active ? "ATIVADA" : "DESATIVADA"}
               </Text>
             </View>
           </Label>
@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "space-between",
     gap: 8,
+    marginBottom: 16,
   },
 });
 

@@ -15,7 +15,7 @@ export function HomeScreen() {
 
   const [data, setData] = useState();
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const fetchData = async () => {
     const response = await api.get(

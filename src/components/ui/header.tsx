@@ -58,6 +58,7 @@ export const Header = ({
           flexDirection: "row",
           flex: 1,
           justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
         <Text style={styles.title} numberOfLines={2}>
@@ -79,7 +80,7 @@ export const Header = ({
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 26,
+    fontSize: 16,
     color: "#E8E8E8",
     textTransform: "uppercase",
     fontWeight: "bold",

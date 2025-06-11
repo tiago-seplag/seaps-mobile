@@ -39,9 +39,11 @@ export const Button = ({
       >
         <MaterialIcons name={icon} size={24} color={COLOR} />
       </View>
-      <View>
+      <View style={{ gap: 2 }}>
         <Text style={[styles.title, { color: COLOR }]}>{title}</Text>
-        {text && <Text style={[styles.text, { color: COLOR }]}>{text}</Text>}
+        {text && (
+          <Text style={[styles.text, { color: COLOR + "70" }]}>{text}</Text>
+        )}
       </View>
       {loading && <ActivityIndicator style={{ marginLeft: "auto" }} />}
     </TouchableOpacity>

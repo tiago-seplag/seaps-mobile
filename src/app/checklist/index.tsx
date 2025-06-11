@@ -85,6 +85,9 @@ export function ChecklistScreen({ route }: any) {
         if (e.response?.data?.message) {
           Toast.error(e.response.data.message);
         }
+        if (e.response.data.action) {
+          Toast.error(e.response.data.action);
+        }
       });
   };
 
@@ -137,7 +140,7 @@ export function ChecklistScreen({ route }: any) {
     <SafeAreaView style={{ flex: 1, backgroundColor: "#1a3280" }}>
       <Header
         backButton
-        title={"CHECKLIST"}
+        title={checklist?.property.name}
         style={{
           borderBottomColor:
             checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
@@ -210,11 +213,12 @@ export function ChecklistScreen({ route }: any) {
               title="RESPONSÁVEL PELO CHECKLIST"
               value={getFirstAndLastName(checklist?.user?.name)}
             />
+            <Label title="PONTUAÇÃO" value={checklist?.score} />
           </View>
         </View>
         <View style={{ gap: 12, marginTop: 16 }}>
           <Text style={{ color: "#1A3180", fontSize: 16, fontWeight: 400 }}>
-            AÇÕES RÁPIDAS:
+            AÇÕES:
           </Text>
           <Button
             icon="add-task"

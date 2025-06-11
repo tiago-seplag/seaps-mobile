@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useStorageState } from "../hooks/useAsyncState";
 import { api } from "../services/api";
 import * as AuthSession from "expo-auth-session";
+import { ActivityIndicator, View } from "react-native";
 
 const AuthContext = React.createContext<{
   user: any;
@@ -66,6 +67,21 @@ export function SessionProvider(props: React.PropsWithChildren) {
     }
   }, [session]);
 
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#1A3180",
+        }}
+      >
+        <ActivityIndicator size={"large"} color={"white"} />
+      </View>
+    );
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -86,4 +102,13 @@ export function SessionProvider(props: React.PropsWithChildren) {
       {props.children}
     </AuthContext.Provider>
   );
+}
+
+export function useIsSignedIn() {
+  const isSignedIn = React.useContext(AuthContext);
+  return Boolean(isSignedIn.session);
+}
+
+export function useIsSignedOut() {
+  return !useIsSignedIn();
 }

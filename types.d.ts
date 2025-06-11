@@ -3,6 +3,8 @@ interface Checklist {
   status: string;
   id: string;
   sid: string;
+  score: number;
+  classification: number;
   model_id: string;
   property_id: string;
   created_by: string | null;
