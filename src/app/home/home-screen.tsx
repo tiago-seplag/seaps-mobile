@@ -1,7 +1,6 @@
 import { FlatList, RefreshControl, Text, View } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useSession } from "../../contexts/authContext";
 import { Button } from "../../components/ui/button";
 import { ChecklistItem } from "../../components/checklist-item";
@@ -9,6 +8,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../services/api";
 import { HomeHeader } from "./components/home-header";
 import { Row } from "../../components/row";
+import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
 
 export function HomeScreen() {
   const { user } = useSession();
@@ -29,23 +29,9 @@ export function HomeScreen() {
   }, [user?.id]);
 
   return (
-    <SafeAreaView
-      edges={["top"]}
-      style={{
-        flex: 1,
-        backgroundColor: "#1a3280",
-      }}
-    >
+    <BaseSafeAreaView edges={["top"]}>
       <HomeHeader />
-      <View
-        style={{
-          flex: 1,
-          height: "100%",
-          width: "100%",
-          backgroundColor: "#F1F2F4",
-          padding: 16,
-        }}
-      >
+      <BaseView>
         <View style={{ gap: 12 }}>
           <Text style={{ color: "#1A3180", fontSize: 16, fontWeight: 400 }}>
             AÇÕES RÁPIDAS:
@@ -87,7 +73,7 @@ export function HomeScreen() {
             renderItem={(item) => <ChecklistItem item={item} />}
           />
         </View>
-      </View>
-    </SafeAreaView>
+      </BaseView>
+    </BaseSafeAreaView>
   );
 }

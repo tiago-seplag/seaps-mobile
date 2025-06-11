@@ -13,9 +13,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import * as ImagePicker from "expo-image-picker";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ChecklistRoutesPrams } from "./routes";
+import {
+  StaticScreenProps,
+  useIsFocused,
+  useNavigation,
+} from "@react-navigation/native";
+import { ChecklistRoutesProps } from "./routes";
 import { Toast } from "toastify-react-native";
 import { api } from "../../services/api";
 
@@ -41,13 +44,17 @@ interface checklistItem {
   }[];
 }
 
-export function PhotosScreen({ route }: any) {
+type Props = StaticScreenProps<{
+  checklistItem: any;
+  checklist: any;
+}>;
+
+export function PhotosScreen({ route }: Props) {
   const focus = useIsFocused();
 
   const checklist = route.params.checklist;
 
-  const navigation =
-    useNavigation<NativeStackNavigationProp<ChecklistRoutesPrams>>();
+  const navigation = useNavigation<ChecklistRoutesProps>();
 
   const [checklistItem, setChecklistItem] = useState<checklistItem>(
     route.params.checklistItem || []

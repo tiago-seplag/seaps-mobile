@@ -1,54 +1,29 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { ChecklistScreen } from ".";
-import { PhotosScreen } from "./photos";
-import { PhotoObservationScreen } from "./photoObservation";
-import { ObservationScreen } from "./observation";
-import { ChecklistItemsScreen } from "./checklistItems";
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
+import { StaticParamList } from "@react-navigation/native";
+
+import { ChecklistScreen } from "./checklist";
+import { ChecklistItemsScreen } from "./checklist-items";
 import { ChecklistItemScreen } from "./checklist-item";
+import { ObservationScreen } from "./observation";
+import { PhotosScreen } from "./photos";
+import { PhotoObservationScreen } from "./photo-observation";
 
-export type ChecklistRoutesPrams = {
-  ChecklistItems: {
-    checklist: any;
-  };
-  ChecklistScreen: {
-    id: string;
-  };
-  ChecklistItem: {
-    checklistItem: any;
-    checklist: any;
-  };
-  Photos: {
-    checklistItem: any;
-    checklist: any;
-  };
-  PhotoObservation: {
-    checklistItemPhoto: any;
-    checklist: any;
-  };
-  Observation: {
-    checklistItem: any;
-    checklist: any;
-  };
-};
+export const ChecklistRoutes = createNativeStackNavigator({
+  screenOptions: { headerShown: false },
+  screens: {
+    Checklist: ChecklistScreen,
+    ChecklistItems: ChecklistItemsScreen,
+    ChecklistItem: ChecklistItemScreen,
+    Observation: ObservationScreen,
+    Photos: PhotosScreen,
+    PhotoObservation: PhotoObservationScreen,
+  },
+});
 
-const Stack = createNativeStackNavigator<ChecklistRoutesPrams>();
+type ChecklistRoutesList = StaticParamList<typeof ChecklistRoutes>;
 
-export function ChecklistRoutes() {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
-      <Stack.Screen name="ChecklistScreen" component={ChecklistScreen} />
-      <Stack.Screen name="ChecklistItem" component={ChecklistItemScreen} />
-      <Stack.Screen name="ChecklistItems" component={ChecklistItemsScreen} />
-      <Stack.Screen name="Photos" component={PhotosScreen} />
-      <Stack.Screen name="Observation" component={ObservationScreen} />
-      <Stack.Screen
-        name="PhotoObservation"
-        component={PhotoObservationScreen}
-      />
-    </Stack.Navigator>
-  );
-}
+export type ChecklistRoutesProps =
+  NativeStackNavigationProp<ChecklistRoutesList>;

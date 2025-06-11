@@ -3,7 +3,6 @@ import { HomeRoutes } from "./app/home/routes";
 import { ChecklistRoutes } from "./app/checklist/routes";
 import { useIsSignedIn, useIsSignedOut } from "./contexts/authContext";
 import { Login } from "./app/auth/login";
-import { ChecklistsRoutes } from "./app/checklists/routes";
 import { PropertiesRoutes } from "./app/properties/routes";
 import { CreateChecklistsRoutes } from "./app/createChecklist/routes";
 import { AccountRoutes } from "./app/account/route";
@@ -12,15 +11,6 @@ import {
   StaticParamList,
 } from "@react-navigation/native";
 
-// export type RootStackParamList = {
-//   Initial: any;
-//   Checklists: any;
-//   Checklist: any;
-//   Properties: any;
-//   CreateChecklist: any;
-//   AccountRoutes: any;
-// };
-
 const Stack = createNativeStackNavigator({
   screenOptions: { headerShown: false },
   screens: {
@@ -28,15 +18,26 @@ const Stack = createNativeStackNavigator({
       if: useIsSignedOut,
       screen: Login,
     },
-    Home: {
+    HomeRoutes: {
       if: useIsSignedIn,
       screen: HomeRoutes,
     },
-    AccountRoutes: AccountRoutes,
-    Checklists: ChecklistsRoutes,
-    Checklist: ChecklistRoutes,
-    Properties: PropertiesRoutes,
-    CreateChecklist: CreateChecklistsRoutes,
+    AccountRoutes: {
+      if: useIsSignedIn,
+      screen: AccountRoutes,
+    },
+    Checklist: {
+      if: useIsSignedIn,
+      screen: ChecklistRoutes,
+    },
+    Properties: {
+      if: useIsSignedIn,
+      screen: PropertiesRoutes,
+    },
+    CreateChecklist: {
+      if: useIsSignedIn,
+      screen: CreateChecklistsRoutes,
+    },
   },
 });
 

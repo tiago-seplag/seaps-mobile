@@ -11,6 +11,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
+import { api } from "../../services/api";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
+import { ChecklistRoutesProps } from "./routes";
+import { Toast } from "toastify-react-native";
+
 interface ChecklistItemImage {
   checklist_item_id: string;
   created_at: string;
@@ -19,19 +24,16 @@ interface ChecklistItemImage {
   observation: string;
 }
 
-import { api } from "../../services/api";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ChecklistRoutesPrams } from "./routes";
-import { Toast } from "toastify-react-native";
+type Props = StaticScreenProps<{
+  checklistItemPhoto: any;
+  checklist: any;
+}>;
 
-export function PhotoObservationScreen({ route }: any) {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<ChecklistRoutesPrams>>();
+export function PhotoObservationScreen({ route }: Props) {
+  const navigation = useNavigation<ChecklistRoutesProps>();
 
-  const [image, setimage] = useState<ChecklistItemImage>(
-    route.params.checklistItemPhoto
-  );
+  const [image] = useState<ChecklistItemImage>(route.params.checklistItemPhoto);
+
   const [text, setText] = useState(
     route.params.checklistItemPhoto.observation || ""
   );

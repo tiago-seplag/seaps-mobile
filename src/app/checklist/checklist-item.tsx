@@ -1,29 +1,28 @@
-import { useEffect, useState } from "react";
-import { FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { api } from "../../services/api";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ChecklistRoutesPrams } from "./routes";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
+import { ChecklistRoutesProps } from "./routes";
 
-import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import RadioGroup from "../../components/RadioGroup";
 import { Toast } from "toastify-react-native";
 import { Header } from "../../components/ui/header";
-import { ScoreBadge } from "../../components/score-badge";
 import { Row } from "../../components/row";
 import { Button } from "../../components/ui/button";
 
-export function ChecklistItemScreen({ route }: any) {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<ChecklistRoutesPrams>>();
+type Props = StaticScreenProps<{
+  checklistItem: any;
+  checklist: any;
+}>;
+
+export function ChecklistItemScreen({ route }: Props) {
+  const navigation = useNavigation<ChecklistRoutesProps>();
 
   const [checklist, setChecklist] = useState<Checklist>(route.params.checklist);
   const [checklistItem, setChecklistItem] = useState<ChecklistItem>(
     route.params.checklistItem
   );
-  const [refresh, setRefresh] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [lock, setLock] = useState(false);
 
   const handlePressRadio = async (value: string, id: string) => {

@@ -15,6 +15,9 @@ export type PropertiesScreenNavigationProp = NativeStackNavigationProp<
 >;
 
 export const PropertiesRoutes = createNativeStackNavigator({
+  screenOptions: {
+    headerShown: false,
+  },
   screens: {
     CreateProperty,
     CreateResponsible,

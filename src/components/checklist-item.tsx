@@ -1,57 +1,39 @@
-import { View } from "react-native";
-import { Card, CardText, CardTitle } from "./ui/card";
-import { ChecklistBadge } from "./checklist-badge";
+import { TouchableOpacity, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Materialnicons from "@expo/vector-icons/MaterialIcons";
+
+import { Card, CardHeader, CardText, CardTitle } from "./ui/card";
+import { ChecklistBadge } from "./checklist-badge";
+import { Icon } from "./icon";
 
 export const ChecklistItem = ({ item }: any) => {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
 
   return (
-    <Card
+    <TouchableOpacity
       onPress={() => {
         navigation.navigate("Checklist", {
-          screen: "ChecklistScreen",
+          screen: "Checklist",
           params: { id: item.item.id },
         });
       }}
-      style={{ gap: 8 }}
       key={item.item.id}
     >
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 4,
-          }}
-        >
-          <CardText style={{ fontFamily: "mono", fontSize: 12 }}>
-            {item.item.sid}
-          </CardText>
-          <CardText>-</CardText>
-          <CardText>{item.item.organization.name}</CardText>
+      <Card style={{ gap: 8 }}>
+        <CardHeader>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+            <CardText style={{ fontFamily: "mono", fontSize: 12 }}>
+              {item.item.sid}
+            </CardText>
+            <CardText>-</CardText>
+            <CardText>{item.item.organization.name}</CardText>
+          </View>
+          <ChecklistBadge status={item.item.status} />
+        </CardHeader>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+          <CardTitle numberOfLines={2}>{item.item.property.name}</CardTitle>
+          <Icon icon="chevron-right" style={{ backgroundColor: "#E8EAF2" }} />
         </View>
-        <ChecklistBadge status={item.item.status} />
-      </View>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-        <CardTitle numberOfLines={2}>{item.item.property.name}</CardTitle>
-        <View
-          style={{
-            backgroundColor: "#E8EAF2",
-            padding: 10,
-            borderRadius: 12,
-          }}
-        >
-          <Materialnicons name="chevron-right" size={24} color={"#1A3180"} />
-        </View>
-      </View>
-    </Card>
+      </Card>
+    </TouchableOpacity>
   );
 };

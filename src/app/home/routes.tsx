@@ -1,7 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
 import { ChecklistsScreen } from "./checklist-screen";
 import { HomeScreen } from "./home-screen";
 import { PropertiesScreen } from "./properties-screen";
+
 import { TabBar } from "./components/tab-bar";
 
 import Materialnicons from "@expo/vector-icons/MaterialIcons";

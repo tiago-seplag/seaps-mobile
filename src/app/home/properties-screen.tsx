@@ -6,22 +6,30 @@ import {
   View,
 } from "react-native";
 
-import { api } from "../../services/api";
-import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Materialnicons from "@expo/vector-icons/MaterialIcons";
-import { Card, CardText, CardTitle } from "../../components/ui/card";
-import { Header } from "../../components/ui/header";
-import { PropertyBadge } from "../../components/property-badge";
+import {
+  StaticScreenProps,
+  useIsFocused,
+  useNavigation,
+} from "@react-navigation/native";
 
-export function PropertiesScreen() {
+import { api } from "../../services/api";
+import { Header } from "../../components/ui/header";
+import { PropertyItem } from "../../components/property-item";
+import { BaseSafeAreaView } from "../../components/skeleton";
+
+type Props = StaticScreenProps<{
+  refresh?: boolean;
+}>;
+
+export function PropertiesScreen({ route }: Props) {
+  const navigation = useNavigation();
+  const isFocused = useIsFocused();
+
   const [data, setData] = useState<any[]>([]);
 
   const [loading, setLoading] = useState(false);
   const [lastPage, setLastPage] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
-
-  const navigation = useNavigation();
 
   const currentPageRef = useRef(1);
 
@@ -59,26 +67,18 @@ export function PropertiesScreen() {
   };
 
   useEffect(() => {
-    fetchData(1);
-  }, []);
+    if (isFocused || route.params.refresh) {
+      fetchData(1);
+    }
+  }, [route.params.refresh, isFocused]);
 
   const renderFooter = () => {
     if (!loadingMore) return null;
     return <ActivityIndicator style={{ marginVertical: 16 }} />;
   };
 
-  const handleEditProperty = (property: any) => {
-    return navigation.navigate("Properties", {
-      screen: "EditProperty",
-      params: { property },
-    });
-  };
-
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#1A3180" }}
-      edges={["top"]}
-    >
+    <BaseSafeAreaView edges={["top"]}>
       <Header
         title="IMÓVEIS"
         icon={"domain"}
@@ -117,50 +117,10 @@ export function PropertiesScreen() {
             flex: 1,
             padding: 16,
             backgroundColor: "#F1F2F4",
-            shadowColor: "black",
-            shadowOffset: {
-              height: 2,
-              width: 4,
-            },
-            shadowOpacity: 0.1,
-            shadowRadius: 2,
           }}
-          renderItem={(item) => (
-            <Card
-              key={item.item.id}
-              onPress={() => handleEditProperty(item.item)}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <CardText numberOfLines={1} style={{ fontWeight: 300 }}>
-                  {item.item.organization?.name}
-                </CardText>
-                <PropertyBadge type={item.item.type} />
-              </View>
-              <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
-              >
-                <CardTitle numberOfLines={2}>{item.item.name}</CardTitle>
-                <View
-                  style={{
-                    backgroundColor: "#E8EAF2",
-                    padding: 16,
-                    borderRadius: 12,
-                  }}
-                >
-                  <Materialnicons name="edit" size={24} color={"#1A3180"} />
-                </View>
-              </View>
-              <CardText numberOfLines={1}>{item.item.address}</CardText>
-            </Card>
-          )}
+          renderItem={(item) => <PropertyItem item={item} />}
         />
       )}
-    </SafeAreaView>
+    </BaseSafeAreaView>
   );
 }

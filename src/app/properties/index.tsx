@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -11,10 +10,11 @@ import {
 
 import { api } from "../../services/api";
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
-import { Card, CardText, CardTitle } from "../../components/ui/card";
+
+import { PropertyItem } from "../../components/property-item";
+import { BaseSafeAreaView } from "../../components/skeleton";
 
 export function PropertiesScreen() {
   const [data, setData] = useState<any[]>([]);
@@ -76,7 +76,7 @@ export function PropertiesScreen() {
   };
 
   return (
-    <SafeAreaView
+    <BaseSafeAreaView
       style={{ flex: 1, backgroundColor: "#1A3180" }}
       edges={["top"]}
     >
@@ -88,9 +88,7 @@ export function PropertiesScreen() {
           justifyContent: "space-between",
         }}
       >
-        <Text style={styles.title} numberOfLines={1}>
-          Imóveis
-        </Text>
+        <Text numberOfLines={1}>Imóveis</Text>
         <TouchableOpacity onPress={() => navigation.push("CreateProperty")}>
           <Materialnicons name="add-home" size={32} color={"#E8E8E8"} />
         </TouchableOpacity>
@@ -130,141 +128,9 @@ export function PropertiesScreen() {
             shadowOpacity: 0.1,
             shadowRadius: 2,
           }}
-          renderItem={(item) => (
-            <Card
-              key={item.item.id}
-              onPress={() => handleEditProperty(item.item)}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <CardText numberOfLines={1} style={{ fontWeight: 300 }}>
-                  {item.item.organization?.name}
-                </CardText>
-                <Badge type={item.item.type} />
-              </View>
-              <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
-              >
-                <CardTitle numberOfLines={2}>{item.item.name}</CardTitle>
-                <View
-                  style={{
-                    backgroundColor: "#E8EAF2",
-                    padding: 16,
-                    borderRadius: 12,
-                  }}
-                >
-                  <Materialnicons name="edit" size={24} color={"#1A3180"} />
-                </View>
-              </View>
-              <CardText numberOfLines={1}>{item.item.address}</CardText>
-            </Card>
-          )}
+          renderItem={(item) => <PropertyItem item={item} />}
         />
       )}
-    </SafeAreaView>
+    </BaseSafeAreaView>
   );
 }
-
-const Badge = ({ type }: { type: string }) => {
-  const style = {
-    backgroundColor: "#1a328020",
-    label: "PRÓPRIO",
-    color: "#1a3280",
-    borderColor: "#1a3280",
-  };
-
-  switch (type) {
-    case "RENTED":
-      style.backgroundColor = "#ca8a0420";
-      style.label = "ALUGADO";
-      style.borderColor = "#ca8a04";
-      style.color = "#ca8a04";
-      break;
-    case "GRANT":
-      style.backgroundColor = "#dc262620";
-      style.label = "CONCESSÃO";
-      style.borderColor = "#dc2626";
-      style.color = "#dc2626";
-      break;
-    default:
-      break;
-  }
-
-  return (
-    <View
-      style={{
-        padding: 4,
-        backgroundColor: style.backgroundColor,
-        borderColor: style.borderColor,
-        borderWidth: 1,
-        borderRadius: 6,
-        minWidth: 90,
-      }}
-    >
-      <Text
-        style={{
-          color: style.color,
-          fontWeight: "bold",
-          fontSize: 12,
-          textAlign: "center",
-        }}
-      >
-        {style.label}
-      </Text>
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 26,
-    color: "#E8E8E8",
-    textTransform: "uppercase",
-    flex: 1,
-    fontWeight: "bold",
-  },
-  card: {
-    paddingVertical: 16,
-    paddingHorizontal: 8,
-    borderWidth: 1,
-    borderColor: "#c8ccda",
-    backgroundColor: "white",
-    borderRadius: 16,
-    marginBottom: 8,
-    gap: 4,
-  },
-  cardTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-  },
-  cardText: {
-    color: "#1A1A1A",
-  },
-  cardSid: {
-    color: "#3b3b3b",
-    fontSize: 16,
-  },
-  cardImage: {
-    height: 128,
-    marginVertical: 8,
-    borderRadius: 4,
-  },
-  observation: {
-    fontSize: 16,
-  },
-  iconButton: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 4,
-    borderWidth: 1,
-    borderColor: "#1A1A1A",
-    borderRadius: 3,
-    flex: 1,
-  },
-});

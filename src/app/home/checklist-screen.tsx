@@ -4,22 +4,26 @@ import {
   FlatList,
   RefreshControl,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
 } from "react-native";
-import Materialnicons from "@expo/vector-icons/MaterialIcons";
 
 import { api } from "../../services/api";
-import { useNavigation } from "@react-navigation/native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  StaticScreenProps,
+  useIsFocused,
+  useNavigation,
+} from "@react-navigation/native";
 import { Header } from "../../components/ui/header";
-import { ChecklistBadge } from "../../components/checklist-badge";
-import { Card, CardText, CardTitle } from "../../components/ui/card";
 import { ChecklistItem } from "../../components/checklist-item";
+import { BaseSafeAreaView } from "../../components/skeleton";
 
-export function ChecklistsScreen({ route }: any) {
-  const navigation = useNavigation<any>();
+type Props = StaticScreenProps<{
+  refresh?: boolean;
+}>;
+
+export function ChecklistsScreen({ route }: Props) {
+  const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
   const [data, setData] = useState<any[]>([]);
 
@@ -29,18 +33,18 @@ export function ChecklistsScreen({ route }: any) {
 
   const currentPageRef = useRef(1);
 
-  const fetchData = async (pageToLoad = 1) => {
+  const fetchData = async (page = 1) => {
     if (loading || loadingMore) return;
 
-    pageToLoad === 1 ? setLoading(true) : setLoadingMore(true);
+    page === 1 ? setLoading(true) : setLoadingMore(true);
 
     try {
       const response = await api.get(
-        `/api/checklists?page=${pageToLoad}&per_page=20`
+        `/api/checklists?page=${page}&per_page=20`
       );
       const responseData = response.data;
 
-      if (pageToLoad === 1) {
+      if (page === 1) {
         setData(responseData.data);
       } else {
         setData((prev) => [...prev, ...responseData.data]);
@@ -63,14 +67,10 @@ export function ChecklistsScreen({ route }: any) {
   };
 
   useEffect(() => {
-    fetchData(1);
-  }, []);
-
-  useEffect(() => {
-    if (route?.params?.refresh) {
+    if (isFocused || route.params.refresh) {
       fetchData(1);
     }
-  }, [route?.params?.refresh]);
+  }, [route.params.refresh, isFocused]);
 
   const renderFooter = () => {
     if (!loadingMore) return null;
@@ -78,10 +78,7 @@ export function ChecklistsScreen({ route }: any) {
   };
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#1A3180" }}
-      edges={["top"]}
-    >
+    <BaseSafeAreaView edges={["top"]}>
       <Header
         title="Checklists"
         icon={"domain"}
@@ -120,7 +117,7 @@ export function ChecklistsScreen({ route }: any) {
           renderItem={(item) => <ChecklistItem item={item} />}
         />
       )}
-    </SafeAreaView>
+    </BaseSafeAreaView>
   );
 }
 
@@ -129,9 +126,5 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     backgroundColor: "#F1F2F4",
-  },
-  cardSid: {
-    fontFamily: "mono",
-    fontSize: 12,
   },
 });
