@@ -6,30 +6,31 @@ import {
 } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 
-import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
-import { Card, CardText, CardTitle } from "../../components/ui/card";
-import { Select } from "../../components/form/select";
-import { api } from "../../services/api";
-import { CreatePropertyRoutesProps } from "./route";
 import {
   FlatList,
   Keyboard,
   RefreshControl,
   Text,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+
+import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
+import { Card } from "../../components/ui/card";
+import { Select } from "../../components/form/select";
 import { Header } from "../../components/ui/header";
 import { Row } from "../../components/row";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Icon } from "../../components/icon";
 import { Input } from "../../components/form/input";
 import { StepsCount } from "../../components/steps-count";
+import { FormButton } from "../../components/form/form-button";
 
-type Props = StaticScreenProps<{
-  organization_id: string;
-}>;
+import { api } from "../../services/api";
+
+import { CreatePropertyRoutesProps } from "./route";
+import { PersonItem } from "./components/person-item";
+import { CreateButton } from "../../components/create-button";
+
+type Props = StaticScreenProps<{ organization_id: string }>;
 
 export const StepTwoScreen = ({ route }: Props) => {
   const organization_id = route.params.organization_id;
@@ -112,73 +113,25 @@ export const StepTwoScreen = ({ route }: Props) => {
                 <RefreshControl refreshing={loading} onRefresh={fetchData} />
               }
               renderItem={(item) => (
-                <TouchableOpacity
-                  key={item.item.id}
-                  onPress={() =>
+                <PersonItem
+                  selected={person_id === item.item.id}
+                  item={item}
+                  onSelect={() =>
                     person_id === item.item.id
                       ? reset()
                       : setValue("person_id", item.item.id)
                   }
-                >
-                  <Card
-                    style={[
-                      {
-                        backgroundColor:
-                          person_id === item.item.id ? "#E8EAF2" : "#FFFFFF",
-                      },
-                      { flexDirection: "row", justifyContent: "space-between" },
-                    ]}
-                  >
-                    <View>
-                      <CardTitle numberOfLines={1} style={{ fontSize: 16 }}>
-                        {item.item.name}
-                      </CardTitle>
-                      <CardText numberOfLines={1} style={{ fontSize: 14 }}>
-                        {item.item.role}
-                      </CardText>
-                      <CardText numberOfLines={1} style={{ fontWeight: 300 }}>
-                        {item.item.email}
-                      </CardText>
-                    </View>
-                    <Icon
-                      icon={
-                        person_id === item.item.id
-                          ? "radio-button-checked"
-                          : "radio-button-unchecked"
-                      }
-                      style={{ backgroundColor: "#E8EAF2" }}
-                    />
-                  </Card>
-                </TouchableOpacity>
+                />
               )}
               ListFooterComponent={() => (
-                <TouchableOpacity
+                <CreateButton
+                  title="CRIAR RESPONSÁVEL"
                   onPress={() =>
                     navigation.push("CreateResponsible", {
                       organization_id: organization_id,
                     })
                   }
-                >
-                  <Card
-                    style={{
-                      alignItems: "center",
-                      backgroundColor: "#E8EAF2",
-                      flexDirection: "row",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Icon
-                      style={{
-                        backgroundColor: "#E8EAF2",
-                        paddingHorizontal: 4,
-                      }}
-                      icon="add"
-                    />
-                    <CardTitle style={{ fontSize: 16 }}>
-                      CRIAR RESPONSÁVEL
-                    </CardTitle>
-                  </Card>
-                </TouchableOpacity>
+                />
               )}
               style={{ flex: 1 }}
             />
@@ -191,34 +144,15 @@ export const StepTwoScreen = ({ route }: Props) => {
                   marginBottom: 10,
                 }}
               >
-                *Selecione o Responsável do imóvel
+                * Selecione o Responsável do imóvel
               </Text>
             ) : null}
           </Card>
-          <TouchableOpacity
+          <FormButton
             onPress={handleSubmit(submit)}
-            style={{
-              flexDirection: "row",
-              marginTop: "auto",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#067C03",
-              padding: 12,
-              borderRadius: 12,
-              gap: 4,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: 700,
-                color: "#FEFEFE",
-              }}
-            >
-              PROXIMO
-            </Text>
-            <MaterialIcons name={"chevron-right"} size={32} color={"#FEFEFE"} />
-          </TouchableOpacity>
+            title="PRÓXIMO"
+            icon="chevron-right"
+          />
         </BaseView>
       </TouchableWithoutFeedback>
     </BaseSafeAreaView>

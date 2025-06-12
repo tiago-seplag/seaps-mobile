@@ -7,12 +7,11 @@ import { Card } from "../../components/ui/card";
 import { Select } from "../../components/form/select";
 import { api } from "../../services/api";
 import { CreatePropertyRoutesProps } from "./route";
-import { Text, TouchableOpacity } from "react-native";
 import { Header } from "../../components/ui/header";
 import { Row } from "../../components/row";
 
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { StepsCount } from "../../components/steps-count";
+import { FormButton } from "../../components/form/form-button";
 
 type Props = StaticScreenProps<
   | {
@@ -80,30 +79,11 @@ export const StepOneScreen = ({ route }: Props) => {
             ]}
           />
         </Card>
-        <TouchableOpacity
+        <FormButton
           onPress={handleSubmit(submit)}
-          style={{
-            flexDirection: "row",
-            marginTop: "auto",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "#067C03",
-            padding: 12,
-            borderRadius: 12,
-            gap: 4,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: 700,
-              color: "#FEFEFE",
-            }}
-          >
-            PROXIMO
-          </Text>
-          <MaterialIcons name={"chevron-right"} size={32} color={"#FEFEFE"} />
-        </TouchableOpacity>
+          title="PRÓXIMO"
+          icon="chevron-right"
+        />
       </BaseView>
     </BaseSafeAreaView>
   );
