@@ -17,7 +17,9 @@ export const Select = ({
   isRequired = true,
   options,
   button,
+  disabled = false,
 }: {
+  disabled?: boolean;
   name: string;
   label: string;
   defaultValue?: string;
@@ -34,17 +36,24 @@ export const Select = ({
   return (
     <View>
       <Text style={styles.label}>{label}</Text>
-
       <Controller
         control={control}
         name={name}
         defaultValue={defaultValue}
         rules={{ required: isRequired }}
         render={({ field: { onChange, value, ref } }) => (
-          <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 8,
+              opacity: disabled ? 0.4 : 1,
+            }}
+          >
             <View style={[styles.picker]}>
               <RNPickerSelect
                 value={value || ""}
+                disabled={disabled}
                 onValueChange={(e) => {
                   onChange(e);
                   if (onValueChange) {
@@ -62,8 +71,10 @@ export const Select = ({
                     paddingLeft: 10,
                     paddingRight: 10,
                     fontFamily: "Poppins-Regular",
+                    color: "#182D74",
                   },
                   inputAndroid: {
+                    color: "#182D74",
                     fontSize: 14,
                     fontFamily: "Poppins-Regular",
                   },
@@ -99,16 +110,17 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 5,
-    fontWeight: "bold",
+    fontWeight: "300",
+    color: "#0E1B46",
   },
   picker: {
     flex: 1,
     backgroundColor: "#FFFFFF",
     height: 40,
     fontSize: 14,
-    borderColor: "#ddd",
+    borderColor: "#6675AA",
     borderWidth: 1,
     marginBottom: 4,
-    borderRadius: 5,
+    borderRadius: 12,
   },
 });

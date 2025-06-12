@@ -67,10 +67,10 @@ export function PropertiesScreen({ route }: Props) {
   };
 
   useEffect(() => {
-    if (isFocused || route.params.refresh) {
+    if (isFocused || route.params?.refresh) {
       fetchData(1);
     }
-  }, [route.params.refresh, isFocused]);
+  }, [route.params?.refresh, isFocused]);
 
   const renderFooter = () => {
     if (!loadingMore) return null;

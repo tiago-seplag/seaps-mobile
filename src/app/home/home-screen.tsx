@@ -15,7 +15,7 @@ export function HomeScreen() {
 
   const [data, setData] = useState();
 
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
 
   const fetchData = async () => {
     const response = await api.get(
@@ -51,8 +51,8 @@ export function HomeScreen() {
             title="CRIAR IMÓVEL"
             text="Criar um novo imóvel"
             onPress={() =>
-              navigation.navigate("Properties", {
-                screen: "CreateProperty",
+              navigation.navigate("CreateProperty", {
+                screen: "StepOne",
               })
             }
           />

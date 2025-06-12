@@ -6,6 +6,7 @@ import { Login } from "./app/auth/login";
 import { PropertiesRoutes } from "./app/properties/routes";
 import { CreateChecklistsRoutes } from "./app/createChecklist/routes";
 import { AccountRoutes } from "./app/account/route";
+import { CreatePropertyRoutes } from "./app/create-property/route";
 import {
   createStaticNavigation,
   StaticParamList,
@@ -37,6 +38,10 @@ const Stack = createNativeStackNavigator({
     CreateChecklist: {
       if: useIsSignedIn,
       screen: CreateChecklistsRoutes,
+    },
+    CreateProperty: {
+      if: useIsSignedIn,
+      screen: CreatePropertyRoutes,
     },
   },
 });

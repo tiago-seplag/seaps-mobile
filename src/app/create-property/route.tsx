@@ -6,6 +6,7 @@ import { StaticParamList } from "@react-navigation/native";
 import { StepOneScreen } from "./step-one";
 import { StepTwoScreen } from "./step-two";
 import { StepThreeScreen } from "./step-three";
+import { CreateResponsibleScreen } from "./create-responsible";
 
 export const CreatePropertyRoutes = createNativeStackNavigator({
   screenOptions: { headerShown: false },
@@ -13,6 +14,7 @@ export const CreatePropertyRoutes = createNativeStackNavigator({
     StepOne: StepOneScreen,
     StepTwo: StepTwoScreen,
     StepThree: StepThreeScreen,
+    CreateResponsible: CreateResponsibleScreen,
   },
 });
 

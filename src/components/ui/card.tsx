@@ -28,6 +28,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     gap: 4,
     padding: 8,
+    shadowColor: "black",
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   header: {
     flexDirection: "row",
@@ -37,8 +44,6 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 22,
     fontWeight: "bold",
-    flex: 1,
-    lineHeight: 22,
   },
   cardText: {
     fontSize: 12,

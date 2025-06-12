@@ -11,9 +11,15 @@ import { Text, TouchableOpacity } from "react-native";
 import { Header } from "../../components/ui/header";
 import { Row } from "../../components/row";
 
-type Props = StaticScreenProps<{
-  organization_id?: string;
-}>;
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { StepsCount } from "../../components/steps-count";
+
+type Props = StaticScreenProps<
+  | {
+      organization_id?: string;
+    }
+  | undefined
+>;
 
 interface PropertyForm {
   organization_id: string;
@@ -31,35 +37,37 @@ export const StepOneScreen = ({ route }: Props) => {
     formState: { errors },
   } = useForm<PropertyForm>({
     defaultValues: {
-      organization_id: route.params.organization_id,
+      organization_id: route.params?.organization_id,
     },
   });
 
   useEffect(() => {
     api.get("/api/organizations").then(({ data }) => setOrganizations(data));
-  }, [focus]);
+  }, []);
 
   const submit = (values: PropertyForm) => {
+    console.log(values);
     navigation.push("StepTwo", { organization_id: values.organization_id });
   };
 
   return (
     <BaseSafeAreaView>
       <Header backButton title={"CRIAR IMÓVEL"} />
-      <BaseView>
+      <BaseView style={{ gap: 16, flex: 1 }}>
+        <StepsCount step={1} length={3} />
         <Row />
-        <Card>
+        <Card style={{ paddingVertical: 14, gap: 16 }}>
           <Select
             options={organizations}
             control={control}
             errors={errors}
             name="organization_id"
-            label="Orgão"
+            label="ORGÃO:"
             placeholder="Selecione o orgão"
             errorMessage="Insira o orgão do imóvel"
           />
           <Select
-            label="Tipo de Imóvel"
+            label="TIPO DE IMÓVEL:"
             placeholder="Selecione o tipo do imóvel"
             control={control}
             errors={errors}
@@ -72,8 +80,29 @@ export const StepOneScreen = ({ route }: Props) => {
             ]}
           />
         </Card>
-        <TouchableOpacity onPress={() => handleSubmit(submit)}>
-          <Text>PROXIMO</Text>
+        <TouchableOpacity
+          onPress={handleSubmit(submit)}
+          style={{
+            flexDirection: "row",
+            marginTop: "auto",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#067C03",
+            padding: 12,
+            borderRadius: 12,
+            gap: 4,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: 700,
+              color: "#FEFEFE",
+            }}
+          >
+            PROXIMO
+          </Text>
+          <MaterialIcons name={"chevron-right"} size={32} color={"#FEFEFE"} />
         </TouchableOpacity>
       </BaseView>
     </BaseSafeAreaView>

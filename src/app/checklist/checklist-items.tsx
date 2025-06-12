@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   FlatList,
   RefreshControl,
-  SafeAreaViewBase,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -23,6 +22,7 @@ import { Toast } from "toastify-react-native";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 
 import { api } from "../../services/api";
+import { BaseSafeAreaView } from "../../components/skeleton";
 
 type Props = StaticScreenProps<{
   checklist: Checklist;
@@ -57,7 +57,7 @@ export function ChecklistItemsScreen({ route }: Props) {
   }, [refresh, focus]);
 
   return (
-    <SafeAreaViewBase>
+    <BaseSafeAreaView>
       <Header
         backButton
         title={checklist.property.name}
@@ -85,7 +85,10 @@ export function ChecklistItemsScreen({ route }: Props) {
               })
             }
           >
-            <Card key={item.item.id}>
+            <Card
+              key={item.item.id}
+              style={{ flexDirection: "row", alignItems: "center", height: 76 }}
+            >
               <CardTitle>{item.item.item.name}</CardTitle>
               <View
                 style={{
@@ -106,7 +109,7 @@ export function ChecklistItemsScreen({ route }: Props) {
           </TouchableOpacity>
         )}
       />
-    </SafeAreaViewBase>
+    </BaseSafeAreaView>
   );
 }
 
