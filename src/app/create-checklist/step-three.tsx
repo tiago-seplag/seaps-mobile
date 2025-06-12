@@ -1,21 +1,29 @@
+import { useEffect, useState } from "react";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 
 import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
 import { Card } from "../../components/ui/card";
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import { Header } from "../../components/ui/header";
 import { Row } from "../../components/row";
 import { Input } from "../../components/form/input";
 
-import { api } from "../../services/api";
 import { StepsCount } from "../../components/steps-count";
 import { FormButton } from "../../components/form/form-button";
+import { Select } from "../../components/form/select";
+import { getFirstAndLastName } from "../../utils";
+
+import { useSession } from "../../contexts/authContext";
+import { api } from "../../services/api";
 
 type Props = StaticScreenProps<undefined>;
 
 export const StepThreeScreen = (_: Props) => {
+  const { user } = useSession();
   const navigation = useNavigation();
+
+  const [users, setUsers] = useState<any[]>([]);
 
   const {
     handleSubmit,
@@ -28,7 +36,7 @@ export const StepThreeScreen = (_: Props) => {
       .post("/api/checklists", values)
       .then(() =>
         navigation.navigate("HomeRoutes", {
-          screen: "PropertiesHomeScreen",
+          screen: "ChecklistsHomeScreen",
           params: {
             refresh: true,
           },
@@ -36,6 +44,10 @@ export const StepThreeScreen = (_: Props) => {
       )
       .catch((e) => console.log(e));
   };
+
+  useEffect(() => {
+    api.get("/api/users").then(({ data }) => setUsers(data));
+  }, []);
 
   return (
     <BaseSafeAreaView>
@@ -45,13 +57,18 @@ export const StepThreeScreen = (_: Props) => {
           <StepsCount step={3} length={3} />
           <Row />
           <Card>
-            <Input
+            <Select
+              options={users.map((user) => ({
+                ...user,
+                name: getFirstAndLastName(user.name),
+              }))}
+              defaultValue={user.id}
               control={control}
               errors={errors}
-              label="Nome"
-              name="name"
-              placeholder="Nome do local"
-              errorMessage="Insira o nome do imóvel"
+              name="user_id"
+              label="RESPONSÁVEL PELO CHECKLIST:"
+              placeholder="Selecione um responsável"
+              errorMessage="Selecione o responsável do checklist"
             />
             <Input
               control={control}
