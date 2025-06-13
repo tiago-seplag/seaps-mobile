@@ -1,20 +1,18 @@
 import { useState } from "react";
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
+import { useForm } from "react-hook-form";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Toast } from "toastify-react-native";
 
 import { api } from "../../services/api";
-import { StaticScreenProps, useNavigation } from "@react-navigation/native";
+import { Card } from "../../components/ui/card";
+import { BaseSafeAreaView } from "../../components/skeleton";
+import { FormButton } from "../../components/form/form-button";
+import { Input } from "../../components/form/input";
+
+import { ImageCard } from "./components/image-card";
+
 import { ChecklistRoutesProps } from "./routes";
-import { Toast } from "toastify-react-native";
 
 interface ChecklistItemImage {
   checklist_item_id: string;
@@ -32,14 +30,23 @@ type Props = StaticScreenProps<{
 export function PhotoObservationScreen({ route }: Props) {
   const navigation = useNavigation<ChecklistRoutesProps>();
 
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<{
+    observation: string;
+  }>();
+
   const [image] = useState<ChecklistItemImage>(route.params.checklistItemPhoto);
 
-  const [text, setText] = useState(
-    route.params.checklistItemPhoto.observation || ""
-  );
   const [loading, setLoading] = useState(false);
 
-  const handleUpdateObservation = async () => {
+  const handleUpdateObservation = async ({
+    observation,
+  }: {
+    observation?: string;
+  }) => {
     setLoading(true);
     await api
       .put(
@@ -48,7 +55,7 @@ export function PhotoObservationScreen({ route }: Props) {
           "/images/" +
           image.id,
         {
-          observation: text,
+          observation: observation,
         }
       )
       .then(() => navigation.goBack())
@@ -61,104 +68,38 @@ export function PhotoObservationScreen({ route }: Props) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <BaseSafeAreaView>
       <KeyboardAwareScrollView
         bounces={false}
         contentContainerStyle={{
           flex: 1,
-          backgroundColor: "#e8e8e8",
-          paddingHorizontal: 16,
-          paddingVertical: 8,
+          padding: 16,
+          backgroundColor: "#F1F2F4",
         }}
         enableAutomaticScroll={true}
       >
-        <View key={image?.id} style={styles.card}>
-          <Image
-            source={{ uri: process.env.EXPO_PUBLIC_BUCKET_URL + image.image }}
-            style={styles.cardImage}
-          />
-          <Text style={{ fontSize: 16, fontWeight: "bold" }}>Observação:</Text>
-          <TextInput
-            defaultValue={image?.observation}
-            style={styles.input}
-            multiline
-            value={text}
-            onChangeText={(e) => setText(e)}
-            scrollEnabled={false}
-            numberOfLines={4}
-            autoCapitalize="characters"
+        <Card>
+          <ImageCard uri={image.image} />
+          <Input
+            required={false}
+            control={control}
+            errors={errors}
+            label="OBERSVAÇÃO:"
+            name="observation"
+            placeholder="Insira uma descrição da imagem"
+            errorMessage="Insira o endereço do imóvel"
             maxLength={255}
-            editable={route.params.checklist.status !== "CLOSED"}
+            multiline
+            style={{ minHeight: 44 * 3.1 }}
           />
-          <View>
-            <TouchableOpacity
-              style={{
-                width: "100%",
-                backgroundColor: "green",
-                alignItems: "center",
-                padding: 12,
-                borderRadius: 4,
-                opacity: route.params.checklist.status === "CLOSED" ? 0.5 : 1,
-              }}
-              disabled={loading || route.params.checklist.status === "CLOSED"}
-              onPress={handleUpdateObservation}
-            >
-              <Text
-                style={{ color: "white", fontSize: 24, fontWeight: "semibold" }}
-              >
-                Salvar
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        </Card>
+        <FormButton
+          icon="save"
+          title="SALVAR"
+          disabled={loading || route.params.checklist.status === "CLOSED"}
+          onPress={handleSubmit(handleUpdateObservation)}
+        />
       </KeyboardAwareScrollView>
-    </SafeAreaView>
+    </BaseSafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 32,
-  },
-  card: {
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    flex: 1,
-    borderColor: "#c8ccda",
-    borderRadius: 16,
-    gap: 8,
-    backgroundColor: "#fff",
-    shadowColor: "black",
-    shadowOffset: {
-      height: 2,
-      width: 4,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  cardImage: {
-    borderRadius: 4,
-    alignItems: "flex-start",
-    objectFit: "cover",
-    justifyContent: "flex-start",
-    height: 370,
-  },
-  input: {
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: "#c8ccda",
-    textAlignVertical: "top",
-    minHeight: 110,
-  },
-  iconButton: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 4,
-    borderWidth: 1,
-    borderColor: "#1A1A1A",
-    borderRadius: 3,
-    flex: 1,
-  },
-});

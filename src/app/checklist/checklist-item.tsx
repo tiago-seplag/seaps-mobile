@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { api } from "../../services/api";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
@@ -10,6 +10,8 @@ import { Toast } from "toastify-react-native";
 import { Header } from "../../components/ui/header";
 import { Row } from "../../components/row";
 import { Button } from "../../components/ui/button";
+import { BaseSafeAreaView } from "../../components/skeleton";
+import { Card } from "../../components/ui/card";
 
 type Props = StaticScreenProps<{
   checklistItem: any;
@@ -73,12 +75,12 @@ export function ChecklistItemScreen({ route }: Props) {
             checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
         }}
       />
-      <View style={styles.flatList}>
+      <BaseSafeAreaView style={{ gap: 16 }}>
         <View style={{ gap: 8 }}>
           <Text style={{ color: "#1A3180", fontSize: 16, fontWeight: 400 }}>
             PONTUAÇÃO:
           </Text>
-          <View style={styles.card}>
+          <Card>
             <RadioGroup
               radioButtons={radioButtons}
               containerStyle={{
@@ -88,7 +90,7 @@ export function ChecklistItemScreen({ route }: Props) {
               onPress={(value) => handlePressRadio(value, checklistItem.id)}
               selectedId={String(checklistItem.score)}
             />
-          </View>
+          </Card>
         </View>
         <Row />
         <View style={{ gap: 8 }}>
@@ -108,42 +110,10 @@ export function ChecklistItemScreen({ route }: Props) {
             onPress={handleNavigateToObservation}
           />
         </View>
-      </View>
+      </BaseSafeAreaView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  title: { fontSize: 26, fontWeight: "bold" },
-  flatList: {
-    flex: 1,
-    gap: 16,
-    padding: 16,
-    backgroundColor: "#F1F2F4",
-  },
-  card: {
-    display: "flex",
-    padding: 8,
-    gap: 8,
-    borderWidth: 1,
-    borderColor: "#c8ccda",
-    backgroundColor: "white",
-    borderRadius: 16,
-    marginBottom: 8,
-    shadowColor: "black",
-    shadowOffset: {
-      height: 2,
-      width: 0,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#0E1B46",
-  },
-});
 
 const radioButtonStyles = {
   height: 54,
