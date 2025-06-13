@@ -29,7 +29,14 @@ export const ChecklistItem = ({ item }: any) => {
           </View>
           <ChecklistBadge status={item.item.status} />
         </CardHeader>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 4,
+          }}
+        >
           <CardTitle numberOfLines={2}>{item.item.property.name}</CardTitle>
           <Icon icon="chevron-right" style={{ backgroundColor: "#E8EAF2" }} />
         </View>

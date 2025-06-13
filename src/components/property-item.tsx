@@ -27,7 +27,14 @@ export const PropertyItem = ({ item }: any) => {
           </CardText>
           <PropertyBadge type={item.item.type} />
         </CardHeader>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 4,
+          }}
+        >
           <CardTitle numberOfLines={2}>{item.item.name}</CardTitle>
           <Icon icon="edit" style={{ backgroundColor: "#E8EAF2" }} />
         </View>

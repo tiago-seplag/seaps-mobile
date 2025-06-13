@@ -40,10 +40,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    flex: 1,
   },
   cardTitle: {
     fontSize: 22,
     fontWeight: "bold",
+    flex: 1,
   },
   cardText: {
     fontSize: 12,

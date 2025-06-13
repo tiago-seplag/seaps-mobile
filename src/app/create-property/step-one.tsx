@@ -12,6 +12,7 @@ import { Row } from "../../components/row";
 
 import { StepsCount } from "../../components/steps-count";
 import { FormButton } from "../../components/form/form-button";
+import { usePropertyStore } from "../../stores/createPropertyStore";
 
 type Props = StaticScreenProps<
   | {
@@ -26,6 +27,8 @@ interface PropertyForm {
 }
 
 export const StepOneScreen = ({ route }: Props) => {
+  const { setProperty } = usePropertyStore();
+
   const navigation = useNavigation<CreatePropertyRoutesProps>();
 
   const [organizations, setOrganizations] = useState<any[]>([]);
@@ -45,7 +48,7 @@ export const StepOneScreen = ({ route }: Props) => {
   }, []);
 
   const submit = (values: PropertyForm) => {
-    console.log(values);
+    setProperty(values);
     navigation.push("StepTwo", { organization_id: values.organization_id });
   };
 

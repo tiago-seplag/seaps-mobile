@@ -17,9 +17,10 @@ export const PropertyItem = ({
       <Card
         style={[
           {
-            backgroundColor: selected === item.item.id ? "#E8EAF2" : "#FFFFFF",
+            backgroundColor: selected ? "#E8EAF2" : "#FFFFFF",
             borderColor: "#182D74",
             borderWidth: 1,
+            gap: 4,
           },
         ]}
       >
@@ -31,18 +32,21 @@ export const PropertyItem = ({
           }}
         >
           <CardText numberOfLines={1} style={{ fontSize: 12 }}>
-            {item.item.organization.name}
+            {item.item.organization?.name}
           </CardText>
-          <PropertyBadge type={item.item.type} />
+          <PropertyBadge type={item.item?.type} />
         </View>
         <View
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
+            flex: 1,
+            minHeight: 22 * 2,
+            gap: 4,
           }}
         >
-          <CardTitle style={{ fontSize: 16, flex: 1 }} numberOfLines={2}>
+          <CardTitle style={{ fontSize: 22, flex: 1 }} numberOfLines={2}>
             {item.item.name}
           </CardTitle>
           <Icon
@@ -51,7 +55,7 @@ export const PropertyItem = ({
           />
         </View>
         <CardText numberOfLines={1} style={{ fontSize: 14 }}>
-          {item.item.address}
+          {item.item?.address}
         </CardText>
       </Card>
     </TouchableOpacity>

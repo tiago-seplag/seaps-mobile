@@ -29,10 +29,13 @@ import { api } from "../../services/api";
 import { CreatePropertyRoutesProps } from "./route";
 import { PersonItem } from "./components/person-item";
 import { CreateButton } from "../../components/create-button";
+import { usePropertyStore } from "../../stores/createPropertyStore";
 
 type Props = StaticScreenProps<{ organization_id: string }>;
 
 export const StepTwoScreen = ({ route }: Props) => {
+  const { setProperty } = usePropertyStore();
+
   const organization_id = route.params.organization_id;
   const isFocused = useIsFocused();
   const navigation = useNavigation<CreatePropertyRoutesProps>();
@@ -69,6 +72,7 @@ export const StepTwoScreen = ({ route }: Props) => {
   }, [isFocused]);
 
   const submit = (values: any) => {
+    setProperty((prev) => ({ ...prev, person_id: values.person_id }));
     navigation.push("StepThree");
   };
 

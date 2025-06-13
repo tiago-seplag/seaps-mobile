@@ -1,4 +1,8 @@
-import { StaticScreenProps, useNavigation } from "@react-navigation/native";
+import {
+  StackActions,
+  StaticScreenProps,
+  useNavigation,
+} from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 
 import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
@@ -11,10 +15,13 @@ import { Input } from "../../components/form/input";
 import { api } from "../../services/api";
 import { StepsCount } from "../../components/steps-count";
 import { FormButton } from "../../components/form/form-button";
+import { usePropertyStore } from "../../stores/createPropertyStore";
 
 type Props = StaticScreenProps<undefined>;
 
 export const StepThreeScreen = (_: Props) => {
+  const { property } = usePropertyStore();
+
   const navigation = useNavigation();
 
   const {
@@ -25,14 +32,16 @@ export const StepThreeScreen = (_: Props) => {
 
   const submit = async (values: any) => {
     return api
-      .post("/api/checklists", values)
+      .post("/api/properties", { ...property, ...values })
       .then(() =>
-        navigation.navigate("HomeRoutes", {
-          screen: "PropertiesHomeScreen",
-          params: {
-            refresh: true,
-          },
-        })
+        navigation.dispatch(
+          StackActions.popTo("CreateChecklist", {
+            screen: "StepTwo",
+            params: {
+              organization_id: property.organization_id,
+            },
+          })
+        )
       )
       .catch((e) => console.log(e));
   };
