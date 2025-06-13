@@ -17,6 +17,7 @@ import { usePropertyStore } from "../../stores/createPropertyStore";
 type Props = StaticScreenProps<
   | {
       organization_id?: string;
+      origin?: string;
     }
   | undefined
 >;
@@ -49,7 +50,10 @@ export const StepOneScreen = ({ route }: Props) => {
 
   const submit = (values: PropertyForm) => {
     setProperty(values);
-    navigation.push("StepTwo", { organization_id: values.organization_id });
+    navigation.push("StepTwo", {
+      organization_id: values.organization_id,
+      origin: route.params?.origin,
+    });
   };
 
   return (
@@ -60,6 +64,7 @@ export const StepOneScreen = ({ route }: Props) => {
         <Row />
         <Card style={{ paddingVertical: 14, gap: 16 }}>
           <Select
+            disabled={!!route.params?.organization_id}
             options={organizations}
             control={control}
             errors={errors}

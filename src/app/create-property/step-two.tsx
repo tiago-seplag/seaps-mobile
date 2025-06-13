@@ -15,23 +15,24 @@ import {
   View,
 } from "react-native";
 
-import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
 import { Card } from "../../components/ui/card";
-import { Select } from "../../components/form/select";
 import { Header } from "../../components/ui/header";
+import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
 import { Row } from "../../components/row";
-import { Input } from "../../components/form/input";
+import { CreateButton } from "../../components/create-button";
 import { StepsCount } from "../../components/steps-count";
+
+import { Input } from "../../components/form/input";
+import { Select } from "../../components/form/select";
 import { FormButton } from "../../components/form/form-button";
 
 import { api } from "../../services/api";
+import { usePropertyStore } from "../../stores/createPropertyStore";
 
 import { CreatePropertyRoutesProps } from "./route";
 import { PersonItem } from "./components/person-item";
-import { CreateButton } from "../../components/create-button";
-import { usePropertyStore } from "../../stores/createPropertyStore";
 
-type Props = StaticScreenProps<{ organization_id: string }>;
+type Props = StaticScreenProps<{ organization_id: string; origin?: string }>;
 
 export const StepTwoScreen = ({ route }: Props) => {
   const { setProperty } = usePropertyStore();
@@ -73,7 +74,9 @@ export const StepTwoScreen = ({ route }: Props) => {
 
   const submit = (values: any) => {
     setProperty((prev) => ({ ...prev, person_id: values.person_id }));
-    navigation.push("StepThree");
+    navigation.push("StepThree", {
+      origin: route.params?.origin,
+    });
   };
 
   const person_id = watch("person_id");

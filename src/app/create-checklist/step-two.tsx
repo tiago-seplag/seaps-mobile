@@ -114,6 +114,7 @@ export function StepTwoScreen({ route }: Props) {
                         screen: "StepOne",
                         params: {
                           organization_id: route.params.organization_id,
+                          origin: "CreateChecklist",
                         },
                       })
                     }

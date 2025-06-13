@@ -17,9 +17,13 @@ import { StepsCount } from "../../components/steps-count";
 import { FormButton } from "../../components/form/form-button";
 import { usePropertyStore } from "../../stores/createPropertyStore";
 
-type Props = StaticScreenProps<undefined>;
+type Props = StaticScreenProps<{ origin?: string }>;
 
-export const StepThreeScreen = (_: Props) => {
+export const StepThreeScreen = ({
+  route: {
+    params: { origin },
+  },
+}: Props) => {
   const { property } = usePropertyStore();
 
   const navigation = useNavigation();
@@ -35,12 +39,19 @@ export const StepThreeScreen = (_: Props) => {
       .post("/api/properties", { ...property, ...values })
       .then(() =>
         navigation.dispatch(
-          StackActions.popTo("CreateChecklist", {
-            screen: "StepTwo",
-            params: {
-              organization_id: property.organization_id,
-            },
-          })
+          origin === "CreateChecklist"
+            ? StackActions.popTo("CreateChecklist", {
+                screen: "StepTwo",
+                params: {
+                  organization_id: property.organization_id,
+                },
+              })
+            : StackActions.popTo("HomeRoutes", {
+                screen: "PropertiesHomeScreen",
+                params: {
+                  refresh: true,
+                },
+              })
         )
       )
       .catch((e) => console.log(e));
@@ -57,7 +68,7 @@ export const StepThreeScreen = (_: Props) => {
             <Input
               control={control}
               errors={errors}
-              label="Nome"
+              label="NOME:"
               name="name"
               placeholder="Nome do local"
               errorMessage="Insira o nome do imóvel"
@@ -65,7 +76,7 @@ export const StepThreeScreen = (_: Props) => {
             <Input
               control={control}
               errors={errors}
-              label="Endereço"
+              label="ENDEREÇO:"
               name="address"
               placeholder="ex.: R. C, S/N - Centro Político Administrativo..."
               errorMessage="Insira o endereço do imóvel"
