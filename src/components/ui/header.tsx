@@ -21,6 +21,7 @@ export const Header = ({
   actionProps?: {
     icon: keyof typeof MaterialIcons.glyphMap;
     action: () => void;
+    disabled?: boolean;
   };
   style?: StyleProp<ViewStyle>;
   backButton?: boolean;
@@ -65,7 +66,10 @@ export const Header = ({
           {title}
         </Text>
         {actionProps && (
-          <TouchableOpacity onPress={actionProps.action}>
+          <TouchableOpacity
+            disabled={actionProps.disabled}
+            onPress={actionProps.action}
+          >
             <MaterialIcons
               name={actionProps.icon}
               size={32}

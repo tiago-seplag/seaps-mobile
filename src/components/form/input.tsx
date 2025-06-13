@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
   input: {
     minHeight: 42,
     fontSize: 14,
+    color: "#182D74",
     borderColor: "#1A3180",
     borderWidth: 1,
     marginBottom: 4,
