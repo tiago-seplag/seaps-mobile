@@ -42,7 +42,7 @@ export function HomeScreen() {
             text="Criar um novo checklist"
             onPress={() =>
               navigation.navigate("CreateChecklist", {
-                screen: "CreateChecklistScreen",
+                screen: "StepOne",
               })
             }
           />
@@ -53,6 +53,9 @@ export function HomeScreen() {
             onPress={() =>
               navigation.navigate("CreateProperty", {
                 screen: "StepOne",
+                params: {
+                  origin: "HomeScreen",
+                },
               })
             }
           />

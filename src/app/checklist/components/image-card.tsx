@@ -7,10 +7,10 @@ export const ImageCard = ({ uri }: { uri: string }) => {
         uri: process.env.EXPO_PUBLIC_BUCKET_URL + uri,
       }}
       style={{
-        height: 298,
+        minHeight: 298,
+        maxHeight: 298,
         width: "auto",
         objectFit: "cover",
-        flex: 1,
         backgroundColor: "#D9D9D9",
         borderRadius: 8,
       }}

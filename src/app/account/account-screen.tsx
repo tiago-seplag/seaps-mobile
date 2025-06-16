@@ -14,6 +14,7 @@ import { Toast } from "toastify-react-native";
 import { StaticScreenProps } from "@react-navigation/native";
 import { Button } from "../../components/ui/button";
 import { Header } from "../../components/ui/header";
+import { Card } from "../../components/ui/card";
 
 type Props = StaticScreenProps<undefined>;
 
@@ -41,7 +42,7 @@ export function AccountScreen({}: Props) {
           <RefreshControl refreshing={loading} onRefresh={handleRereshData} />
         }
       >
-        <View style={styles.card}>
+        <Card style={styles.card}>
           <Label title="NOME" value={user?.name} />
           <Label title="EMAIL" value={user?.email} />
           <Label title="PERFIL" value={user?.role} />
@@ -52,13 +53,18 @@ export function AccountScreen({}: Props) {
               </Text>
             </View>
           </Label>
+        </Card>
+        <View style={{ gap: 12 }}>
+          <Text style={{ color: "#1A3180", fontSize: 16, fontWeight: 400 }}>
+            AÇÕES:
+          </Text>
+          <Button
+            title="SAIR"
+            icon={"logout"}
+            color="#c52822"
+            onPress={signOut}
+          />
         </View>
-        <Button
-          title="SAIR"
-          icon={"logout"}
-          color="#c52822"
-          onPress={signOut}
-        />
       </ScrollView>
     </SafeAreaView>
   );

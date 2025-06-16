@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { api } from "../../services/api";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { ChecklistRoutesProps } from "./routes";
@@ -10,12 +9,13 @@ import { Toast } from "toastify-react-native";
 import { Header } from "../../components/ui/header";
 import { Row } from "../../components/row";
 import { Button } from "../../components/ui/button";
-import { BaseSafeAreaView } from "../../components/skeleton";
+import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
 import { Card } from "../../components/ui/card";
 
 type Props = StaticScreenProps<{
   checklistItem: any;
   checklist: any;
+  refresh?: number;
 }>;
 
 export function ChecklistItemScreen({ route }: Props) {
@@ -65,8 +65,30 @@ export function ChecklistItemScreen({ route }: Props) {
     });
   };
 
+  useEffect(() => {
+    const getData = async () => {
+      await api
+        .get("/api/checklist-item/" + checklistItem.id)
+        .then(({ data }) =>
+          setChecklistItem((prev) => ({
+            ...prev,
+            observation: data.observation,
+          }))
+        )
+        .catch((e) => {
+          if (e.response?.data?.message) {
+            Toast.error(e.response.data.message);
+          }
+        });
+    };
+
+    if (route.params?.refresh) {
+      getData();
+    }
+  }, [route.params?.refresh]);
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#1a3280" }}>
+    <BaseSafeAreaView>
       <Header
         backButton
         title={checklistItem.item?.name}
@@ -75,7 +97,7 @@ export function ChecklistItemScreen({ route }: Props) {
             checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
         }}
       />
-      <BaseSafeAreaView style={{ gap: 16 }}>
+      <BaseView style={{ gap: 16 }}>
         <View style={{ gap: 8 }}>
           <Text style={{ color: "#1A3180", fontSize: 16, fontWeight: 400 }}>
             PONTUAÇÃO:
@@ -110,8 +132,8 @@ export function ChecklistItemScreen({ route }: Props) {
             onPress={handleNavigateToObservation}
           />
         </View>
-      </BaseSafeAreaView>
-    </SafeAreaView>
+      </BaseView>
+    </BaseSafeAreaView>
   );
 }
 

@@ -13,6 +13,7 @@ import { Input } from "../../components/form/input";
 import { ImageCard } from "./components/image-card";
 
 import { ChecklistRoutesProps } from "./routes";
+import { Header } from "../../components/ui/header";
 
 interface ChecklistItemImage {
   checklist_item_id: string;
@@ -24,11 +25,16 @@ interface ChecklistItemImage {
 
 type Props = StaticScreenProps<{
   checklistItemPhoto: any;
+  checklistItem: any;
   checklist: any;
 }>;
 
 export function PhotoObservationScreen({ route }: Props) {
   const navigation = useNavigation<ChecklistRoutesProps>();
+
+  const checklist = route.params.checklist;
+  const checklistItem = route.params.checklistItem;
+  const checklistItemPhoto = route.params.checklistItemPhoto;
 
   const {
     handleSubmit,
@@ -36,9 +42,11 @@ export function PhotoObservationScreen({ route }: Props) {
     formState: { errors },
   } = useForm<{
     observation: string;
-  }>();
-
-  const [image] = useState<ChecklistItemImage>(route.params.checklistItemPhoto);
+  }>({
+    defaultValues: {
+      observation: checklistItemPhoto.observation,
+    },
+  });
 
   const [loading, setLoading] = useState(false);
 
@@ -51,14 +59,14 @@ export function PhotoObservationScreen({ route }: Props) {
     await api
       .put(
         "/api/checklist-item/" +
-          image.checklist_item_id +
+          checklistItemPhoto.checklist_item_id +
           "/images/" +
-          image.id,
+          checklistItemPhoto.id,
         {
           observation: observation,
         }
       )
-      .then(() => navigation.goBack())
+      .then(() => navigation.pop(2))
       .catch((e) => {
         if (e.response?.data?.message) {
           Toast.error(e.response.data.message);
@@ -69,6 +77,14 @@ export function PhotoObservationScreen({ route }: Props) {
 
   return (
     <BaseSafeAreaView>
+      <Header
+        backButton
+        title={checklistItem?.item?.name}
+        style={{
+          borderBottomColor:
+            checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
+        }}
+      />
       <KeyboardAwareScrollView
         bounces={false}
         contentContainerStyle={{
@@ -78,8 +94,8 @@ export function PhotoObservationScreen({ route }: Props) {
         }}
         enableAutomaticScroll={true}
       >
-        <Card>
-          <ImageCard uri={image.image} />
+        <Card style={{ gap: 16 }}>
+          <ImageCard uri={checklistItemPhoto.image} />
           <Input
             required={false}
             control={control}

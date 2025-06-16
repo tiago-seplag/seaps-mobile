@@ -10,6 +10,7 @@ import { ChecklistItemScreen } from "./checklist-item";
 import { ObservationScreen } from "./observation";
 import { PhotosListScreen } from "./photos-list";
 import { PhotoObservationScreen } from "./photo-observation";
+import { PhotoScreen } from "./photo";
 
 export const ChecklistRoutes = createNativeStackNavigator({
   screenOptions: { headerShown: false },
@@ -19,6 +20,7 @@ export const ChecklistRoutes = createNativeStackNavigator({
     ChecklistItem: ChecklistItemScreen,
     Observation: ObservationScreen,
     Photos: PhotosListScreen,
+    Photo: PhotoScreen,
     PhotoObservation: PhotoObservationScreen,
   },
 });

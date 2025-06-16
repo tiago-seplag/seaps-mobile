@@ -53,7 +53,7 @@ export function PhotosListScreen({ route }: Props) {
   );
   const [refresh, setRefresh] = useState(true);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const handleSelectOrigin = () => {
     Alert.alert(
@@ -145,7 +145,6 @@ export function PhotosListScreen({ route }: Props) {
   };
 
   const getData = async () => {
-    setLoading(true);
     api
       .get("/api/checklist-item/" + checklistItem.id)
       .then(({ data }) => setChecklistItem(data))
@@ -158,7 +157,7 @@ export function PhotosListScreen({ route }: Props) {
   };
 
   useEffect(() => {
-    if (focus && !loading) {
+    if (focus) {
       getData();
     }
   }, [refresh, focus]);
@@ -166,8 +165,9 @@ export function PhotosListScreen({ route }: Props) {
   const CHECKLIST_IS_CLOSED = checklist?.status === "CLOSED";
 
   return (
-    <BaseSafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <BaseSafeAreaView>
       <Header
+        backButton
         title={checklistItem?.item?.name}
         actionProps={{
           action: handleSelectOrigin,
@@ -192,7 +192,13 @@ export function PhotosListScreen({ route }: Props) {
             <PhotosItem
               item={item}
               highlight={checklistItem?.image === item.item?.image}
-              onSelect={() => {}}
+              onSelect={() =>
+                navigation.push("Photo", {
+                  checklist,
+                  checklistItem,
+                  checklistItemPhoto: item.item,
+                })
+              }
             />
           )}
         />

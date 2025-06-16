@@ -31,7 +31,8 @@ export function PhotoScreen({ route }: Props) {
   const handleNavigateToObservation = () => {
     navigation.push("PhotoObservation", {
       checklist,
-      checklistItemPhoto: route.params.checklistItemPhoto,
+      checklistItemPhoto: checklistItemPhoto,
+      checklistItem: checklistItem,
     });
   };
 
@@ -86,7 +87,7 @@ export function PhotoScreen({ route }: Props) {
       })
       .then(() => {
         Toast.success("Item atulizado com sucesso");
-        getData();
+        navigation.pop();
       })
       .catch((e) => {
         if (e.response?.data?.message) {
@@ -119,50 +120,52 @@ export function PhotoScreen({ route }: Props) {
         }}
       />
       <BaseScrollView>
-        <Card style={{ gap: 8 }}>
-          <Image
-            source={{
-              uri: process.env.EXPO_PUBLIC_BUCKET_URL + checklistItem.image,
-            }}
-            style={{
-              height: 298,
-              width: "auto",
-              objectFit: "cover",
-              flex: 1,
-              backgroundColor: "#D9D9D9",
-              borderRadius: 8,
-            }}
-          />
-          <CardText
-            numberOfLines={3}
-            style={{ fontSize: 10, fontWeight: "bold" }}
-          >
-            {checklistItemPhoto.observation}
-          </CardText>
-        </Card>
-        <Row />
-        <View style={{ gap: 8 }}>
-          <Text style={{ color: "#1A3180", fontSize: 16, fontWeight: 400 }}>
-            AÇÕES:
-          </Text>
-          <Button
-            icon="sms"
-            title="EDITAR OBSERVAÇÕES"
-            onPress={handleNavigateToObservation}
-          />
-          <Button
-            disabled={checklistItem?.image === checklistItemPhoto?.image}
-            icon="star"
-            color="#EAB308"
-            title="TORNAR PRINCIPAL"
-            onPress={handleUpdateChecklistImage}
-          />
-          <Button
-            icon="delete"
-            color="#DC2626"
-            title="DELETAR IMAGEM"
-            onPress={handleDeleteImage}
-          />
+        <View style={{ gap: 16 }}>
+          <Card style={{ gap: 8 }}>
+            <Image
+              source={{
+                uri: process.env.EXPO_PUBLIC_BUCKET_URL + checklistItem.image,
+              }}
+              style={{
+                height: 298,
+                width: "auto",
+                objectFit: "cover",
+                flex: 1,
+                backgroundColor: "#D9D9D9",
+                borderRadius: 8,
+              }}
+            />
+            <CardText
+              numberOfLines={3}
+              style={{ fontSize: 14, fontWeight: "bold" }}
+            >
+              {checklistItemPhoto.observation}
+            </CardText>
+          </Card>
+          <Row />
+          <View style={{ gap: 8 }}>
+            <Text style={{ color: "#1A3180", fontSize: 16, fontWeight: 400 }}>
+              AÇÕES:
+            </Text>
+            <Button
+              icon="sms"
+              title="EDITAR OBSERVAÇÕES"
+              onPress={handleNavigateToObservation}
+            />
+            <Button
+              disabled={checklistItem?.image === checklistItemPhoto?.image}
+              icon="star"
+              color="#EAB308"
+              title="TORNAR PRINCIPAL"
+              onPress={handleUpdateChecklistImage}
+            />
+            <Button
+              icon="delete"
+              color="#DC2626"
+              title="DELETAR IMAGEM"
+              onPress={handleDeleteImage}
+            />
+          </View>
         </View>
       </BaseScrollView>
     </SafeAreaView>

@@ -34,12 +34,11 @@ export function ChecklistItemsScreen({ route }: Props) {
 
   const [checklist, setChecklist] = useState<Checklist>(route.params.checklist);
   const [refresh, setRefresh] = useState(true);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (focus) {
       const getData = () => {
-        setLoading(true);
         api
           .get("/api/checklists/" + checklist.id)
           .then(({ data }) => {
