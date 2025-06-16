@@ -5,7 +5,7 @@ import { Card, CardHeader, CardText, CardTitle } from "./ui/card";
 import { ChecklistBadge } from "./checklist-badge";
 import { Icon } from "./icon";
 
-export const ChecklistItem = ({ item }: any) => {
+export const ChecklistItem = ({ item }: { item: { item: Checklist } }) => {
   const navigation = useNavigation();
 
   return (
