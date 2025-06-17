@@ -2,6 +2,7 @@ import { Text, TouchableOpacity, TouchableOpacityProps } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export const FormButton = ({
+  disabled,
   icon,
   title,
   style,
@@ -12,6 +13,7 @@ export const FormButton = ({
 } & TouchableOpacityProps) => {
   return (
     <TouchableOpacity
+      disabled={disabled}
       style={[
         {
           marginTop: "auto",
@@ -22,6 +24,7 @@ export const FormButton = ({
           padding: 12,
           borderRadius: 12,
           gap: 4,
+          opacity: disabled ? 0.5 : 1,
         },
         style,
       ]}

@@ -16,6 +16,7 @@ export const Input = ({
   errorMessage,
   required = true,
   style,
+  disabled,
   ...props
 }: {
   required?: boolean;
@@ -25,6 +26,7 @@ export const Input = ({
   placeholder: string;
   control: Control<any>;
   errors: FieldErrors;
+  disabled?: boolean;
 } & Partial<TextInputProps>) => {
   return (
     <View>
@@ -35,11 +37,13 @@ export const Input = ({
           required,
         }}
         name={name}
+        
         render={({ field: { onChange, value } }) => (
           <TextInput
+            editable={!disabled}
             placeholder={placeholder}
             value={value}
-            style={[styles.input, style]}
+            style={[styles.input, style, disabled && { opacity: 0.5 }]}
             onChangeText={onChange}
             autoCapitalize="characters"
             {...props}
