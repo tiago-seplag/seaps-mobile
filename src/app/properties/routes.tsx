@@ -2,8 +2,6 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import { CreateProperty } from "./createProperty";
-import { CreateResponsible } from "./createResponsible";
 import { EditProperty } from "./editProperty";
 import { StaticParamList } from "@react-navigation/native";
 
@@ -11,7 +9,7 @@ type PropertiesParamList = StaticParamList<typeof PropertiesRoutes>;
 
 export type PropertiesScreenNavigationProp = NativeStackNavigationProp<
   PropertiesParamList,
-  "CreateProperty"
+  "EditProperty"
 >;
 
 export const PropertiesRoutes = createNativeStackNavigator({
@@ -19,8 +17,8 @@ export const PropertiesRoutes = createNativeStackNavigator({
     headerShown: false,
   },
   screens: {
-    CreateProperty,
-    CreateResponsible,
+    // CreateProperty,
+    // CreateResponsible,
     EditProperty,
   },
 });

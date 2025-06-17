@@ -1,76 +1,37 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  View,
-} from "react-native";
+import { useEffect } from "react";
+import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
 
-import {
-  StaticScreenProps,
-  useIsFocused,
-  useNavigation,
-} from "@react-navigation/native";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 
 import { api } from "../../services/api";
 import { Header } from "../../components/ui/header";
 import { PropertyItem } from "../../components/property-item";
 import { BaseSafeAreaView } from "../../components/skeleton";
+import { useInfinityScroll } from "../../hooks/useInfinityScroll";
 
 type Props = StaticScreenProps<{
-  refresh?: boolean;
+  refresh?: boolean | number;
 }>;
 
-export function PropertiesScreen({ route }: Props) {
+function getProperties(page: number = 1, params?: any) {
+  return api.get<{ data: Property[]; meta: any }>(`/api/properties`, {
+    params: {
+      page,
+      per_page: 20,
+      ...params,
+    },
+  });
+}
+
+export function PropertiesScreen({ route: { params } }: Props) {
   const navigation = useNavigation();
-  const isFocused = useIsFocused();
 
-  const [data, setData] = useState<any[]>([]);
-
-  const [loading, setLoading] = useState(false);
-  const [lastPage, setLastPage] = useState(0);
-  const [loadingMore, setLoadingMore] = useState(false);
-
-  const currentPageRef = useRef(1);
-
-  const fetchData = async (pageToLoad = 1) => {
-    if (loading || loadingMore) return;
-
-    pageToLoad === 1 ? setLoading(true) : setLoadingMore(true);
-
-    try {
-      const response = await api.get(
-        `/api/properties?page=${pageToLoad}&per_page=20`
-      );
-      const responseData = response.data;
-
-      if (pageToLoad === 1) {
-        setData(responseData.data);
-      } else {
-        setData((prev) => [...prev, ...responseData.data]);
-      }
-
-      currentPageRef.current = responseData.meta.current_page;
-      setLastPage(responseData.meta.last_page);
-    } catch (error) {
-      console.error("Erro ao buscar dados:", error);
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-    }
-  };
-
-  const loadMore = () => {
-    if (!loadingMore && currentPageRef.current < lastPage) {
-      fetchData(currentPageRef.current + 1);
-    }
-  };
+  const { data, loadingMore, loading, fetchData, loadMore } =
+    useInfinityScroll(getProperties);
 
   useEffect(() => {
-    if (isFocused || route.params?.refresh) {
-      fetchData(1);
-    }
-  }, [route.params?.refresh, isFocused]);
+    fetchData(1);
+  }, [params?.refresh]);
 
   const renderFooter = () => {
     if (!loadingMore) return null;
@@ -84,43 +45,31 @@ export function PropertiesScreen({ route }: Props) {
         icon={"domain"}
         actionProps={{
           action: () =>
-            navigation.navigate("Properties", {
-              screen: "CreateProperty",
+            navigation.navigate("CreateProperty", {
+              screen: "StepOne",
+              params: {
+                origin: "HomeScreen",
+              },
             }),
           icon: "add-home",
         }}
       />
-      {loading ? (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            backgroundColor: "#F1F2F4",
-          }}
-        >
-          <ActivityIndicator size="large" />
-        </View>
-      ) : (
-        <FlatList
-          data={data}
-          refreshControl={
-            <RefreshControl
-              refreshing={loading}
-              onRefresh={() => fetchData(1)}
-            />
-          }
-          onEndReached={loadMore}
-          onEndReachedThreshold={0.5}
-          contentContainerStyle={{ paddingBottom: 92 }}
-          ListFooterComponent={renderFooter}
-          style={{
-            flex: 1,
-            padding: 16,
-            backgroundColor: "#F1F2F4",
-          }}
-          renderItem={(item) => <PropertyItem item={item} />}
-        />
-      )}
+      <FlatList
+        data={data}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={() => fetchData(1)} />
+        }
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        contentContainerStyle={{ paddingBottom: 92 }}
+        ListFooterComponent={renderFooter}
+        style={{
+          flex: 1,
+          padding: 16,
+          backgroundColor: "#F1F2F4",
+        }}
+        renderItem={(item) => <PropertyItem item={item} />}
+      />
     </BaseSafeAreaView>
   );
 }

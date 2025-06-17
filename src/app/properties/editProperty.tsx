@@ -11,18 +11,21 @@ import {
 } from "react-native";
 import { useForm } from "react-hook-form";
 
-import { SafeAreaView } from "react-native-safe-area-context";
-
 import { Input } from "../../components/form/input";
 import { Select } from "../../components/form/select";
 import { api } from "../../services/api";
 import {
+  StackActions,
   StaticScreenProps,
   useIsFocused,
   useNavigation,
 } from "@react-navigation/native";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 import { PropertiesScreenNavigationProp } from "./routes";
+import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
+import { Header } from "../../components/ui/header";
+import { FormButton } from "../../components/form/form-button";
+import { Card } from "../../components/ui/card";
 
 interface PropertyForm {
   name: string;
@@ -61,17 +64,17 @@ export function EditProperty({ route }: Props) {
 
   useEffect(() => {
     api.get("/api/organizations").then(({ data }) => setOrganizations(data));
-  }, [focus]);
+  }, []);
 
   const [organization_id] = watch(["organization_id"]);
 
   useEffect(() => {
-    if (organization_id) {
+    if (organization_id && focus) {
       api
         .get("/api/organizations/" + organization_id + "/responsible")
         .then(({ data }) => setResponsible(data));
     }
-  }, [organization_id]);
+  }, [organization_id, focus]);
 
   const submit = async (values: PropertyForm) => {
     const data = {
@@ -82,43 +85,38 @@ export function EditProperty({ route }: Props) {
 
     return api
       .put("/api/properties/" + property.id, data)
-      .then(() => screen.goBack())
+      .then(() =>
+        screen.dispatch(
+          StackActions.popTo("HomeRoutes", {
+            screen: "PropertiesHomeScreen",
+            params: {
+              refresh: Date.now(),
+            },
+          })
+        )
+      )
       .catch((e) => console.log(e.response.data));
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <View
-        style={{
-          paddingHorizontal: 16,
-          paddingVertical: 8,
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <Text style={styles.title} numberOfLines={1}>
-          {property.name}
-        </Text>
-      </View>
-      <KeyboardAvoidingView
-        behavior="padding"
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
-        style={styles.container}
-      >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.form}>
+    <BaseSafeAreaView>
+      <Header backButton title={property.name} />
+
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <BaseView>
+          <Card style={{ gap: 8 }}>
             <Select
               options={organizations}
               control={control}
               errors={errors}
               name="organization_id"
-              label="Orgão"
+              label="ORGÃO:"
               placeholder="Selecione o orgão"
               errorMessage="Insira o orgão do imóvel"
             />
             {organization_id && (
               <Select
-                label="Responsável"
+                label="RESPONSÁVEL:"
                 placeholder="Selecione o Responsável do imóvel"
                 control={control}
                 errors={errors}
@@ -128,7 +126,16 @@ export function EditProperty({ route }: Props) {
                 button={
                   <TouchableOpacity
                     style={styles.button}
-                    onPress={() => screen.push("CreateResponsible")}
+                    onPress={() =>
+                      screen.dispatch(
+                        StackActions.push("CreateProperty", {
+                          screen: "CreateResponsible",
+                          params: {
+                            organization_id,
+                          },
+                        })
+                      )
+                    }
                   >
                     <Materialnicons name="add" size={24} color={"#1a3180"} />
                   </TouchableOpacity>
@@ -136,7 +143,7 @@ export function EditProperty({ route }: Props) {
               />
             )}
             <Select
-              label="Tipo de Imóvel"
+              label="TIPO DE IMÓVEL:"
               placeholder="Selecione o tipo do imóvel"
               control={control}
               errors={errors}
@@ -151,7 +158,7 @@ export function EditProperty({ route }: Props) {
             <Input
               control={control}
               errors={errors}
-              label="Nome"
+              label="NOME:"
               name="name"
               placeholder="Nome do local"
               errorMessage="Insira o nome do imóvel"
@@ -159,28 +166,23 @@ export function EditProperty({ route }: Props) {
             <Input
               control={control}
               errors={errors}
-              label="Endereço"
+              label="ENDEREÇO:"
               name="address"
               placeholder="ex.: R. C, S/N - Centro Político Administrativo..."
               errorMessage="Insira o endereço do imóvel"
+              maxLength={255}
+              multiline
+              style={{ minHeight: 44 * 3.1 }}
             />
-            <TouchableOpacity
-              onPress={handleSubmit(submit)}
-              style={styles.saveButton}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: 600,
-                }}
-              >
-                SALVAR
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          </Card>
+          <FormButton
+            onPress={handleSubmit(submit)}
+            icon="save"
+            title="SALVAR"
+          />
+        </BaseView>
+      </TouchableWithoutFeedback>
+    </BaseSafeAreaView>
   );
 }
 
