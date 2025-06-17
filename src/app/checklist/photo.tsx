@@ -153,13 +153,17 @@ export function PhotoScreen({ route }: Props) {
               onPress={handleNavigateToObservation}
             />
             <Button
-              disabled={checklistItem?.image === checklistItemPhoto?.image}
+              disabled={
+                checklistItem?.image === checklistItemPhoto?.image ||
+                route.params.checklist.status === "CLOSED"
+              }
               icon="star"
               color="#EAB308"
               title="TORNAR PRINCIPAL"
               onPress={handleUpdateChecklistImage}
             />
             <Button
+              disabled={route.params.checklist.status === "CLOSED"}
               icon="delete"
               color="#DC2626"
               title="DELETAR IMAGEM"

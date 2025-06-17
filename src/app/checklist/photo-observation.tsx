@@ -106,6 +106,7 @@ export function PhotoObservationScreen({ route }: Props) {
             errorMessage="Insira o endereço do imóvel"
             maxLength={255}
             multiline
+            disabled={loading || route.params.checklist.status === "CLOSED"}
             style={{ minHeight: 44 * 3.1 }}
           />
         </Card>

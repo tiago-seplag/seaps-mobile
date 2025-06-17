@@ -98,6 +98,7 @@ export function ObservationScreen({ route }: Props) {
             errorMessage="Insira o endereço do imóvel"
             maxLength={255}
             multiline
+            disabled={route.params.checklist.status === "CLOSED"}
             style={{ minHeight: 44 * 3.1 }}
           />
         </Card>
