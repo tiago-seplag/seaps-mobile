@@ -22,6 +22,7 @@ export const PDFModal = ({
       <View style={styles.modalHeader}>
         <Button
           title="Compartilhar"
+          color={"white"}
           onPress={async () =>
             uri &&
             Sharing.shareAsync(uri, {
@@ -31,7 +32,7 @@ export const PDFModal = ({
             })
           }
         />
-        <Button title="Fechar" onPress={handleCloseModal} />
+        <Button title="Fechar" color={"white"} onPress={handleCloseModal} />
       </View>
       <WebView
         source={{ uri: uri }}
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingBottom: 10,
     paddingHorizontal: 10,
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "#1A3180",
     flexDirection: "row",
     justifyContent: "space-between",
   },

@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { StyleSheet, TouchableOpacityProps, Platform } from "react-native";
+import { TouchableOpacityProps, Platform } from "react-native";
 import { useSession } from "../../../contexts/authContext";
 import { Toast } from "toastify-react-native";
 import { Button } from "../../../components/ui/button";
@@ -92,26 +92,3 @@ export const PDFButtonModal: FC<PDFButtonModalProps> = ({ checklist, id }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 50,
-    paddingHorizontal: 20,
-  },
-  modalHeader: {
-    paddingTop: 50,
-    paddingBottom: 10,
-    paddingHorizontal: 10,
-    backgroundColor: "#f2f2f2",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  webview: {
-    flex: 1,
-  },
-  loader: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
