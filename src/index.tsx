@@ -19,8 +19,8 @@ const AppStack = createNativeStackNavigator({
   screens: {
     HomeRoutes: HomeRoutes,
     AccountRoutes: AccountRoutes,
-    Checklist: ChecklistRoutes,
-    Properties: PropertyRoutes,
+    ChecklistRoutes: ChecklistRoutes,
+    PropertyRoutes: PropertyRoutes,
     CreateChecklist: CreateChecklistRoutes,
     CreateProperty: CreatePropertyRoutes,
   },

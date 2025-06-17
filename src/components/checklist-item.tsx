@@ -11,7 +11,7 @@ export const ChecklistItem = ({ item }: { item: { item: Checklist } }) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate("Checklist", {
+        navigation.navigate("ChecklistRoutes", {
           screen: "Checklist",
           params: { id: item.item.id },
         });

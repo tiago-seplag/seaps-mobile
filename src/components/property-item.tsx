@@ -9,7 +9,7 @@ export const PropertyItem = ({ item }: any) => {
   const navigation = useNavigation();
 
   const handleEditProperty = (property: any) => {
-    return navigation.navigate("Properties", {
+    return navigation.navigate("PropertyRoutes", {
       screen: "EditProperty",
       params: { property },
     });
