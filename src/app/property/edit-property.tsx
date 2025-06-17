@@ -1,31 +1,25 @@
 import React, { useEffect, useState } from "react";
 import {
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
 } from "react-native";
-import { useForm } from "react-hook-form";
-
-import { Input } from "../../components/form/input";
-import { Select } from "../../components/form/select";
-import { api } from "../../services/api";
 import {
   StackActions,
   StaticScreenProps,
   useIsFocused,
   useNavigation,
 } from "@react-navigation/native";
-import Materialnicons from "@expo/vector-icons/MaterialIcons";
-import { PropertiesScreenNavigationProp } from "./routes";
+import { useForm } from "react-hook-form";
+
+import { Input } from "../../components/form/input";
+import { Select } from "../../components/form/select";
+import { api } from "../../services/api";
 import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
 import { Header } from "../../components/ui/header";
 import { FormButton } from "../../components/form/form-button";
 import { Card } from "../../components/ui/card";
+import { Icon } from "../../components/icon";
 
 interface PropertyForm {
   name: string;
@@ -40,15 +34,14 @@ type Props = StaticScreenProps<{
 }>;
 
 export function EditProperty({ route }: Props) {
-  const focus = useIsFocused();
+  const isFocused = useIsFocused();
+  const navigation = useNavigation();
 
   const [property] = useState<any>(route.params.property);
   const [organizations, setOrganizations] = useState<any[]>([]);
   const [responsible, setResponsible] = useState<any[]>([]);
-  const screen = useNavigation<PropertiesScreenNavigationProp>();
 
   const {
-    watch,
     handleSubmit,
     control,
     formState: { errors },
@@ -66,15 +59,13 @@ export function EditProperty({ route }: Props) {
     api.get("/api/organizations").then(({ data }) => setOrganizations(data));
   }, []);
 
-  const [organization_id] = watch(["organization_id"]);
-
   useEffect(() => {
-    if (organization_id && focus) {
+    if (property && isFocused) {
       api
-        .get("/api/organizations/" + organization_id + "/responsible")
+        .get("/api/organizations/" + property.organization_id + "/responsible")
         .then(({ data }) => setResponsible(data));
     }
-  }, [organization_id, focus]);
+  }, [property, isFocused]);
 
   const submit = async (values: PropertyForm) => {
     const data = {
@@ -86,7 +77,7 @@ export function EditProperty({ route }: Props) {
     return api
       .put("/api/properties/" + property.id, data)
       .then(() =>
-        screen.dispatch(
+        navigation.dispatch(
           StackActions.popTo("HomeRoutes", {
             screen: "PropertiesHomeScreen",
             params: {
@@ -101,7 +92,6 @@ export function EditProperty({ route }: Props) {
   return (
     <BaseSafeAreaView>
       <Header backButton title={property.name} />
-
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <BaseView>
           <Card style={{ gap: 8 }}>
@@ -114,34 +104,31 @@ export function EditProperty({ route }: Props) {
               placeholder="Selecione o orgão"
               errorMessage="Insira o orgão do imóvel"
             />
-            {organization_id && (
-              <Select
-                label="RESPONSÁVEL:"
-                placeholder="Selecione o Responsável do imóvel"
-                control={control}
-                errors={errors}
-                name="person_id"
-                errorMessage="Selecione o Responsável do imóvel"
-                options={responsible}
-                button={
-                  <TouchableOpacity
-                    style={styles.button}
-                    onPress={() =>
-                      screen.dispatch(
-                        StackActions.push("CreateProperty", {
-                          screen: "CreateResponsible",
-                          params: {
-                            organization_id,
-                          },
-                        })
-                      )
-                    }
-                  >
-                    <Materialnicons name="add" size={24} color={"#1a3180"} />
-                  </TouchableOpacity>
-                }
-              />
-            )}
+            <Select
+              label="RESPONSÁVEL:"
+              placeholder="Selecione o Responsável do imóvel"
+              control={control}
+              errors={errors}
+              name="person_id"
+              errorMessage="Selecione o Responsável do imóvel"
+              options={responsible}
+              button={
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.dispatch(
+                      StackActions.push("CreateProperty", {
+                        screen: "CreateResponsible",
+                        params: {
+                          organization_id: property.organization_id,
+                        },
+                      })
+                    )
+                  }
+                >
+                  <Icon icon="add" />
+                </TouchableOpacity>
+              }
+            />
             <Select
               label="TIPO DE IMÓVEL:"
               placeholder="Selecione o tipo do imóvel"
@@ -185,55 +172,3 @@ export function EditProperty({ route }: Props) {
     </BaseSafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 26,
-    fontWeight: "bold",
-  },
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#e8e8e8",
-    shadowColor: "black",
-    justifyContent: "flex-start",
-  },
-  form: {
-    backgroundColor: "#ffffff",
-    padding: 16,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    marginBottom: 16,
-    gap: 8,
-  },
-  saveButton: {
-    backgroundColor: "#58e68e",
-    borderColor: "#1c492e",
-    padding: 4,
-    borderWidth: 1,
-    borderRadius: 8,
-    height: 40,
-    paddingVertical: 10,
-    alignSelf: "flex-end",
-    width: "30%",
-    display: "flex",
-    alignItems: "center",
-  },
-  button: {
-    borderColor: "#1a3180",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderRadius: 8,
-    height: 40,
-    width: 40,
-    display: "flex",
-    alignItems: "center",
-  },
-});

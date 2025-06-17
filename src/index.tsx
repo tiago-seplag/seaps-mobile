@@ -1,16 +1,18 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Login } from "./app/auth/login";
-import { HomeRoutes } from "./app/home/routes";
-import { ChecklistRoutes } from "./app/checklist/routes";
-import { useIsSignedIn, useIsSignedOut } from "./contexts/authContext";
-import { PropertiesRoutes } from "./app/properties/routes";
-import { AccountRoutes } from "./app/account/route";
-import { CreateChecklistRoutes } from "./app/create-checklist/routes";
-import { CreatePropertyRoutes } from "./app/create-property/route";
 import {
   createStaticNavigation,
   StaticParamList,
 } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+import { useIsSignedIn, useIsSignedOut } from "./contexts/authContext";
+
+import { Login } from "./app/auth/login";
+import { HomeRoutes } from "./app/home/routes";
+import { ChecklistRoutes } from "./app/checklist/routes";
+import { PropertyRoutes } from "./app/property/routes";
+import { AccountRoutes } from "./app/account/route";
+import { CreateChecklistRoutes } from "./app/create-checklist/routes";
+import { CreatePropertyRoutes } from "./app/create-property/route";
 
 const AppStack = createNativeStackNavigator({
   screenOptions: { headerShown: false },
@@ -18,7 +20,7 @@ const AppStack = createNativeStackNavigator({
     HomeRoutes: HomeRoutes,
     AccountRoutes: AccountRoutes,
     Checklist: ChecklistRoutes,
-    Properties: PropertiesRoutes,
+    Properties: PropertyRoutes,
     CreateChecklist: CreateChecklistRoutes,
     CreateProperty: CreatePropertyRoutes,
   },
