@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Alert, FlatList, Platform, RefreshControl } from "react-native";
+import {
+  Alert,
+  FlatList,
+  Platform,
+  RefreshControl,
+  Text,
+  View,
+} from "react-native";
 import {
   StaticScreenProps,
   useIsFocused,
@@ -13,6 +20,7 @@ import { api } from "../../services/api";
 import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
 import { Header } from "../../components/ui/header";
 import { PhotosItem } from "./components/photos-item";
+import { CreateButton } from "../../components/create-button";
 
 interface checklistItem {
   id: string;
@@ -62,11 +70,17 @@ export function PhotosListScreen({ route }: Props) {
       [
         {
           text: "Galeria",
+          isPreferred: true,
           onPress: () => pickImage("LIBRARY"),
         },
         {
           text: "Camera",
           onPress: () => pickImage("CAMERA"),
+        },
+        {
+          text: "Cancelar",
+          style: "destructive",
+          onPress: () => null,
         },
       ],
       {
@@ -162,24 +176,25 @@ export function PhotosListScreen({ route }: Props) {
     }
   }, [refresh, focus]);
 
-  const CHECKLIST_IS_CLOSED = checklist?.status === "CLOSED";
-
   return (
     <BaseSafeAreaView>
       <Header
         backButton
         title={checklistItem?.item?.name}
-        actionProps={{
-          action: handleSelectOrigin,
-          icon: "add-a-photo",
-          disabled: CHECKLIST_IS_CLOSED,
-        }}
         style={{
           borderBottomColor:
             checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
         }}
       />
-      <BaseView>
+      <BaseView style={{ gap: 8 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={{ color: "#1A3180", fontSize: 16, fontWeight: 400 }}>
+            IMAGENS:
+          </Text>
+          <Text style={{ color: "#858586", fontSize: 16, fontWeight: 400 }}>
+            {checklistItem?.images.length}/10
+          </Text>
+        </View>
         <FlatList
           data={checklistItem?.images}
           refreshControl={
@@ -187,6 +202,14 @@ export function PhotosListScreen({ route }: Props) {
               refreshing={loading}
               onRefresh={() => setRefresh(!refresh)}
             />
+          }
+          ListFooterComponent={
+            checklistItem.images?.length < 10 ? (
+              <CreateButton
+                title="INSERIR IMAGEM"
+                onPress={handleSelectOrigin}
+              />
+            ) : null
           }
           renderItem={(item) => (
             <PhotosItem

@@ -70,7 +70,7 @@ export function PhotoScreen({ route }: Props) {
       )
       .then(() => {
         Toast.success("Imagem deletada com sucesso");
-        getData();
+        navigation.goBack();
       })
       .catch((e) => {
         if (e.response?.data?.message) {
