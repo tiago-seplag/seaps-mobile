@@ -125,7 +125,17 @@ export function EditProperty({ route }: Props) {
                     )
                   }
                 >
-                  <Icon icon="add" />
+                  <Icon
+                    style={{
+                      padding: 0,
+                      marginBottom: 4,
+                      height: 40,
+                      width: 40,
+                      borderWidth: 1,
+                      borderColor: "#182D74",
+                    }}
+                    icon="add"
+                  />
                 </TouchableOpacity>
               }
             />

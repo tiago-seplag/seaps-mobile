@@ -29,6 +29,7 @@ export function StepOneScreen(_: Props) {
   const navigation = useNavigation<CreateChecklistRoutesProps>();
 
   const {
+    setValue,
     clearErrors,
     handleSubmit,
     control,
@@ -38,7 +39,10 @@ export function StepOneScreen(_: Props) {
   useEffect(() => {
     clearErrors();
     api.get("/api/organizations").then(({ data }) => setOrganizations(data));
-    api.get("/api/models").then(({ data }) => setModels(data));
+    api.get("/api/models").then(({ data }) => {
+      setModels(data);
+      setValue("model_id", data[0]?.id);
+    });
   }, []);
 
   const submit = async (values: Form) => {

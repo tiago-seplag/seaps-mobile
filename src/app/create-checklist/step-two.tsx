@@ -9,7 +9,11 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { StaticScreenProps, useNavigation } from "@react-navigation/native";
+import {
+  StaticScreenProps,
+  useIsFocused,
+  useNavigation,
+} from "@react-navigation/native";
 
 import { useCreateChecklist } from "../../contexts/checklistContext";
 import { Input } from "../../components/form/input";
@@ -38,6 +42,7 @@ type Props = StaticScreenProps<{
 }>;
 
 export function StepTwoScreen({ route }: Props) {
+  const isFocused = useIsFocused();
   const { setChecklist } = useChecklistStore();
 
   const {
@@ -57,7 +62,7 @@ export function StepTwoScreen({ route }: Props) {
     api
       .get("/api/organizations/" + route.params.organization_id + "/properties")
       .then(({ data }) => setProperties(data));
-  }, []);
+  }, [isFocused]);
 
   const submit = async (values: ChecklistForm) => {
     setChecklist((prev) => ({ ...prev, property_id: values.property_id }));
