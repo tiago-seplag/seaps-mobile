@@ -1,20 +1,18 @@
-import { useEffect } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  StyleSheet,
-} from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 
 import { api } from "../../services/api";
 import { Header } from "../../components/ui/header";
 import { ChecklistItem } from "../../components/checklist-item";
-import { BaseSafeAreaView } from "../../components/skeleton";
+import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
 import { useInfinityScroll } from "../../hooks/useInfinityScroll";
+import { Row } from "../../components/row";
+import { SearchInput } from "./components/search-input";
+import debounce from "lodash.debounce";
 
 type Props = StaticScreenProps<{
-  refresh?: boolean;
+  refresh?: boolean | number;
 }>;
 
 function getChecklist(page: number = 1, params?: any) {
@@ -30,8 +28,21 @@ function getChecklist(page: number = 1, params?: any) {
 export function ChecklistsScreen({ route: { params } }: Props) {
   const navigation = useNavigation();
 
+  const [search, setSearch] = useState("");
   const { data, loadingMore, loading, fetchData, loadMore } =
     useInfinityScroll(getChecklist);
+
+  const debouncedFetchData = useCallback(
+    debounce((value: string) => {
+      fetchData(1, { property_name: value });
+    }, 500),
+    []
+  );
+
+  const handleSearchChange = (text: string) => {
+    setSearch(text);
+    debouncedFetchData(text);
+  };
 
   useEffect(() => {
     fetchData(1);
@@ -55,26 +66,30 @@ export function ChecklistsScreen({ route: { params } }: Props) {
           icon: "add-chart",
         }}
       />
-      <FlatList
-        data={data}
-        refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={() => fetchData(1)} />
-        }
-        style={styles.list}
-        onEndReached={loadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={renderFooter}
-        contentContainerStyle={{ paddingBottom: 92 }}
-        renderItem={(item) => <ChecklistItem item={item} />}
-      />
+      <BaseView style={{ gap: 12 }}>
+        <SearchInput
+          value={search}
+          placeholder="Procure pelo Imóvel"
+          onChangeText={handleSearchChange}
+        />
+        <Row />
+        <FlatList
+          data={data}
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={() =>
+                fetchData(1, search && { property_name: search })
+              }
+            />
+          }
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderFooter}
+          contentContainerStyle={{ paddingBottom: 92 }}
+          renderItem={(item) => <ChecklistItem item={item} />}
+        />
+      </BaseView>
     </BaseSafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  list: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#F1F2F4",
-  },
-});

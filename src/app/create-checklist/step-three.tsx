@@ -49,7 +49,7 @@ export const StepThreeScreen = (_: Props) => {
           StackActions.popTo("HomeRoutes", {
             screen: "ChecklistsHomeScreen",
             params: {
-              refresh: true,
+              refresh: Date.now(),
             },
           })
         )

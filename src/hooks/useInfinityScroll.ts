@@ -2,7 +2,10 @@ import { AxiosResponse } from "axios";
 import { useRef, useState } from "react";
 
 export const useInfinityScroll = <T = unknown>(
-  getData: (page: number) => Promise<
+  getData: (
+    page: number,
+    filter?: any
+  ) => Promise<
     AxiosResponse<
       {
         data: T[];
@@ -10,8 +13,7 @@ export const useInfinityScroll = <T = unknown>(
       },
       any
     >
-  >,
-  ...args: any[]
+  >
 ) => {
   const [data, setData] = useState<T[]>([]);
 
@@ -21,13 +23,15 @@ export const useInfinityScroll = <T = unknown>(
 
   const currentPageRef = useRef(1);
 
-  const fetchData = async (page = 1) => {
+  const fetchData = async (page = 1, filter?: any) => {
     if (loading || loadingMore) return;
 
-    page === 1 ? setLoading(true) : setLoadingMore(true);
+    page === 1 && filter === undefined
+      ? setLoading(true)
+      : setLoadingMore(true);
 
     try {
-      const response = await getData(page);
+      const response = await getData(page, filter);
       const responseData = response.data;
 
       if (page === 1) {

@@ -13,7 +13,7 @@ export const ChecklistItem = ({ item }: { item: { item: Checklist } }) => {
       onPress={() => {
         navigation.navigate("ChecklistRoutes", {
           screen: "Checklist",
-          params: { id: item.item.id },
+          params: { id: item.item.id, checklist: item.item },
         });
       }}
       key={item.item.id}
