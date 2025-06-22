@@ -46,6 +46,7 @@ export const Select = ({
             style={{
               display: "flex",
               flexDirection: "row",
+              alignItems: "center",
               gap: 8,
               opacity: disabled ? 0.4 : 1,
             }}

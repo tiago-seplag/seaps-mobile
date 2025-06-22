@@ -21,7 +21,7 @@ export const Input = ({
 }: {
   required?: boolean;
   name: string;
-  label: string;
+  label?: string;
   errorMessage?: string;
   placeholder: string;
   control: Control<any>;
@@ -30,14 +30,13 @@ export const Input = ({
 } & Partial<TextInputProps>) => {
   return (
     <View>
-      <Text style={styles.label}>{label}</Text>
+      {label ? <Text style={styles.label}>{label}</Text> : null}
       <Controller
         control={control}
         rules={{
           required,
         }}
         name={name}
-        
         render={({ field: { onChange, value } }) => (
           <TextInput
             editable={!disabled}
@@ -67,6 +66,7 @@ const styles = StyleSheet.create({
   input: {
     minHeight: 42,
     fontSize: 14,
+    backgroundColor: "#FBFBFC",
     color: "#182D74",
     borderColor: "#1A3180",
     borderWidth: 1,
