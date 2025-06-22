@@ -5,6 +5,7 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  RefreshControl,
   Text,
   TouchableWithoutFeedback,
   View,
@@ -54,6 +55,7 @@ export function StepTwoScreen({ route }: Props) {
     formState: { errors },
   } = useForm<ChecklistForm>();
   const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const screen = useNavigation<CreateChecklistRoutesProps>();
   const navigation = useNavigation();
@@ -61,7 +63,8 @@ export function StepTwoScreen({ route }: Props) {
   useEffect(() => {
     api
       .get("/api/organizations/" + route.params.organization_id + "/properties")
-      .then(({ data }) => setProperties(data));
+      .then(({ data }) => setProperties(data))
+      .finally(() => setLoading(false));
   }, [isFocused]);
 
   const submit = async (values: ChecklistForm) => {
@@ -106,6 +109,7 @@ export function StepTwoScreen({ route }: Props) {
                 errorMessage="Insira o nome do imóvel"
               />
               <FlatList
+                refreshControl={<RefreshControl refreshing={loading} />}
                 data={
                   name
                     ? properties.filter((item) => item.name.startsWith(name))
