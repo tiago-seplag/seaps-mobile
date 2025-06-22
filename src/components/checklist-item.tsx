@@ -37,7 +37,9 @@ export const ChecklistItem = ({ item }: { item: { item: Checklist } }) => {
             gap: 4,
           }}
         >
-          <CardTitle numberOfLines={2}>{item.item.property.name}</CardTitle>
+          <CardTitle style={{ flex: 1 }} numberOfLines={2}>
+            {item.item.property.name}
+          </CardTitle>
           <Icon icon="chevron-right" style={{ backgroundColor: "#E8EAF2" }} />
         </View>
       </Card>
