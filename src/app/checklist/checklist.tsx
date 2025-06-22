@@ -31,6 +31,7 @@ import {
 import { Card, CardHeader } from "../../components/ui/card";
 
 type Props = StaticScreenProps<{
+  checklist: any;
   id: string;
 }>;
 
@@ -38,7 +39,7 @@ export function ChecklistScreen({ route }: Props) {
   const focus = useIsFocused();
   const navigation = useNavigation<ChecklistRoutesProps>();
 
-  const [checklist, setChecklist] = useState<Checklist>();
+  const [checklist, setChecklist] = useState<Checklist>(route.params.checklist);
   const [loading, setLoading] = useState(true);
 
   const getData = () => {
@@ -83,6 +84,7 @@ export function ChecklistScreen({ route }: Props) {
   };
 
   const finishChecklist = async () => {
+    setLoading(true);
     await api
       .put("/api/checklists/" + route.params?.id + "/finish")
       .then(() => getData())
@@ -93,10 +95,12 @@ export function ChecklistScreen({ route }: Props) {
         if (e.response.data.action) {
           Toast.error(e.response.data.action);
         }
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const reopenChecklist = async () => {
+    setLoading(true);
     await api
       .post("/api/checklists/" + route.params?.id + "/re-open")
       .then(() => getData())
@@ -104,7 +108,8 @@ export function ChecklistScreen({ route }: Props) {
         if (e.response?.data?.message) {
           Toast.error(e.response.data.message);
         }
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   const handleReopenChecklist = () => {
@@ -130,106 +135,111 @@ export function ChecklistScreen({ route }: Props) {
 
   return (
     <BaseSafeAreaView>
+      <Header
+        backButton
+        title={checklist?.property.name}
+        style={{
+          borderBottomColor:
+            checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
+        }}
+      />
       {loading || !checklist ? (
         <BaseView>
           <ActivityIndicator size={"large"} />
         </BaseView>
       ) : (
-        <>
-          <Header
-            backButton
-            title={checklist?.property.name}
-            style={{
-              borderBottomColor:
-                checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
-            }}
-          />
-          <BaseScrollView
-            refreshControl={
-              <RefreshControl refreshing={loading} onRefresh={getData} />
-            }
-          >
-            <Card style={styles.shadow}>
-              <CardHeader>
-                <Text style={styles.cardSid}>{checklist?.sid}</Text>
-                <ChecklistBadge status={checklist?.status} />
-              </CardHeader>
-              <View style={{ display: "flex", gap: 8 }}>
-                <Label title="ORGÃO" value={checklist?.organization.name} />
-                <Label title="LOCAL" value={checklist?.property.name} />
+        <BaseScrollView
+          refreshControl={
+            <RefreshControl refreshing={loading} onRefresh={getData} />
+          }
+        >
+          <Card style={styles.shadow}>
+            <CardHeader>
+              <Text style={styles.cardSid}>{checklist?.sid}</Text>
+              <ChecklistBadge status={checklist?.status} />
+            </CardHeader>
+            <View style={{ display: "flex", gap: 8 }}>
+              <Label title="ORGÃO" value={checklist?.organization.name} />
+              <Label title="LOCAL" value={checklist?.property.name} />
+              <Label
+                title="RESPONSÁVEL PELO IMÓVEL"
+                value={checklist?.property.person?.name}
+              />
+              <Label title="IMÓVEL" value={checklist?.property.name} />
+              <Label title="ENDEREÇO" value={checklist?.property.address} />
+              <Row />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
                 <Label
-                  title="RESPONSÁVEL PELO IMÓVEL"
-                  value={checklist?.property.person?.name}
+                  title="CRIADO EM"
+                  value={new Date(
+                    checklist?.created_at || ""
+                  ).toLocaleDateString()}
+                  style={{ flex: 1 }}
                 />
-                <Label title="IMÓVEL" value={checklist?.property.name} />
-                <Label title="ENDEREÇO" value={checklist?.property.address} />
-                <Row />
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Label
-                    title="CRIADO EM"
-                    value={new Date(
-                      checklist?.created_at || ""
-                    ).toLocaleDateString()}
-                    style={{ flex: 1 }}
-                  />
-                  <Label
-                    style={{ flex: 1 }}
-                    title="FINALIZADO EM"
-                    value={
-                      checklist?.finished_at
-                        ? new Date(checklist?.finished_at).toLocaleDateString()
-                        : "--"
-                    }
-                  />
-                </View>
                 <Label
-                  title="RESPONSÁVEL PELO CHECKLIST"
-                  value={getFirstAndLastName(checklist?.user?.name)}
+                  style={{ flex: 1 }}
+                  title="FINALIZADO EM"
+                  value={
+                    checklist?.finished_at
+                      ? new Date(checklist?.finished_at).toLocaleDateString()
+                      : "--"
+                  }
                 />
-                <Label title="PONTUAÇÃO" value={checklist?.score} />
               </View>
-            </Card>
-            <View style={{ gap: 12, marginTop: 16 }}>
-              <Text style={{ color: "#1A3180", fontSize: 16, fontWeight: 400 }}>
-                AÇÕES:
-              </Text>
-              <Button
-                icon="add-task"
-                title="ITENS"
-                text="Listar itens do checklist"
-                onPress={() =>
-                  navigation.push("ChecklistItems", {
-                    checklist: checklist,
-                  })
-                }
+              <Label
+                title="RESPONSÁVEL PELO CHECKLIST"
+                value={getFirstAndLastName(checklist?.user?.name)}
               />
-              <PDFButtonModal
-                disabled={checklist?.status === "OPEN"}
-                checklist={checklist}
-                id={checklist?.id}
-              />
-              <Button
-                icon="check"
-                title={checklist?.status === "OPEN" ? "FINALIZAR" : "REABRIR"}
-                text={
-                  checklist?.status === "OPEN"
-                    ? "Finalizar o checklist"
-                    : "Reabrir o checklist para alterações"
-                }
-                onPress={() =>
-                  checklist?.status === "OPEN"
-                    ? handleFinishChecklist()
-                    : handleReopenChecklist()
+              <Label
+                title="PONTUAÇÃO"
+                value={
+                  checklist.status === "CLOSED"
+                    ? checklist?.score.toFixed(2)
+                    : "--"
                 }
               />
             </View>
-          </BaseScrollView>
-        </>
+          </Card>
+          <View style={{ gap: 12, marginTop: 16 }}>
+            <Text style={{ color: "#1A3180", fontSize: 16, fontWeight: 400 }}>
+              AÇÕES:
+            </Text>
+            <Button
+              icon="add-task"
+              title="ITENS"
+              text="Listar itens do checklist"
+              onPress={() =>
+                navigation.push("ChecklistItems", {
+                  checklist: checklist,
+                })
+              }
+            />
+            <PDFButtonModal
+              disabled={checklist?.status === "OPEN"}
+              checklist={checklist}
+              id={checklist?.id}
+            />
+            <Button
+              icon="check"
+              title={checklist?.status === "OPEN" ? "FINALIZAR" : "REABRIR"}
+              text={
+                checklist?.status === "OPEN"
+                  ? "Finalizar o checklist"
+                  : "Reabrir o checklist para alterações"
+              }
+              onPress={() =>
+                checklist?.status === "OPEN"
+                  ? handleFinishChecklist()
+                  : handleReopenChecklist()
+              }
+            />
+          </View>
+        </BaseScrollView>
       )}
     </BaseSafeAreaView>
   );

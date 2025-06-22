@@ -88,7 +88,7 @@ export function ChecklistItemsScreen({ route }: Props) {
               key={item.item.id}
               style={{ flexDirection: "row", alignItems: "center", height: 76 }}
             >
-              <CardTitle>{item.item.item.name}</CardTitle>
+              <CardTitle style={{ flex: 1 }}>{item.item.item.name}</CardTitle>
               <View
                 style={{
                   flexDirection: "row",
