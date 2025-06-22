@@ -29,6 +29,7 @@
     "expo-sharing": "~13.1.5",
     "expo-status-bar": "~2.2.3",
     "expo-web-browser": "~14.1.6",
+    "lodash.debounce": "^4.0.8",
     "react": "19.0.0",
     "react-hook-form": "^7.54.2",
     "react-native": "0.79.2",
@@ -42,6 +43,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@types/lodash.debounce": "^4.0.9",
     "@types/react": "~18.3.12",
     "typescript": "^5.3.3"
   },
