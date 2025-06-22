@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
   },
   webview: {
     flex: 1,
+    backgroundColor: "#1A3180"
   },
   loader: {
     flex: 1,
