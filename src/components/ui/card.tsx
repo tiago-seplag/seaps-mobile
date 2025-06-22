@@ -45,7 +45,6 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 22,
     fontWeight: "bold",
-    flex: 1,
   },
   cardText: {
     fontSize: 12,

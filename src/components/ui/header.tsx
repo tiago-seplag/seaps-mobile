@@ -67,6 +67,7 @@ export const Header = ({
         </Text>
         {actionProps && (
           <TouchableOpacity
+            style={{ opacity: actionProps.disabled ? 0.5 : 1 }}
             disabled={actionProps.disabled}
             onPress={actionProps.action}
           >
