@@ -35,7 +35,9 @@ export const PropertyItem = ({ item }: any) => {
             gap: 4,
           }}
         >
-          <CardTitle numberOfLines={2}>{item.item.name}</CardTitle>
+          <CardTitle style={{ flex: 1 }} numberOfLines={2}>
+            {item.item.name}
+          </CardTitle>
           <Icon icon="edit" style={{ backgroundColor: "#E8EAF2" }} />
         </View>
         <CardText numberOfLines={1}>{item.item.address}</CardText>

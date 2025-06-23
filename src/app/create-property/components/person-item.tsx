@@ -21,8 +21,8 @@ export const PersonItem = ({
           { flexDirection: "row", justifyContent: "space-between" },
         ]}
       >
-        <View>
-          <CardTitle numberOfLines={1} style={{ fontSize: 16 }}>
+        <View style={{ flex: 1 }}>
+          <CardTitle numberOfLines={1} style={{ flex: 1, fontSize: 16 }}>
             {item.item.name}
           </CardTitle>
           <CardText numberOfLines={1} style={{ fontSize: 14 }}>

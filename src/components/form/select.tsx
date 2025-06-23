@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     flex: 1,
+    alignItems: "center",
     backgroundColor: "#FFFFFF",
     height: 40,
     fontSize: 14,
