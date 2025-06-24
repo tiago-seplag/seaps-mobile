@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   Keyboard,
   KeyboardAvoidingView,
@@ -24,8 +25,10 @@ export function Login() {
   const { signIn } = useSession();
 
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const submitLogin = async ({ email, password }: any) => {
+    setLoading(true);
     try {
       const { data } = await api.post("api/auth/mobile/login", {
         email: email.trim().toLowerCase(),
@@ -33,10 +36,16 @@ export function Login() {
       });
       signIn(data.SESSION);
     } catch (err: any) {
-      if (err.response.data?.message) {
+      console.log({ ...err });
+      if (err.message) {
+        Toast.error(err.message);
+      }
+      if (err.response?.data?.message) {
         return Toast.error(err.response.data.message);
       }
-      Toast.error("Error");
+    } finally {
+      setLoading(false);
+      Keyboard.dismiss();
     }
   };
 
@@ -63,7 +72,7 @@ export function Login() {
               objectFit: "cover",
             }}
           />
-          <Text style={styles.label}>EMAIL</Text>
+          <Text style={styles.label}>EMAIL:</Text>
           <Controller
             control={control}
             rules={{
@@ -84,7 +93,7 @@ export function Login() {
           {errors.email ? (
             <Text style={styles.errorText}>Insira o email</Text>
           ) : null}
-          <Text style={styles.label}>SENHA</Text>
+          <Text style={styles.label}>SENHA:</Text>
           <View
             style={{
               flexDirection: "row",
@@ -119,13 +128,14 @@ export function Login() {
                   paddingVertical: 0,
                   justifyContent: "center",
                   borderRadius: 12,
+                  backgroundColor: "#1A3180",
                 },
               ]}
             >
               <Materialnicons
                 name={showPassword ? "visibility" : "visibility-off"}
                 size={24}
-                color={"#1A1A1A"}
+                color={"#FEFEFE"}
               />
             </TouchableOpacity>
           </View>
@@ -134,15 +144,24 @@ export function Login() {
           ) : null}
           <TouchableOpacity
             onPress={handleSubmit(submitLogin)}
-            style={styles.button}
+            style={[
+              styles.button,
+              { backgroundColor: "#067C03", opacity: loading ? 0.5 : 1 },
+            ]}
           >
-            <Text
-              style={{
-                fontSize: 16,
-              }}
-            >
-              Entrar
-            </Text>
+            {loading ? (
+              <ActivityIndicator color={"#FEFEFE"} />
+            ) : (
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 700,
+                  color: "#FEFEFE",
+                }}
+              >
+                ENTRAR
+              </Text>
+            )}
           </TouchableOpacity>
         </View>
       </TouchableWithoutFeedback>
@@ -173,9 +192,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: {
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 5,
-    fontWeight: "bold",
+    fontWeight: 300,
     color: "#0E1B46",
     marginLeft: 12,
   },
@@ -191,18 +210,16 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: "#f75656",
+    marginTop: -10,
     marginBottom: 10,
   },
   button: {
-    backgroundColor: "white",
-    borderColor: "#3b3b3b",
     padding: 4,
-    borderWidth: 1,
     borderRadius: 8,
-    height: 40,
+    height: 42,
     paddingVertical: 10,
     alignSelf: "flex-end",
-    width: "30%",
+    width: "50%",
     display: "flex",
     alignItems: "center",
   },
