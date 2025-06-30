@@ -124,7 +124,7 @@ export function PhotoScreen({ route }: Props) {
           <Card style={{ gap: 8 }}>
             <Image
               source={{
-                uri: process.env.EXPO_PUBLIC_BUCKET_URL + checklistItem.image,
+                uri: process.env.EXPO_PUBLIC_BUCKET_URL + checklistItemPhoto.image,
               }}
               style={{
                 height: 298,
