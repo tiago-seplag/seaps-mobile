@@ -5,7 +5,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { Toast } from "toastify-react-native";
 
 import { api } from "../../services/api";
-import { Card } from "../../components/ui/card";
+import { Card, CardText } from "../../components/ui/card";
 import { BaseSafeAreaView } from "../../components/skeleton";
 import { FormButton } from "../../components/form/form-button";
 import { Input } from "../../components/form/input";
@@ -14,6 +14,7 @@ import { ImageCard } from "./components/image-card";
 
 import { ChecklistRoutesProps } from "./routes";
 import { Header } from "../../components/ui/header";
+import { View } from "react-native";
 
 interface ChecklistItemImage {
   checklist_item_id: string;
@@ -39,6 +40,7 @@ export function PhotoObservationScreen({ route }: Props) {
   const {
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm<{
     observation: string;
@@ -75,6 +77,8 @@ export function PhotoObservationScreen({ route }: Props) {
       .finally(() => setLoading(false));
   };
 
+  const observation = watch("observation");
+
   return (
     <BaseSafeAreaView>
       <Header
@@ -96,19 +100,24 @@ export function PhotoObservationScreen({ route }: Props) {
       >
         <Card style={{ gap: 16 }}>
           <ImageCard uri={checklistItemPhoto.image} />
-          <Input
-            required={false}
-            control={control}
-            errors={errors}
-            label="OBERSVAÇÃO:"
-            name="observation"
-            placeholder="Insira uma descrição da imagem"
-            errorMessage="Insira o endereço do imóvel"
-            maxLength={255}
-            multiline
-            disabled={loading || route.params.checklist.status === "CLOSED"}
-            style={{ minHeight: 44 * 3.1 }}
-          />
+          <View>
+            <Input
+              required={false}
+              control={control}
+              errors={errors}
+              label="OBERSVAÇÃO:"
+              name="observation"
+              placeholder="Insira uma descrição da imagem"
+              errorMessage="Insira o endereço do imóvel"
+              maxLength={255}
+              multiline
+              disabled={loading || route.params.checklist.status === "CLOSED"}
+              style={{ minHeight: 44 * 3.1 }}
+            />
+            <CardText style={{ alignSelf: "flex-end", marginRight: 8 }}>
+              {Math.max(observation?.length, 0)}/255
+            </CardText>
+          </View>
         </Card>
         <FormButton
           icon="save"

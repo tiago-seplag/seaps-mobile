@@ -16,7 +16,7 @@ type Props = StaticScreenProps<{
 }>;
 
 function getChecklist(page: number = 1, params?: any) {
-  return api.get<{ data: Checklist[]; meta: any }>(`/api/checklists`, {
+  return api.get<{ data: Checklist[]; meta: any }>(`/api/mobile/checklists`, {
     params: {
       page,
       per_page: 20,

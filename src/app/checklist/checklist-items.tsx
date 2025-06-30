@@ -32,7 +32,9 @@ export function ChecklistItemsScreen({ route }: Props) {
   const focus = useIsFocused();
   const navigation = useNavigation<ChecklistRoutesProps>();
 
-  const [checklist, setChecklist] = useState<Checklist>(route.params.checklist);
+  const checklist = route.params.checklist;
+
+  const [checklistItems, setChecklistItems] = useState<ChecklistItem[]>([]);
   const [refresh, setRefresh] = useState(true);
   const [loading, setLoading] = useState(true);
 
@@ -40,14 +42,13 @@ export function ChecklistItemsScreen({ route }: Props) {
     if (focus) {
       const getData = () => {
         api
-          .get("/api/checklists/" + checklist.id)
-          .then(({ data }) => {
-            setChecklist(data);
-          })
+          .get("/api/mobile/checklists/" + checklist.id + "/items")
+          .then(({ data }) => setChecklistItems(data))
           .catch((e) => {
             if (e.response?.data?.message) {
-              Toast.error(e.response.data.message);
+              return Toast.error(e.response.data.message);
             }
+            Toast.error(e.message);
           })
           .finally(() => setLoading(false));
       };
@@ -59,14 +60,14 @@ export function ChecklistItemsScreen({ route }: Props) {
     <BaseSafeAreaView>
       <Header
         backButton
-        title={checklist.property.name}
+        title={checklist.property?.name}
         style={{
           borderBottomColor:
             checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
         }}
       />
       <FlatList
-        data={checklist?.checklistItems}
+        data={checklistItems}
         style={styles.flatList}
         refreshControl={
           <RefreshControl
@@ -88,7 +89,7 @@ export function ChecklistItemsScreen({ route }: Props) {
               key={item.item.id}
               style={{ flexDirection: "row", alignItems: "center", height: 76 }}
             >
-              <CardTitle style={{ flex: 1 }}>{item.item.item.name}</CardTitle>
+              <CardTitle style={{ flex: 1 }}>{item.item.item?.name}</CardTitle>
               <View
                 style={{
                   flexDirection: "row",

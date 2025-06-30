@@ -28,9 +28,16 @@ interface ChecklistItem {
   observation: string | null;
   image: string | null;
   is_inspected: boolean;
-  item: {
+  item?: {
     name: string;
   };
+  images?: {
+    checklist_item_id: string;
+    created_at: string;
+    id: string;
+    image: string;
+    observation: string;
+  }[];
 }
 
 interface Property {

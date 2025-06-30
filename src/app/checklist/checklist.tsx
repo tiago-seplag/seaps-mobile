@@ -44,7 +44,7 @@ export function ChecklistScreen({ route }: Props) {
 
   const getData = () => {
     api
-      .get("/api/checklists/" + route.params?.id)
+      .get("/api/mobile/checklists/" + route.params?.id)
       .then(({ data }) => {
         setChecklist(data);
       })
@@ -149,6 +149,7 @@ export function ChecklistScreen({ route }: Props) {
         </BaseView>
       ) : (
         <BaseScrollView
+          style={{ flex: 1 }}
           refreshControl={
             <RefreshControl refreshing={loading} onRefresh={getData} />
           }

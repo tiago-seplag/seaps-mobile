@@ -21,7 +21,7 @@ type Props = StaticScreenProps<{
 export function ChecklistItemScreen({ route }: Props) {
   const navigation = useNavigation<ChecklistRoutesProps>();
 
-  const [checklist, setChecklist] = useState<Checklist>(route.params.checklist);
+  const checklist = route.params.checklist;
   const [checklistItem, setChecklistItem] = useState<ChecklistItem>(
     route.params.checklistItem
   );
@@ -33,13 +33,6 @@ export function ChecklistItemScreen({ route }: Props) {
       await api
         .put("/api/checklist-item/" + id, { score: value })
         .then(() => {
-          setChecklist((oldValue: any) => ({
-            ...oldValue,
-            checklistItems: oldValue.checklistItems.map((item: any) =>
-              item.id === id ? { ...item, score: value } : item
-            ),
-          }));
-
           setChecklistItem((state) => ({ ...state, score: Number(value) }));
         })
         .catch((e) => {
@@ -120,12 +113,14 @@ export function ChecklistItemScreen({ route }: Props) {
             AÇÕES:
           </Text>
           <Button
+            disabled={checklistItem.score === 0}
             icon="photo-library"
             title="IMAGENS"
             text="Listar imagens do ITEM"
             onPress={handleNavigateToImages}
           />
           <Button
+            disabled={checklistItem.score === 0}
             icon="sms"
             title="OBSERVAÇÕES"
             text="Observações gerais sobre o ITEM"

@@ -119,12 +119,13 @@ export function PhotoScreen({ route }: Props) {
             checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
         }}
       />
-      <BaseScrollView>
+      <BaseScrollView bounces={false} bouncesZoom>
         <View style={{ gap: 16 }}>
           <Card style={{ gap: 8 }}>
             <Image
               source={{
-                uri: process.env.EXPO_PUBLIC_BUCKET_URL + checklistItemPhoto.image,
+                uri:
+                  process.env.EXPO_PUBLIC_BUCKET_URL + checklistItemPhoto.image,
               }}
               style={{
                 height: 298,
@@ -135,12 +136,11 @@ export function PhotoScreen({ route }: Props) {
                 borderRadius: 8,
               }}
             />
-            <CardText
-              numberOfLines={3}
-              style={{ fontSize: 14, fontWeight: "bold" }}
-            >
-              {checklistItemPhoto.observation}
-            </CardText>
+            {checklistItemPhoto.observation && (
+              <CardText style={{ fontSize: 14, fontWeight: "bold" }}>
+                {checklistItemPhoto.observation}
+              </CardText>
+            )}
           </Card>
           <Row />
           <View style={{ gap: 8 }}>
@@ -148,6 +148,7 @@ export function PhotoScreen({ route }: Props) {
               AÇÕES:
             </Text>
             <Button
+              disabled={route.params.checklist.status === "CLOSED"}
               icon="sms"
               title="EDITAR OBSERVAÇÕES"
               onPress={handleNavigateToObservation}

@@ -45,7 +45,7 @@ interface checklistItem {
 }
 
 type Props = StaticScreenProps<{
-  checklistItem: any;
+  checklistItem: ChecklistItem;
   checklist: any;
 }>;
 
@@ -56,8 +56,8 @@ export function PhotosListScreen({ route }: Props) {
 
   const navigation = useNavigation<ChecklistRoutesProps>();
 
-  const [checklistItem, setChecklistItem] = useState<checklistItem>(
-    route.params.checklistItem || []
+  const [checklistItem, setChecklistItem] = useState<ChecklistItem>(
+    route.params.checklistItem
   );
   const [refresh, setRefresh] = useState(true);
 
@@ -92,6 +92,9 @@ export function PhotosListScreen({ route }: Props) {
 
   const pickImage = async (from: "CAMERA" | "LIBRARY") => {
     let result;
+
+    const IMAGE_MAX = checklistItem.images?.length || 10;
+
     if (from === "CAMERA") {
       await ImagePicker.requestCameraPermissionsAsync();
 
@@ -100,7 +103,7 @@ export function PhotosListScreen({ route }: Props) {
         allowsMultipleSelection: true,
         quality: 0.5,
         allowsEditing: false,
-        selectionLimit: 10 - checklistItem.images.length,
+        selectionLimit: 10 - IMAGE_MAX,
         aspect: [4, 3],
       });
     } else {
@@ -110,7 +113,7 @@ export function PhotosListScreen({ route }: Props) {
         mediaTypes: ["images"],
         allowsMultipleSelection: true,
         quality: 0.5,
-        selectionLimit: 10 - checklistItem.images.length,
+        selectionLimit: 10 - IMAGE_MAX,
         allowsEditing: false,
         aspect: [4, 3],
       });
@@ -160,7 +163,9 @@ export function PhotosListScreen({ route }: Props) {
 
   const getData = async () => {
     api
-      .get("/api/checklist-item/" + checklistItem.id)
+      .get(
+        "/api/mobile/checklists/" + checklist.id + "/items/" + checklistItem.id
+      )
       .then(({ data }) => setChecklistItem(data))
       .catch((e) => {
         if (e.response?.data?.message) {
@@ -192,7 +197,7 @@ export function PhotosListScreen({ route }: Props) {
             IMAGENS:
           </Text>
           <Text style={{ color: "#858586", fontSize: 16, fontWeight: 400 }}>
-            {checklistItem?.images.length}/10
+            {checklistItem?.images?.length}/10
           </Text>
         </View>
         <FlatList
@@ -204,7 +209,7 @@ export function PhotosListScreen({ route }: Props) {
             />
           }
           ListFooterComponent={
-            checklistItem.images?.length < 10 ? (
+            checklistItem.images && checklistItem.images.length < 10 ? (
               <CreateButton
                 title="INSERIR IMAGEM"
                 onPress={handleSelectOrigin}
