@@ -44,7 +44,7 @@ export function ChecklistScreen({ route }: Props) {
 
   const getData = () => {
     api
-      .get("/api/checklists/" + route.params?.id)
+      .get("/api/v1/checklists/" + route.params?.id)
       .then(({ data }) => {
         setChecklist(data);
       })
@@ -86,7 +86,7 @@ export function ChecklistScreen({ route }: Props) {
   const finishChecklist = async () => {
     setLoading(true);
     await api
-      .put("/api/checklists/" + route.params?.id + "/finish")
+      .put("/api/v1/checklists/" + route.params?.id + "/finish")
       .then(() => getData())
       .catch((e) => {
         if (e.response?.data?.message) {
@@ -102,7 +102,7 @@ export function ChecklistScreen({ route }: Props) {
   const reopenChecklist = async () => {
     setLoading(true);
     await api
-      .post("/api/checklists/" + route.params?.id + "/re-open")
+      .post("/api/v1/checklists/" + route.params?.id + "/re-open")
       .then(() => getData())
       .catch((e) => {
         if (e.response?.data?.message) {

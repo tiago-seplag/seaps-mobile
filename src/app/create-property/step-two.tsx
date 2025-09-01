@@ -61,7 +61,7 @@ export const StepTwoScreen = ({ route }: Props) => {
   const fetchData = useCallback(() => {
     setLoading(true);
     api
-      .get("/api/organizations/" + organization_id + "/responsible")
+      .get("/api/v1/organizations/" + organization_id + "/responsible")
       .then(({ data }) => setResponsible(data))
       .finally(() => setLoading(false));
   }, [organization_id]);

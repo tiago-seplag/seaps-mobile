@@ -36,7 +36,7 @@ export const StepThreeScreen = ({
 
   const submit = async (values: any) => {
     return api
-      .post("/api/properties", { ...property, ...values })
+      .post("/api/v1/properties", { ...property, ...values })
       .then(() =>
         navigation.dispatch(
           origin === "CreateChecklist"

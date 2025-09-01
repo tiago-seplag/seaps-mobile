@@ -14,7 +14,7 @@ type Props = StaticScreenProps<{
 }>;
 
 function getProperties(page: number = 1, params?: any) {
-  return api.get<{ data: Property[]; meta: any }>(`/api/properties`, {
+  return api.get<{ data: Property[]; meta: any }>(`/api/v1/properties`, {
     params: {
       page,
       per_page: 20,

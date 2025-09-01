@@ -43,7 +43,7 @@ export const StepThreeScreen = (_: Props) => {
 
   const submit = async (values: any) => {
     return api
-      .post("/api/checklists", { ...checklist, ...values })
+      .post("/api/v1/checklists", { ...checklist, ...values })
       .then(() =>
         navigation.dispatch(
           StackActions.popTo("HomeRoutes", {
@@ -58,7 +58,7 @@ export const StepThreeScreen = (_: Props) => {
   };
 
   useEffect(() => {
-    api.get("/api/users").then(({ data }) => setUsers(data));
+    api.get("/api/v1/users").then(({ data }) => setUsers(data));
   }, []);
 
   return (

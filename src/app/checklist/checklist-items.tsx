@@ -40,7 +40,7 @@ export function ChecklistItemsScreen({ route }: Props) {
     if (focus) {
       const getData = () => {
         api
-          .get("/api/checklists/" + checklist.id)
+          .get("/api/v1/checklists/" + checklist.id)
           .then(({ data }) => {
             setChecklist(data);
           })

@@ -58,7 +58,7 @@ export function PhotoObservationScreen({ route }: Props) {
     setLoading(true);
     await api
       .put(
-        "/api/checklist-item/" +
+        "/api/v1/checklist-item/" +
           checklistItemPhoto.checklist_item_id +
           "/images/" +
           checklistItemPhoto.id,

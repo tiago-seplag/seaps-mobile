@@ -53,7 +53,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
 
   const getData = async () => {
     api
-      .get("/api/auth/me")
+      .get("/api/v1/auth/me")
       .then(({ data }) => setUser(data))
       .catch((e) => console.log(e));
   };

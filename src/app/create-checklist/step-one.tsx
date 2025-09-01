@@ -38,8 +38,8 @@ export function StepOneScreen(_: Props) {
 
   useEffect(() => {
     clearErrors();
-    api.get("/api/organizations").then(({ data }) => setOrganizations(data));
-    api.get("/api/models").then(({ data }) => {
+    api.get("/api/v1/organizations").then(({ data }) => setOrganizations(data));
+    api.get("/api/v1/models").then(({ data }) => {
       setModels(data);
       setValue("model_id", data[0]?.id);
     });

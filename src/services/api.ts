@@ -22,7 +22,7 @@ api.interceptors.response.use(undefined, async (data: AxiosError<any>) => {
 api.interceptors.request.use(async (config) => {
   if (!config.headers.get("Cookie")) {
     const token = await AsyncStorage.getItem("session");
-    config.headers["Cookie"] = `SESSION=${token}`;
+    config.headers["Cookie"] = `session=${token}`;
   }
   return config;
 });

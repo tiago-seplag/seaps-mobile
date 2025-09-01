@@ -41,7 +41,7 @@ export const PDFButtonModal: FC<PDFButtonModalProps> = ({ checklist, id }) => {
           FileSystem.documentDirectory + fileName,
           {
             headers: {
-              Cookie: "SESSION=" + session,
+              Cookie: "session=" + session,
             },
           }
         );

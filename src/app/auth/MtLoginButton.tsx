@@ -39,7 +39,7 @@ export function MtLogginButton() {
   async function exchangeCodeForToken(code: string) {
     try {
       const response = await api.post(
-        "/api/auth/login?code=" +
+        "/api/v1/sessions/mt-login?code=" +
           code +
           "&redirect_uri=" +
           REDIRECT_URI +

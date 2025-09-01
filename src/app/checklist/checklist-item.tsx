@@ -31,7 +31,7 @@ export function ChecklistItemScreen({ route }: Props) {
     if (!lock) {
       setLock(true);
       await api
-        .put("/api/checklist-item/" + id, { score: value })
+        .put("/api/v1/checklist-item/" + id, { score: value })
         .then(() => {
           setChecklist((oldValue: any) => ({
             ...oldValue,
@@ -68,7 +68,7 @@ export function ChecklistItemScreen({ route }: Props) {
   useEffect(() => {
     const getData = async () => {
       await api
-        .get("/api/checklist-item/" + checklistItem.id)
+        .get("/api/v1/checklist-item/" + checklistItem.id)
         .then(({ data }) =>
           setChecklistItem((prev) => ({
             ...prev,

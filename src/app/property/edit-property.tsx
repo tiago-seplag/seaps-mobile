@@ -56,13 +56,13 @@ export function EditProperty({ route }: Props) {
   });
 
   useEffect(() => {
-    api.get("/api/organizations").then(({ data }) => setOrganizations(data));
+    api.get("/api/v1/organizations").then(({ data }) => setOrganizations(data));
   }, []);
 
   useEffect(() => {
     if (property && isFocused) {
       api
-        .get("/api/organizations/" + property.organization_id + "/responsible")
+        .get("/api/v1/organizations/" + property.organization_id + "/responsible")
         .then(({ data }) => setResponsible(data));
     }
   }, [property, isFocused]);
@@ -75,7 +75,7 @@ export function EditProperty({ route }: Props) {
     };
 
     return api
-      .put("/api/properties/" + property.id, data)
+      .put("/api/v1/properties/" + property.id, data)
       .then(() =>
         navigation.dispatch(
           StackActions.popTo("HomeRoutes", {

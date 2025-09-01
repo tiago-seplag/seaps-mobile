@@ -45,7 +45,7 @@ export const StepOneScreen = ({ route }: Props) => {
   });
 
   useEffect(() => {
-    api.get("/api/organizations").then(({ data }) => setOrganizations(data));
+    api.get("/api/v1/organizations").then(({ data }) => setOrganizations(data));
   }, []);
 
   const submit = (values: PropertyForm) => {

@@ -51,7 +51,7 @@ export function ObservationScreen({ route }: Props) {
     observation: string;
   }) => {
     await api
-      .put("/api/checklist-item/" + checklistItem.id, {
+      .put("/api/v1/checklist-item/" + checklistItem.id, {
         observation: observation,
       })
       .then(() =>
