@@ -33,6 +33,7 @@ export function ChecklistItemsScreen({ route }: Props) {
   const navigation = useNavigation<ChecklistRoutesProps>();
 
   const [checklist, setChecklist] = useState<Checklist>(route.params.checklist);
+  const [checklistItems, setChecklistItems] = useState<ChecklistItem[]>([]);
   const [refresh, setRefresh] = useState(true);
   const [loading, setLoading] = useState(true);
 
@@ -40,9 +41,9 @@ export function ChecklistItemsScreen({ route }: Props) {
     if (focus) {
       const getData = () => {
         api
-          .get("/api/v1/checklists/" + checklist.id)
+          .get("/api/v1/checklists/" + checklist.id + "/items")
           .then(({ data }) => {
-            setChecklist(data);
+            setChecklistItems(data);
           })
           .catch((e) => {
             if (e.response?.data?.message) {
@@ -66,7 +67,7 @@ export function ChecklistItemsScreen({ route }: Props) {
         }}
       />
       <FlatList
-        data={checklist?.checklistItems}
+        data={checklistItems}
         style={styles.flatList}
         refreshControl={
           <RefreshControl

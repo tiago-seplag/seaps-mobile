@@ -30,11 +30,11 @@ export function Login() {
   const submitLogin = async ({ email, password }: any) => {
     setLoading(true);
     try {
-      const { data } = await api.post("api/auth/mobile/login", {
+      const { data } = await api.post("/api/v1/sessions", {
         email: email.trim().toLowerCase(),
         password: password.trim(),
       });
-      signIn(data.SESSION);
+      signIn(data.token);
     } catch (err: any) {
       console.log({ ...err });
       if (err.message) {

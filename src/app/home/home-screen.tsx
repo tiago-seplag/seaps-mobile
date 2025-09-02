@@ -19,7 +19,7 @@ export function HomeScreen() {
 
   const fetchData = async () => {
     const response = await api.get(
-      `v1/checklists?page=1&per_page=5&user_id=${user.id}`
+      `/api/v1/checklists?page=1&per_page=5&user_id=${user.id}`
     );
     setData(response.data.data);
   };

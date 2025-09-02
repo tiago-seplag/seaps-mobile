@@ -21,7 +21,8 @@ type Props = StaticScreenProps<{
 export function ChecklistItemScreen({ route }: Props) {
   const navigation = useNavigation<ChecklistRoutesProps>();
 
-  const [checklist, setChecklist] = useState<Checklist>(route.params.checklist);
+  const checklist = route.params.checklist;
+
   const [checklistItem, setChecklistItem] = useState<ChecklistItem>(
     route.params.checklistItem
   );
@@ -32,16 +33,12 @@ export function ChecklistItemScreen({ route }: Props) {
       setLock(true);
       await api
         .put("/api/v1/checklist-item/" + id, { score: value })
-        .then(() => {
-          setChecklist((oldValue: any) => ({
-            ...oldValue,
-            checklistItems: oldValue.checklistItems.map((item: any) =>
-              item.id === id ? { ...item, score: value } : item
-            ),
-          }));
-
-          setChecklistItem((state) => ({ ...state, score: Number(value) }));
-        })
+        .then(({ data }) =>
+          setChecklistItem((prev) => ({
+            ...prev,
+            ...data,
+          }))
+        )
         .catch((e) => {
           if (e.response?.data?.message) {
             Toast.error(e.response.data.message);

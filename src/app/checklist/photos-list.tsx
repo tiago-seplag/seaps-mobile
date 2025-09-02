@@ -192,7 +192,7 @@ export function PhotosListScreen({ route }: Props) {
             IMAGENS:
           </Text>
           <Text style={{ color: "#858586", fontSize: 16, fontWeight: 400 }}>
-            {checklistItem?.images.length}/10
+            {checklistItem?.images?.length}/10
           </Text>
         </View>
         <FlatList
