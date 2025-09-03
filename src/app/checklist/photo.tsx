@@ -63,7 +63,7 @@ export function PhotoScreen({ route }: Props) {
 
     await api
       .delete(
-        "/api/v1/checklist-item/" +
+        "/api/v1/checklist-items/" +
           checklistItem.id +
           "/images/" +
           checklistItemPhoto.id
@@ -82,7 +82,7 @@ export function PhotoScreen({ route }: Props) {
 
   async function handleUpdateChecklistImage() {
     api
-      .put("/api/v1/checklist-item/" + checklistItem.id, {
+      .put("/api/v1/checklist-items/" + checklistItem.id, {
         image: checklistItemPhoto.image,
       })
       .then(() => {
@@ -99,7 +99,7 @@ export function PhotoScreen({ route }: Props) {
   const getData = async () => {
     setLoading(true);
     api
-      .get("/api/v1/checklist-item/" + checklistItem.id)
+      .get("/api/v1/checklist-items/" + checklistItem.id)
       //   .then(({ data }) => setChecklistItem(data))
       .catch((e) => {
         if (e.response?.data?.message) {

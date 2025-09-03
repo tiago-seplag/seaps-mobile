@@ -144,7 +144,7 @@ export function PhotosListScreen({ route }: Props) {
         },
       });
 
-      await api.put("/api/v1/checklist-item/" + checklistItem.id + "/images", {
+      await api.put("/api/v1/checklist-items/" + checklistItem.id + "/images", {
         images: data.files.map((file: any) => file.url),
       });
     } catch (e: any) {
@@ -160,7 +160,7 @@ export function PhotosListScreen({ route }: Props) {
 
   const getData = async () => {
     api
-      .get("/api/v1/checklist-item/" + checklistItem.id)
+      .get("/api/v1/checklist-items/" + checklistItem.id)
       .then(({ data }) => setChecklistItem(data))
       .catch((e) => {
         if (e.response?.data?.message) {
