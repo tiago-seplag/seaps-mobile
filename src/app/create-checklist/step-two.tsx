@@ -62,8 +62,8 @@ export function StepTwoScreen({ route }: Props) {
 
   useEffect(() => {
     api
-      .get("/api/v1/properties?organization_id=" + route.params.organization_id)
-      .then(({ data }) => setProperties(data))
+      .get("/api/v1/properties?per_page=1000&organization_id=" + route.params.organization_id)
+      .then(({ data }) => setProperties(data.data))
       .finally(() => setLoading(false));
   }, [isFocused]);
 

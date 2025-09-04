@@ -36,7 +36,6 @@ export function Login() {
       });
       signIn(data.token);
     } catch (err: any) {
-      console.log({ ...err });
       if (err.message) {
         Toast.error(err.message);
       }

@@ -52,10 +52,13 @@ export function SessionProvider(props: React.PropsWithChildren) {
   );
 
   const getData = async () => {
-    api
-      .get("/api/v1/auth/me")
-      .then(({ data }) => setUser(data))
-      .catch((e) => console.log(e));
+    try {
+      const { data } = await api.get("/api/v1/auth/me");
+      setUser(data);
+    } catch (error) {
+      setSession(null);
+    } finally {
+    }
   };
 
   useEffect(() => {

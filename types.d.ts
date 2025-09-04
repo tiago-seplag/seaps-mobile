@@ -10,6 +10,8 @@ interface Checklist {
   created_by: string | null;
   person_id: string | null;
   finished_at: Date | null;
+  is_returned?: boolean;
+  return?: number | null;
   created_at: Date;
   updated_at: Date;
   property: Property;

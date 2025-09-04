@@ -12,12 +12,15 @@ import { FormButton } from "../../components/form/form-button";
 import { CreateChecklistRoutesProps } from "./routes";
 import { useForm } from "react-hook-form";
 import { useChecklistStore } from "../../stores/createChecklistStore";
+import { Input } from "../../components/form/input";
 
 type Props = StaticScreenProps<undefined>;
 
 type Form = {
   organization_id: string;
   model_id: string;
+  is_returned: boolean;
+  return: number;
 };
 
 export function StepOneScreen(_: Props) {
@@ -38,10 +41,12 @@ export function StepOneScreen(_: Props) {
 
   useEffect(() => {
     clearErrors();
-    api.get("/api/v1/organizations").then(({ data }) => setOrganizations(data));
+    api
+      .get("/api/v1/organizations?per_page=100")
+      .then(({ data }) => setOrganizations(data.data));
     api.get("/api/v1/models").then(({ data }) => {
-      setModels(data);
-      setValue("model_id", data[0]?.id);
+      setModels(data.data);
+      setValue("model_id", data.data[0]?.id);
     });
   }, []);
 
@@ -77,6 +82,27 @@ export function StepOneScreen(_: Props) {
             label="ORGÃO:"
             placeholder="Selecione um orgão"
             errorMessage="Selecione o orgão do checklist"
+          />
+          <Select
+            options={[
+              { id: "true", name: "Sim" },
+              { id: "false", name: "Não" },
+            ]}
+            control={control}
+            errors={errors}
+            name="is_returned"
+            label="CHECKLIST DE RETORNO:"
+            placeholder="É um checklist de retorno?"
+            errorMessage="Informe se é um checklist de retorno"
+          />
+          <Input
+            control={control}
+            keyboardType="number-pad"
+            defaultValue="0"
+            errors={errors}
+            name="return"
+            label="QUAL RETORNO:"
+            placeholder="Insira qual o retorno"
           />
         </Card>
         <FormButton

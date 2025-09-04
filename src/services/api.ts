@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Toast } from "toastify-react-native";
 
@@ -7,17 +7,20 @@ const api = axios.create({
   withCredentials: false,
 });
 
-api.interceptors.response.use(undefined, async (data: AxiosError<any>) => {
-  if (data.response) {
-    if (data.response.status === 401) {
-      Toast.error("Conta não ativa");
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.data?.messages?.length > 0) {
+      error.response.data.messages.map((msg: string) => Toast.error(msg));
+    } else if (error.response?.data?.message) {
+      Toast.error(error.response.data.action);
+    } else {
+      Toast.error("Erro ao tentar processar a requisição. Tente novamente.");
     }
-    if (data.response.status === 403) {
-      Toast.error("Você não tem permissão para isso");
-    }
+
+    return Promise.reject(error);
   }
-  return Promise.reject(data);
-});
+);
 
 api.interceptors.request.use(async (config) => {
   if (!config.headers.get("Cookie")) {
