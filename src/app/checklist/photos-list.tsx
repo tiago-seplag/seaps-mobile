@@ -137,17 +137,22 @@ export function PhotosListScreen({ route }: Props) {
       }
       form.append("folder", "photos");
 
-      const { data } = await api.post("/api/v1/upload", form, {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      await api.put("/api/v1/checklist-items/" + checklistItem.id + "/images", {
-        images: data.files.map((file: any) => file.url),
-      });
+      await api.post(
+        "/api/v1/checklists/" +
+          checklist.id +
+          "/items/" +
+          checklistItem.id +
+          "/images",
+        form,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
     } catch (e: any) {
+      console.log(e);
       if (e.response?.data?.message) {
         return Toast.error(e.response.data.message);
       }

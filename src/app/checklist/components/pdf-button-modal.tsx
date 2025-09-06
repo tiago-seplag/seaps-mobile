@@ -31,30 +31,16 @@ export const PDFButtonModal: FC<PDFButtonModalProps> = ({ checklist, id }) => {
         checklist.sid.replace("/", "_") +
         ".pdf";
 
-      const localPath = FileSystem.documentDirectory + fileName;
-
-      const fileInfo = await FileSystem.getInfoAsync(localPath);
-
-      if (!fileInfo.exists) {
-        const download = await FileSystem.downloadAsync(
-          process.env.EXPO_PUBLIC_API_URL + "/api/reports/" + id,
-          FileSystem.documentDirectory + fileName,
-          {
-            headers: {
-              Cookie: "session=" + session,
-            },
-          }
-        );
-
-        setLocalUri(download.uri);
-      } else {
-        if (Date.now() - fileInfo.modificationTime * 1000 > 600000) {
-          await FileSystem.deleteAsync(fileInfo.uri);
-          await downloadPdfFromApi();
-          return;
+      await FileSystem.downloadAsync(
+        process.env.EXPO_PUBLIC_API_URL + "/api/v1/reports/" + id,
+        FileSystem.documentDirectory + fileName,
+        {
+          cache: true,
+          headers: {
+            Cookie: "session=" + session,
+          },
         }
-        setLocalUri(fileInfo.uri);
-      }
+      );
 
       if (Platform.OS === "android") {
         if (await Sharing.isAvailableAsync()) {

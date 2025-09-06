@@ -50,8 +50,8 @@ export function MtLogginButton() {
         }
       );
 
-      if (response?.data.SESSION) {
-        signIn(response.data.SESSION);
+      if (response?.data.token) {
+        signIn(response.data.token);
       } else {
         Toast.error(
           "Erro ao fazer login pelo MT-Cidadão, tente novamente mais tarde."
