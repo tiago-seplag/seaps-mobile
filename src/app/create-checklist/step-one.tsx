@@ -13,6 +13,7 @@ import { CreateChecklistRoutesProps } from "./routes";
 import { useForm } from "react-hook-form";
 import { useChecklistStore } from "../../stores/createChecklistStore";
 import { Input } from "../../components/form/input";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
 
 type Props = StaticScreenProps<undefined>;
 
@@ -61,56 +62,58 @@ export function StepOneScreen(_: Props) {
   return (
     <BaseSafeAreaView>
       <Header backButton title={"CRIAR CHECKLIST"} />
-      <BaseView style={{ gap: 16, flex: 1 }}>
-        <StepsCount step={1} length={3} />
-        <Row />
-        <Card style={{ paddingVertical: 14, gap: 16 }}>
-          <Select
-            options={models}
-            control={control}
-            errors={errors}
-            name="model_id"
-            label="MODELO:"
-            placeholder="Selecione um modelo"
-            errorMessage="Selecione o modelo do checklist"
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <BaseView style={{ gap: 16, flex: 1 }}>
+          <StepsCount step={1} length={3} />
+          <Row />
+          <Card style={{ paddingVertical: 14, gap: 16 }}>
+            <Select
+              options={models}
+              control={control}
+              errors={errors}
+              name="model_id"
+              label="MODELO:"
+              placeholder="Selecione um modelo"
+              errorMessage="Selecione o modelo do checklist"
+            />
+            <Select
+              options={organizations}
+              control={control}
+              errors={errors}
+              name="organization_id"
+              label="ORGÃO:"
+              placeholder="Selecione um orgão"
+              errorMessage="Selecione o orgão do checklist"
+            />
+            <Select
+              options={[
+                { id: "true", name: "Sim" },
+                { id: "false", name: "Não" },
+              ]}
+              control={control}
+              errors={errors}
+              name="is_returned"
+              label="CHECKLIST DE RETORNO:"
+              placeholder="É um checklist de retorno?"
+              errorMessage="Informe se é um checklist de retorno"
+            />
+            <Input
+              required={false}
+              control={control}
+              keyboardType="number-pad"
+              errors={errors}
+              name="return"
+              label="QUAL RETORNO:"
+              placeholder="Insira qual o retorno"
+            />
+          </Card>
+          <FormButton
+            onPress={handleSubmit(submit)}
+            title="PRÓXIMO"
+            icon="chevron-right"
           />
-          <Select
-            options={organizations}
-            control={control}
-            errors={errors}
-            name="organization_id"
-            label="ORGÃO:"
-            placeholder="Selecione um orgão"
-            errorMessage="Selecione o orgão do checklist"
-          />
-          <Select
-            options={[
-              { id: "true", name: "Sim" },
-              { id: "false", name: "Não" },
-            ]}
-            control={control}
-            errors={errors}
-            name="is_returned"
-            label="CHECKLIST DE RETORNO:"
-            placeholder="É um checklist de retorno?"
-            errorMessage="Informe se é um checklist de retorno"
-          />
-          <Input
-            control={control}
-            keyboardType="number-pad"
-            defaultValue="0"
-            errors={errors}
-            name="return"
-            label="QUAL RETORNO:"
-            placeholder="Insira qual o retorno"
-          />
-        </Card>
-        <FormButton
-          onPress={handleSubmit(submit)}
-          title="PRÓXIMO"
-          icon="chevron-right"
-        />
-      </BaseView>
+        </BaseView>
+      </TouchableWithoutFeedback>
     </BaseSafeAreaView>
   );
 }
