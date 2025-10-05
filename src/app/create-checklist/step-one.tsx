@@ -20,7 +20,7 @@ type Props = StaticScreenProps<undefined>;
 type Form = {
   organization_id: string;
   model_id: string;
-  is_returned: boolean;
+  is_returned: string;
   return: number;
 };
 
@@ -34,6 +34,7 @@ export function StepOneScreen(_: Props) {
 
   const {
     setValue,
+    watch,
     clearErrors,
     handleSubmit,
     control,
@@ -52,12 +53,20 @@ export function StepOneScreen(_: Props) {
   }, []);
 
   const submit = async (values: Form) => {
-    setChecklist(values);
+    setChecklist({ ...values, is_returned: values.is_returned === "true" });
 
     navigation.push("StepTwo", {
       organization_id: values.organization_id,
     });
   };
+
+  const is_returned = watch("is_returned");
+
+  useEffect(() => {
+    if (is_returned === "false") {
+      setValue("return", 0);
+    }
+  }, [is_returned]);
 
   return (
     <BaseSafeAreaView>
@@ -97,15 +106,17 @@ export function StepOneScreen(_: Props) {
               placeholder="É um checklist de retorno?"
               errorMessage="Informe se é um checklist de retorno"
             />
-            <Input
-              required={false}
-              control={control}
-              keyboardType="number-pad"
-              errors={errors}
-              name="return"
-              label="QUAL RETORNO:"
-              placeholder="Insira qual o retorno"
-            />
+            {is_returned === "true" && (
+              <Input
+                required={false}
+                control={control}
+                keyboardType="number-pad"
+                errors={errors}
+                name="return"
+                label="QUAL RETORNO:"
+                placeholder="Insira qual o retorno"
+              />
+            )}
           </Card>
           <FormButton
             onPress={handleSubmit(submit)}

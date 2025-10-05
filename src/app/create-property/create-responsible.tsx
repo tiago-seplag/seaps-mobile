@@ -50,7 +50,9 @@ export function CreateResponsibleScreen({
   });
 
   useEffect(() => {
-    api.get("/api/v1/organizations").then(({ data }) => setOrganizations(data));
+    api
+      .get("/api/v1/organizations")
+      .then(({ data }) => setOrganizations(data.data));
   }, []);
 
   const submit = async (values: ResponsibleForm) => {
