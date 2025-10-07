@@ -41,6 +41,7 @@ const HomeRoutes = createBottomTabNavigator({
     headerShown: false,
     animation: "shift",
   },
+  detachInactiveScreens: false,
 });
 
 export { HomeRoutes };
