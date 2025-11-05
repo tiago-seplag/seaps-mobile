@@ -1,43 +1,55 @@
+import {
+  createStaticNavigation,
+  StaticParamList,
+} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+import { useIsSignedIn, useIsSignedOut } from "./contexts/authContext";
+
+import { Login } from "./app/auth/login";
 import { HomeRoutes } from "./app/home/routes";
 import { ChecklistRoutes } from "./app/checklist/routes";
-import { useSession } from "./contexts/authContext";
-import { Login } from "./app/auth/login";
-import { ChecklistsRoutes } from "./app/checklists/routes";
-import { PropertiesRoutes } from "./app/properties/routes";
+import { PropertyRoutes } from "./app/property/routes";
+import { AccountRoutes } from "./app/account/route";
+import { CreateChecklistRoutes } from "./app/create-checklist/routes";
+import { CreatePropertyRoutes } from "./app/create-property/route";
 
-export type RootStackParamList = {
-  Initial: any;
-  Checklists: any;
-  Checklist: any;
-  Properties: any;
-};
+const AppStack = createNativeStackNavigator({
+  screenOptions: { headerShown: false },
+  screens: {
+    HomeRoutes: HomeRoutes,
+    AccountRoutes: AccountRoutes,
+    ChecklistRoutes: ChecklistRoutes,
+    PropertyRoutes: PropertyRoutes,
+    CreateChecklist: CreateChecklistRoutes,
+    CreateProperty: CreatePropertyRoutes,
+  },
+});
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const MainStack = createNativeStackNavigator({
+  screenOptions: { headerShown: false },
+  screens: {
+    AuthRoutes: {
+      if: useIsSignedOut,
+      screen: Login,
+    },
+    AppRoutes: {
+      if: useIsSignedIn,
+      screen: AppStack,
+    },
+  },
+});
+
+type RootStackParamList = StaticParamList<typeof AppStack>;
+
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends RootStackParamList {}
+  }
+}
 
 export default function Index() {
-  const { session } = useSession();
-
-  return session ? (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-      initialRouteName="Initial"
-    >
-      <Stack.Screen name="Initial" component={HomeRoutes} />
-      <Stack.Screen name="Checklists" component={ChecklistsRoutes} />
-      <Stack.Screen name="Checklist" component={ChecklistRoutes} />
-      <Stack.Screen name="Properties" component={PropertiesRoutes} />
-    </Stack.Navigator>
-  ) : (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}
-      initialRouteName="Initial"
-    >
-      <Stack.Screen name="Initial" component={Login} />
-    </Stack.Navigator>
-  );
+  return <Navigation />;
 }
+
+const Navigation = createStaticNavigation(MainStack);

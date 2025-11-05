@@ -46,77 +46,74 @@ export default function RadioButton({
     }
   }
 
-  const labelComp = React.isValidElement(label) ? (
-    label
-  ) : Boolean(label) ? (
-    <Text style={[margin, labelStyle]}>{label}</Text>
-  ) : null;
-  const descComp = React.isValidElement(description) ? (
-    description
-  ) : Boolean(description) ? (
-    <Text style={[margin, descriptionStyle]}>{description}</Text>
-  ) : null;
-
   return (
-    <>
-      <TouchableOpacity
-        accessibilityHint={
-          typeof description === "string" ? description : undefined
-        }
-        accessibilityLabel={
-          accessibilityLabel || (typeof label === "string" ? label : undefined)
-        }
-        accessibilityRole="radio"
-        accessibilityState={{ checked: selected, disabled }}
-        disabled={disabled}
-        onPress={handlePress}
+    <TouchableOpacity
+      accessibilityHint={
+        typeof description === "string" ? description : undefined
+      }
+      accessibilityLabel={
+        accessibilityLabel || (typeof label === "string" ? label : undefined)
+      }
+      accessibilityRole="radio"
+      accessibilityState={{ checked: selected, disabled }}
+      disabled={disabled}
+      onPress={handlePress}
+      style={[
+        styles.container,
+        orientation,
+        { opacity: disabled ? 0.5 : 1 },
+        containerStyle,
+        selected
+          ? { backgroundColor }
+          : { backgroundColor: backgroundColor + "30" },
+      ]}
+      testID={testID}
+    >
+      <Text
         style={[
-          styles.container,
-          orientation,
-          { opacity: disabled ? 0.5 : 1 },
-          containerStyle,
-          selected && { backgroundColor },
+          margin,
+          labelStyle,
+          { fontWeight: "bold" },
+          selected ? { color: "#FFFFFF" } : { color: "#0B1536" },
         ]}
-        testID={testID}
       >
-        <View
-          style={[
-            styles.border,
-            {
-              borderColor: borderColor || color,
-              borderWidth,
-              width: sizeFull,
-              height: sizeFull,
-              borderRadius: sizeHalf,
-            },
-          ]}
-        >
-          {selected && (
-            <View
-              style={{
-                backgroundColor: color,
+        {label}
+      </Text>
+      <View
+        style={[
+          {
+            borderWidth,
+            justifyContent: "center",
+            alignItems: "center",
+            width: sizeFull,
+            height: sizeFull,
+            borderRadius: sizeHalf,
+          },
+          selected && { borderColor: "#FFFFFF" },
+        ]}
+      >
+        {selected && (
+          <View
+            style={[
+              {
                 width: sizeHalf,
                 height: sizeHalf,
                 borderRadius: sizeHalf,
-              }}
-            />
-          )}
-        </View>
-        {labelComp}
-      </TouchableOpacity>
-      {descComp}
-    </>
+              },
+              selected && { backgroundColor: "#FFFFFF" },
+            ]}
+          />
+        )}
+      </View>
+    </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
+    width: "100%",
     marginHorizontal: 10,
-    marginVertical: 5,
-  },
-  border: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "space-between",
   },
 });

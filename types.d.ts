@@ -3,15 +3,20 @@ interface Checklist {
   status: string;
   id: string;
   sid: string;
+  score: number;
+  classification: number;
   model_id: string;
   property_id: string;
   created_by: string | null;
   person_id: string | null;
   finished_at: Date | null;
+  is_returned?: boolean;
+  return?: number | null;
   created_at: Date;
   updated_at: Date;
   property: Property;
   organization?: any;
+  user?: any;
   checklistItems: ChecklistItem[];
 }
 
@@ -40,6 +45,7 @@ interface Property {
   address: string | null;
   organization_id: string;
   location: string | null;
+  organization?: any;
   person?: Person;
 }
 

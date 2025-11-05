@@ -10,10 +10,11 @@ import { Toast } from "toastify-react-native";
 
 WebBrowser.maybeCompleteAuthSession();
 
-const CLIENT_ID = "seplag-manutencao-predial";
+const CLIENT_ID = process.env.EXPO_PUBLIC_CLIENT_ID;
 
 const AUTH_URL =
-  "https://login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/auth";
+  process.env.EXPO_PUBLIC_LOGIN_URL +
+  "/realms/mt-realm/protocol/openid-connect/auth";
 
 const REDIRECT_URI = AuthSession.makeRedirectUri({
   scheme: "smp",
@@ -38,7 +39,7 @@ export function MtLogginButton() {
   async function exchangeCodeForToken(code: string) {
     try {
       const response = await api.post(
-        "/api/auth/login?code=" +
+        "/api/v1/sessions/mt-login?code=" +
           code +
           "&redirect_uri=" +
           REDIRECT_URI +
@@ -49,8 +50,8 @@ export function MtLogginButton() {
         }
       );
 
-      if (response?.data.SESSION) {
-        signIn(response.data.SESSION);
+      if (response?.data.token) {
+        signIn(response.data.token);
       } else {
         Toast.error(
           "Erro ao fazer login pelo MT-Cidadão, tente novamente mais tarde."
@@ -86,7 +87,7 @@ export function MtLogginButton() {
         gap: 16,
       }}
     >
-      <Text style={{ color: "black", fontWeight: "600" }}>ENTRAR COM</Text>
+      <Text style={{ color: "black", fontWeight: "bold" }}>ENTRAR COM</Text>
       <Image
         style={{ height: 50, width: 50, objectFit: "contain" }}
         source={MtLoginLogo}

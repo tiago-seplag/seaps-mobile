@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useStorageState } from "../hooks/useAsyncState";
 import { api } from "../services/api";
+import { ActivityIndicator, View } from "react-native";
 import * as AuthSession from "expo-auth-session";
 
 const AuthContext = React.createContext<{
@@ -20,12 +21,10 @@ const AuthContext = React.createContext<{
 });
 
 const LOGOUT_URL =
-  "https://login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/logout";
+  process.env.EXPO_PUBLIC_LOGIN_URL +
+  "/realms/mt-realm/protocol/openid-connect/logout";
 
-const CLIENT_ID = "seplag-manutencao-predial";
-
-const AUTH_URL =
-  "https://login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/logout";
+const CLIENT_ID = process.env.EXPO_PUBLIC_CLIENT_ID;
 
 const REDIRECT_URI = AuthSession.makeRedirectUri({
   scheme: "smp",
@@ -48,16 +47,18 @@ export function SessionProvider(props: React.PropsWithChildren) {
       responseType: "code",
     },
     {
-      authorizationEndpoint: AUTH_URL,
       endSessionEndpoint: LOGOUT_URL,
     }
   );
 
   const getData = async () => {
-    api
-      .get("/api/auth/me")
-      .then(({ data }) => setUser(data))
-      .catch((e) => console.log(e));
+    try {
+      const { data } = await api.get("/api/v1/auth/me");
+      setUser(data);
+    } catch (error) {
+      setSession(null);
+    } finally {
+    }
   };
 
   useEffect(() => {
@@ -65,6 +66,21 @@ export function SessionProvider(props: React.PropsWithChildren) {
       getData();
     }
   }, [session]);
+
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#1A3180",
+        }}
+      >
+        <ActivityIndicator size={"large"} color={"white"} />
+      </View>
+    );
+  }
 
   return (
     <AuthContext.Provider
@@ -86,4 +102,13 @@ export function SessionProvider(props: React.PropsWithChildren) {
       {props.children}
     </AuthContext.Provider>
   );
+}
+
+export function useIsSignedIn() {
+  const isSignedIn = React.useContext(AuthContext);
+  return Boolean(isSignedIn.session);
+}
+
+export function useIsSignedOut() {
+  return !useIsSignedIn();
 }

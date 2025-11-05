@@ -13,7 +13,7 @@ export type RadioButtonProps = {
   disabled?: boolean;
   id: string;
   key?: string;
-  label?: ReactNode | string;
+  label?: string;
   labelStyle?: StyleProp<TextStyle>;
   layout?: "row" | "column";
   onPress?: (id: string) => void;

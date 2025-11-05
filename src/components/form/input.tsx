@@ -14,32 +14,38 @@ export const Input = ({
   name,
   placeholder,
   errorMessage,
+  required = true,
+  style,
+  disabled,
   ...props
 }: {
+  required?: boolean;
   name: string;
-  label: string;
+  label?: string;
   errorMessage?: string;
   placeholder: string;
   control: Control<any>;
   errors: FieldErrors;
+  disabled?: boolean;
 } & Partial<TextInputProps>) => {
   return (
     <View>
-      <Text style={styles.label}>{label}</Text>
+      {label ? <Text style={styles.label}>{label}</Text> : null}
       <Controller
         control={control}
         rules={{
-          required: true,
+          required,
         }}
         name={name}
         render={({ field: { onChange, value } }) => (
           <TextInput
-          placeholder={placeholder}
-          value={value}
-          style={styles.input}
-          onChangeText={onChange}
-          autoCapitalize="characters"
-          {...props}
+            editable={!disabled}
+            placeholder={placeholder}
+            value={value}
+            style={[styles.input, style, disabled && { opacity: 0.5 }]}
+            onChangeText={onChange}
+            autoCapitalize="characters"
+            {...props}
           />
         )}
       />
@@ -54,16 +60,19 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 5,
-    fontWeight: "bold",
+    fontWeight: 300,
+    color: "#0E1B46",
   },
   input: {
-    height: 40,
+    minHeight: 42,
     fontSize: 14,
-    borderColor: "#ddd",
+    backgroundColor: "#FBFBFC",
+    color: "#182D74",
+    borderColor: "#1A3180",
     borderWidth: 1,
     marginBottom: 4,
     padding: 10,
-    borderRadius: 5,
+    borderRadius: 12,
   },
   errorText: {
     color: "#f75656",

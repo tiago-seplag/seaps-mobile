@@ -11,94 +11,105 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import { api } from "../../services/api";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ChecklistRoutesPrams } from "./routes";
+import { StaticScreenProps, useNavigation } from "@react-navigation/native";
+import { ChecklistRoutesProps } from "./routes";
 import { Toast } from "toastify-react-native";
+import { Header } from "../../components/ui/header";
+import { BaseSafeAreaView } from "../../components/skeleton";
+import { Input } from "../../components/form/input";
+import { useForm } from "react-hook-form";
+import { Card } from "../../components/ui/card";
+import { FormButton } from "../../components/form/form-button";
 
-export function ObservationScreen({ route }: any) {
+type Props = StaticScreenProps<{
+  checklistItem: any;
+  checklist: any;
+}>;
+
+export function ObservationScreen({ route }: Props) {
   const checklist = route.params.checklist;
 
-  const navigation =
-    useNavigation<NativeStackNavigationProp<ChecklistRoutesPrams>>();
+  const navigation = useNavigation<ChecklistRoutesProps>();
 
   const [checklistItem] = useState<ChecklistItem>(route.params.checklistItem);
-  const [text, setText] = useState(
-    route.params.checklistItem.observation || ""
-  );
-  const [loading, setLoading] = useState(false);
 
-  const handleUpdateObservation = async () => {
-    setLoading(true);
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<{
+    observation: string;
+  }>({
+    defaultValues: {
+      observation: route.params.checklistItem.observation,
+    },
+  });
+
+  const handleUpdateObservation = async ({
+    observation,
+  }: {
+    observation: string;
+  }) => {
     await api
-      .put("/api/checklist-item/" + checklistItem.id, {
-        observation: text,
+      .put("/api/v1/checklist-items/" + checklistItem.id, {
+        observation: observation,
       })
-      .then(() => navigation.goBack())
+      .then(() =>
+        navigation.popTo("ChecklistItem", {
+          checklistItem,
+          checklist,
+          refresh: Date.now(),
+        })
+      )
       .catch((e) => {
         if (e.response?.data?.message) {
           Toast.error(e.response.data.message);
         }
-      })
-      .finally(() => setLoading(false));
+      });
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <View style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
-        <Text style={styles.title} numberOfLines={1}>
-          {checklistItem.item.name}
-        </Text>
-      </View>
+    <BaseSafeAreaView>
+      <Header
+        backButton
+        title={checklistItem?.item?.name}
+        style={{
+          borderBottomColor:
+            checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
+        }}
+      />
       <KeyboardAwareScrollView
         bounces={false}
         contentContainerStyle={{
           flex: 1,
-          backgroundColor: "#e8e8e8",
-          paddingHorizontal: 16,
-          paddingVertical: 8,
+          padding: 16,
+          backgroundColor: "#F1F2F4",
         }}
         enableAutomaticScroll={true}
       >
-        <View key={checklistItem?.id} style={styles.card}>
-          <Text style={{ fontSize: 16, fontWeight: "bold" }}>Observação:</Text>
-          <TextInput
-            defaultValue={checklistItem?.observation || ""}
-            style={styles.input}
-            multiline
-            value={text}
-            onChangeText={(e) => setText(e)}
-            scrollEnabled={false}
-            numberOfLines={4}
-            autoCapitalize="characters"
-            editable={checklist.status === "OPEN"}
+        <Card>
+          <Input
+            required={false}
+            control={control}
+            errors={errors}
+            label="OBERSVAÇÃO:"
+            name="observation"
+            placeholder="Insira uma descrição da imagem"
+            errorMessage="Insira o endereço do imóvel"
             maxLength={255}
+            multiline
+            disabled={route.params.checklist.status === "CLOSED"}
+            style={{ minHeight: 44 * 3.1 }}
           />
-          <View>
-            <TouchableOpacity
-              style={[
-                {
-                  width: "100%",
-                  backgroundColor: "green",
-                  alignItems: "center",
-                  padding: 12,
-                  borderRadius: 4,
-                },
-                { opacity: checklist?.status === "CLOSED" ? 0.5 : 1 },
-              ]}
-              disabled={checklist?.status === "CLOSED"}
-              onPress={handleUpdateObservation}
-            >
-              <Text
-                style={{ color: "white", fontSize: 24, fontWeight: "semibold" }}
-              >
-                Salvar
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        </Card>
+        <FormButton
+          icon="save"
+          title="SALVAR"
+          disabled={route.params.checklist.status === "CLOSED"}
+          onPress={handleSubmit(handleUpdateObservation)}
+        />
       </KeyboardAwareScrollView>
-    </SafeAreaView>
+    </BaseSafeAreaView>
   );
 }
 
