@@ -5,9 +5,20 @@ import {
 } from "@react-navigation/native";
 import { useForm } from "react-hook-form";
 
-import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
+import {
+  BaseSafeAreaView,
+  BaseScrollView,
+  BaseView,
+} from "../../components/skeleton";
 import { Card } from "../../components/ui/card";
-import { Keyboard, TouchableWithoutFeedback } from "react-native";
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { Header } from "../../components/ui/header";
 import { Row } from "../../components/row";
 import { Input } from "../../components/form/input";
@@ -107,103 +118,103 @@ export const StepThreeScreen = ({
   return (
     <BaseSafeAreaView>
       <Header backButton title={"CRIAR IMÓVEL"} />
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <BaseView style={{ gap: 16 }}>
-          <StepsCount step={3} length={3} />
-          <Row />
-          <Card>
-            <Input
-              control={control}
-              errors={errors}
-              label="NOME:"
-              name="name"
-              placeholder="Nome do local"
-              errorMessage="Insira o nome do imóvel"
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+        // style={styles.container}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <BaseView style={{ gap: 16 }}>
+            <StepsCount step={3} length={3} />
+            <Row />
+            <Card>
+              <ScrollView>
+                <View style={{ gap: 4 }}>
+                  <Input
+                    control={control}
+                    errors={errors}
+                    label="NOME:"
+                    name="name"
+                    placeholder="Nome do local"
+                    errorMessage="Insira o nome do imóvel"
+                  />
+                  <Input
+                    control={control}
+                    errors={errors}
+                    label="CEP:"
+                    name="cep"
+                    placeholder="00000-000"
+                    errorMessage="Insira o CEP"
+                    maxLength={9}
+                    onChangeText={(value) => {
+                      const formatted = formatCEP(value);
+                      setValue("cep", formatted);
+                      if (formatted.length === 9) {
+                        findAddressByCEP(formatted.replace("-", ""));
+                      }
+                    }}
+                  />
+                  <Select
+                    label="ESTADO:"
+                    placeholder="Selecione o Estado"
+                    control={control}
+                    errors={errors}
+                    name="state"
+                    errorMessage="Selecione o Estado"
+                    options={states.map((state) => ({
+                      id: state.acronym,
+                      name: state.name.toUpperCase(),
+                    }))}
+                  />
+                  <Select
+                    label="CIDADE:"
+                    placeholder="Selecione a Cidade"
+                    control={control}
+                    errors={errors}
+                    name="city"
+                    errorMessage="Selecione a Cidade"
+                    options={cities}
+                    disabled={!watchedState}
+                  />
+                  <Input
+                    control={control}
+                    errors={errors}
+                    label="BAIRRO:"
+                    name="neighborhood"
+                    placeholder="Digite o bairro"
+                    errorMessage="Insira o bairro"
+                  />
+                  <Input
+                    control={control}
+                    errors={errors}
+                    label="RUA:"
+                    name="street"
+                    placeholder="Digite a rua"
+                    errorMessage="Insira a rua"
+                  />
+                  <Input
+                    control={control}
+                    errors={errors}
+                    label="ENDEREÇO COMPLETO:"
+                    name="address"
+                    placeholder="ex.: R. C, S/N - Centro Político Administrativo..."
+                    errorMessage="Insira o endereço do imóvel"
+                    maxLength={255}
+                    multiline
+                    style={{ minHeight: 44 * 3.1 }}
+                  />
+                </View>
+              </ScrollView>
+            </Card>
+            <FormButton
+              onPress={handleSubmit(submit)}
+              title="SALVAR"
+              icon="save"
             />
-            <Input
-              control={control}
-              errors={errors}
-              label="CEP:"
-              name="cep"
-              placeholder="00000-000"
-              errorMessage="Insira o CEP"
-              maxLength={9}
-              onChangeText={(value) => {
-                const formatted = formatCEP(value);
-                setValue("cep", formatted);
-                if (formatted.length === 9) {
-                  findAddressByCEP(formatted.replace("-", ""));
-                }
-              }}
-            />
-            <Select
-              label="ESTADO:"
-              placeholder="Selecione o Estado"
-              control={control}
-              errors={errors}
-              name="state"
-              errorMessage="Selecione o Estado"
-              options={states.map((state) => ({
-                id: state.acronym,
-                name: state.name.toUpperCase(),
-              }))}
-            />
-            <Select
-              label="CIDADE:"
-              placeholder="Selecione a Cidade"
-              control={control}
-              errors={errors}
-              name="city"
-              errorMessage="Selecione a Cidade"
-              options={cities}
-              disabled={!watchedState}
-            />
-            <Input
-              control={control}
-              errors={errors}
-              label="BAIRRO:"
-              name="neighborhood"
-              placeholder="Digite o bairro"
-              errorMessage="Insira o bairro"
-            />
-            <Input
-              control={control}
-              errors={errors}
-              label="RUA:"
-              name="street"
-              placeholder="Digite a rua"
-              errorMessage="Insira a rua"
-            />
-            <Input
-              control={control}
-              errors={errors}
-              label="ENDEREÇO COMPLETO:"
-              name="address"
-              placeholder="ex.: R. C, S/N - Centro Político Administrativo..."
-              errorMessage="Insira o endereço do imóvel"
-              maxLength={255}
-              multiline
-              style={{ minHeight: 44 * 3.1 }}
-            />
-            <Input
-              control={control}
-              errors={errors}
-              label="ENDEREÇO:"
-              name="address"
-              placeholder="ex.: R. C, S/N - Centro Político Administrativo..."
-              errorMessage="Insira o endereço do imóvel"
-              maxLength={255}
-              multiline
-              style={{ minHeight: 44 * 3.1 }}
-            />
-          </Card>
-          <FormButton
-            onPress={handleSubmit(submit)}
-            title="SALVAR"
-            icon="save"
-          />
-        </BaseView>
-      </TouchableWithoutFeedback>
+          </BaseView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </BaseSafeAreaView>
   );
 };
