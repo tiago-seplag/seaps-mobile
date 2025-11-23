@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { Select } from "../../components/form/select";
-import { api } from "../../services/api";
+import { getOrganizations, getModels } from "../../services";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { Card } from "../../components/ui/card";
 import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
@@ -43,12 +43,12 @@ export function StepOneScreen(_: Props) {
 
   useEffect(() => {
     clearErrors();
-    api
-      .get("/api/v1/organizations?per_page=100")
-      .then(({ data }) => setOrganizations(data.data));
-    api.get("/api/v1/models").then(({ data }) => {
-      setModels(data.data);
-      setValue("model_id", data.data[0]?.id);
+    getOrganizations({ per_page: 100 }).then((response) =>
+      setOrganizations(response.data)
+    );
+    getModels().then((response) => {
+      setModels(response.data);
+      setValue("model_id", response.data[0]?.id);
     });
   }, []);
 

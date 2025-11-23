@@ -3,7 +3,7 @@ import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
 
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 
-import { api } from "../../services/api";
+import { getProperties } from "../../services";
 import { Header } from "../../components/ui/header";
 import { PropertyItem } from "../../components/property-item";
 import { BaseSafeAreaView } from "../../components/skeleton";
@@ -12,16 +12,6 @@ import { useInfinityScroll } from "../../hooks/useInfinityScroll";
 type Props = StaticScreenProps<{
   refresh?: boolean | number;
 }>;
-
-function getProperties(page: number = 1, params?: any) {
-  return api.get<{ data: Property[]; meta: any }>(`/api/v1/properties`, {
-    params: {
-      page,
-      per_page: 20,
-      ...params,
-    },
-  });
-}
 
 export function PropertiesScreen({ route: { params } }: Props) {
   const navigation = useNavigation();

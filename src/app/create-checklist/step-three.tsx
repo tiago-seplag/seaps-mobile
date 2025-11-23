@@ -18,7 +18,7 @@ import { Select } from "../../components/form/select";
 import { getFirstAndLastName } from "../../utils";
 
 import { useSession } from "../../contexts/authContext";
-import { api } from "../../services/api";
+import { createChecklist, getUsers } from "../../services";
 import { useChecklistStore } from "../../stores/createChecklistStore";
 
 type Props = StaticScreenProps<undefined>;
@@ -42,30 +42,28 @@ export const StepThreeScreen = (_: Props) => {
   });
 
   const submit = async (values: any) => {
-    return api
-      .post("/api/v1/checklists", {
+    try {
+      await createChecklist({
         ...checklist,
         ...values,
         return: Number(checklist.return) || 0,
         is_returned: Boolean(checklist.is_returned),
-      })
-      .then(() =>
-        navigation.dispatch(
-          StackActions.popTo("HomeRoutes", {
-            screen: "ChecklistsHomeScreen",
-            params: {
-              refresh: Date.now(),
-            },
-          })
-        )
-      )
-      .catch((e) => console.log(e.response.data));
+      });
+      navigation.dispatch(
+        StackActions.popTo("HomeRoutes", {
+          screen: "ChecklistsHomeScreen",
+          params: {
+            refresh: Date.now(),
+          },
+        })
+      );
+    } catch (e: any) {
+      console.log(e.response?.data);
+    }
   };
 
   useEffect(() => {
-    api
-      .get("/api/v1/users?role=evaluator")
-      .then(({ data }) => setUsers(data.data));
+    getUsers({ role: "evaluator" }).then((response) => setUsers(response.data));
   }, []);
 
   return (

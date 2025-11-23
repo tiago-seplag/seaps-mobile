@@ -21,7 +21,7 @@ import { Card, CardTitle } from "../../components/ui/card";
 import { Toast } from "toastify-react-native";
 import Materialnicons from "@expo/vector-icons/MaterialIcons";
 
-import { api } from "../../services/api";
+import { ChecklistItem, getChecklistItems } from "../../services";
 import { BaseSafeAreaView } from "../../components/skeleton";
 
 type Props = StaticScreenProps<{
@@ -39,18 +39,17 @@ export function ChecklistItemsScreen({ route }: Props) {
 
   useEffect(() => {
     if (focus) {
-      const getData = () => {
-        api
-          .get("/api/v1/checklists/" + checklist.id + "/items")
-          .then(({ data }) => {
-            setChecklistItems(data);
-          })
-          .catch((e) => {
-            if (e.response?.data?.message) {
-              Toast.error(e.response.data.message);
-            }
-          })
-          .finally(() => setLoading(false));
+      const getData = async () => {
+        try {
+          const data = await getChecklistItems(checklist.id);
+          setChecklistItems(data);
+        } catch (e: any) {
+          if (e.response?.data?.message) {
+            Toast.error(e.response.data.message);
+          }
+        } finally {
+          setLoading(false);
+        }
       };
       getData();
     }
@@ -89,7 +88,7 @@ export function ChecklistItemsScreen({ route }: Props) {
               key={item.item.id}
               style={{ flexDirection: "row", alignItems: "center", height: 76 }}
             >
-              <CardTitle style={{ flex: 1 }}>{item.item.item.name}</CardTitle>
+              <CardTitle style={{ flex: 1 }}>{item.item?.item?.name}</CardTitle>
               <View
                 style={{
                   flexDirection: "row",

@@ -16,7 +16,11 @@ import { Toast } from "toastify-react-native";
 
 import * as ImagePicker from "expo-image-picker";
 import { ChecklistRoutesProps } from "./routes";
-import { api } from "../../services/api";
+import {
+  uploadChecklistItemImages,
+  getChecklistItemById,
+  ChecklistItem,
+} from "../../services";
 import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
 import { Header } from "../../components/ui/header";
 import { PhotosItem } from "./components/photos-item";
@@ -56,8 +60,8 @@ export function PhotosListScreen({ route }: Props) {
 
   const navigation = useNavigation<ChecklistRoutesProps>();
 
-  const [checklistItem, setChecklistItem] = useState<checklistItem>(
-    route.params.checklistItem || []
+  const [checklistItem, setChecklistItem] = useState<ChecklistItem>(
+    route.params.checklistItem
   );
   const [refresh, setRefresh] = useState(true);
 
@@ -100,7 +104,7 @@ export function PhotosListScreen({ route }: Props) {
         allowsMultipleSelection: true,
         quality: 0.5,
         allowsEditing: false,
-        selectionLimit: 10 - checklistItem.images.length,
+        selectionLimit: 10 - (checklistItem.images?.length || 0),
         aspect: [4, 3],
       });
     } else {
@@ -110,7 +114,7 @@ export function PhotosListScreen({ route }: Props) {
         mediaTypes: ["images"],
         allowsMultipleSelection: true,
         quality: 0.5,
-        selectionLimit: 10 - checklistItem.images.length,
+        selectionLimit: 10 - (checklistItem.images?.length || 0),
         allowsEditing: false,
         aspect: [4, 3],
       });
@@ -137,20 +141,7 @@ export function PhotosListScreen({ route }: Props) {
       }
       form.append("folder", "photos");
 
-      await api.post(
-        "/api/v1/checklists/" +
-          checklist.id +
-          "/items/" +
-          checklistItem.id +
-          "/images",
-        form,
-        {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await uploadChecklistItemImages(checklist.id, checklistItem.id, form);
     } catch (e: any) {
       console.log(e);
       if (e.response?.data?.message) {
@@ -164,15 +155,16 @@ export function PhotosListScreen({ route }: Props) {
   };
 
   const getData = async () => {
-    api
-      .get("/api/v1/checklist-items/" + checklistItem.id)
-      .then(({ data }) => setChecklistItem(data))
-      .catch((e) => {
-        if (e.response?.data?.message) {
-          Toast.error(e.response.data.message);
-        }
-      })
-      .finally(() => setLoading(false));
+    try {
+      const data = await getChecklistItemById(checklistItem.id);
+      setChecklistItem(data);
+    } catch (e: any) {
+      if (e.response?.data?.message) {
+        Toast.error(e.response.data.message);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -180,6 +172,21 @@ export function PhotosListScreen({ route }: Props) {
       getData();
     }
   }, [refresh, focus]);
+
+  if (!checklistItem || !checklistItem.images) {
+    return (
+      <BaseSafeAreaView>
+        <Header
+          backButton
+          title={"Carregando..."}
+          style={{
+            borderBottomColor:
+              checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
+          }}
+        />
+      </BaseSafeAreaView>
+    );
+  }
 
   return (
     <BaseSafeAreaView>

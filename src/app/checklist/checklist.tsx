@@ -13,7 +13,11 @@ import {
   useNavigation,
 } from "@react-navigation/native";
 import { ChecklistRoutesProps } from "./routes";
-import { api } from "../../services/api";
+import {
+  getChecklistById,
+  finishChecklist as finishChecklistService,
+  reopenChecklist as reopenChecklistService,
+} from "../../services";
 import { Toast } from "toastify-react-native";
 
 import { Label } from "../../components/Label";
@@ -42,18 +46,17 @@ export function ChecklistScreen({ route }: Props) {
   const [checklist, setChecklist] = useState<Checklist>(route.params.checklist);
   const [loading, setLoading] = useState(true);
 
-  const getData = () => {
-    api
-      .get("/api/v1/checklists/" + route.params?.id)
-      .then(({ data }) => {
-        setChecklist(data);
-      })
-      .catch((e) => {
-        if (e.response?.data?.message) {
-          Toast.error(e.response.data.message);
-        }
-      })
-      .finally(() => setLoading(false));
+  const getData = async () => {
+    try {
+      const data = await getChecklistById(route.params?.id);
+      setChecklist(data);
+    } catch (e: any) {
+      if (e.response?.data?.message) {
+        Toast.error(e.response.data.message);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -85,31 +88,33 @@ export function ChecklistScreen({ route }: Props) {
 
   const finishChecklist = async () => {
     setLoading(true);
-    await api
-      .put("/api/v1/checklists/" + route.params?.id + "/finish")
-      .then(() => getData())
-      .catch((e) => {
-        if (e.response?.data?.message) {
-          Toast.error(e.response.data.message);
-        }
-        if (e.response.data.action) {
-          Toast.error(e.response.data.action);
-        }
-      })
-      .finally(() => setLoading(false));
+    try {
+      await finishChecklistService(route.params?.id);
+      await getData();
+    } catch (e: any) {
+      if (e.response?.data?.message) {
+        Toast.error(e.response.data.message);
+      }
+      if (e.response?.data?.action) {
+        Toast.error(e.response.data.action);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const reopenChecklist = async () => {
     setLoading(true);
-    await api
-      .post("/api/v1/checklists/" + route.params?.id + "/re-open")
-      .then(() => getData())
-      .catch((e) => {
-        if (e.response?.data?.message) {
-          Toast.error(e.response.data.message);
-        }
-      })
-      .finally(() => setLoading(false));
+    try {
+      await reopenChecklistService(route.params?.id);
+      await getData();
+    } catch (e: any) {
+      if (e.response?.data?.message) {
+        Toast.error(e.response.data.message);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleReopenChecklist = () => {

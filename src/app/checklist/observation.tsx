@@ -1,16 +1,9 @@
 import { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet } from "react-native";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-import { api } from "../../services/api";
+import { updateChecklistItem } from "../../services";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { ChecklistRoutesProps } from "./routes";
 import { Toast } from "toastify-react-native";
@@ -50,22 +43,20 @@ export function ObservationScreen({ route }: Props) {
   }: {
     observation: string;
   }) => {
-    await api
-      .put("/api/v1/checklist-items/" + checklistItem.id, {
+    try {
+      await updateChecklistItem(checklistItem.id, {
         observation: observation,
-      })
-      .then(() =>
-        navigation.popTo("ChecklistItem", {
-          checklistItem,
-          checklist,
-          refresh: Date.now(),
-        })
-      )
-      .catch((e) => {
-        if (e.response?.data?.message) {
-          Toast.error(e.response.data.message);
-        }
       });
+      navigation.popTo("ChecklistItem", {
+        checklistItem,
+        checklist,
+        refresh: Date.now(),
+      });
+    } catch (e: any) {
+      if (e.response?.data?.message) {
+        Toast.error(e.response.data.message);
+      }
+    }
   };
 
   return (

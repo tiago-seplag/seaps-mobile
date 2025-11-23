@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 
-import { api } from "../../services/api";
+import { getChecklists } from "../../services";
 import { Header } from "../../components/ui/header";
 import { ChecklistItem } from "../../components/checklist-item";
 import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
@@ -15,22 +15,12 @@ type Props = StaticScreenProps<{
   refresh?: boolean | number;
 }>;
 
-function getChecklist(page: number = 1, params?: any) {
-  return api.get<{ data: Checklist[]; meta: any }>(`/api/v1/checklists`, {
-    params: {
-      page,
-      per_page: 20,
-      ...params,
-    },
-  });
-}
-
 export function ChecklistsScreen({ route: { params } }: Props) {
   const navigation = useNavigation();
 
   const [search, setSearch] = useState("");
   const { data, loadingMore, loading, fetchData, loadMore } =
-    useInfinityScroll(getChecklist);
+    useInfinityScroll(getChecklists);
 
   const debouncedFetchData = useCallback(
     debounce((value: string) => {

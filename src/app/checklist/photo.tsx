@@ -10,7 +10,11 @@ import { BaseScrollView } from "../../components/skeleton";
 import { ChecklistRoutesProps } from "./routes";
 import { Card, CardText } from "../../components/ui/card";
 import { useState } from "react";
-import { api } from "../../services/api";
+import {
+  deleteChecklistItemImage,
+  updateChecklistItem,
+  getChecklistItemById,
+} from "../../services";
 import { Toast } from "toastify-react-native";
 
 type Props = StaticScreenProps<{
@@ -60,53 +64,45 @@ export function PhotoScreen({ route }: Props) {
 
   async function onDeleteImage() {
     setLoading(true);
-
-    await api
-      .delete(
-        "/api/v1/checklist-items/" +
-          checklistItem.id +
-          "/images/" +
-          checklistItemPhoto.id
-      )
-      .then(() => {
-        Toast.success("Imagem deletada com sucesso");
-        navigation.goBack();
-      })
-      .catch((e) => {
-        if (e.response?.data?.message) {
-          Toast.error(e.response.data.message);
-        }
-      })
-      .finally(() => setLoading(false));
+    try {
+      await deleteChecklistItemImage(checklistItem.id, checklistItemPhoto.id);
+      Toast.success("Imagem deletada com sucesso");
+      navigation.goBack();
+    } catch (e: any) {
+      if (e.response?.data?.message) {
+        Toast.error(e.response.data.message);
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function handleUpdateChecklistImage() {
-    api
-      .put("/api/v1/checklist-items/" + checklistItem.id, {
+    try {
+      await updateChecklistItem(checklistItem.id, {
         image: checklistItemPhoto.image,
-      })
-      .then(() => {
-        Toast.success("Item atulizado com sucesso");
-        navigation.pop();
-      })
-      .catch((e) => {
-        if (e.response?.data?.message) {
-          Toast.error(e.response.data.message);
-        }
       });
+      Toast.success("Item atulizado com sucesso");
+      navigation.pop();
+    } catch (e: any) {
+      if (e.response?.data?.message) {
+        Toast.error(e.response.data.message);
+      }
+    }
   }
 
   const getData = async () => {
     setLoading(true);
-    api
-      .get("/api/v1/checklist-items/" + checklistItem.id)
+    try {
+      await getChecklistItemById(checklistItem.id);
       //   .then(({ data }) => setChecklistItem(data))
-      .catch((e) => {
-        if (e.response?.data?.message) {
-          Toast.error(e.response.data.message);
-        }
-      })
-      .finally(() => setLoading(false));
+    } catch (e: any) {
+      if (e.response?.data?.message) {
+        Toast.error(e.response.data.message);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -124,7 +120,8 @@ export function PhotoScreen({ route }: Props) {
           <Card style={{ gap: 8 }}>
             <Image
               source={{
-                uri: process.env.EXPO_PUBLIC_BUCKET_URL + checklistItemPhoto.image,
+                uri:
+                  process.env.EXPO_PUBLIC_BUCKET_URL + checklistItemPhoto.image,
               }}
               style={{
                 height: 298,

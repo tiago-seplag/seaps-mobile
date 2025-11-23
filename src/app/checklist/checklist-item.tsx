@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import { api } from "../../services/api";
+import {
+  updateChecklistItem,
+  getChecklistItemById,
+  ChecklistItem,
+} from "../../services";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { ChecklistRoutesProps } from "./routes";
 
@@ -31,20 +35,19 @@ export function ChecklistItemScreen({ route }: Props) {
   const handlePressRadio = async (value: string, id: string) => {
     if (!lock) {
       setLock(true);
-      await api
-        .put("/api/v1/checklist-items/" + id, { score: value })
-        .then(({ data }) =>
-          setChecklistItem((prev) => ({
-            ...prev,
-            ...data,
-          }))
-        )
-        .catch((e) => {
-          if (e.response?.data?.message) {
-            Toast.error(e.response.data.message);
-          }
-        })
-        .finally(() => setLock(false));
+      try {
+        const data = await updateChecklistItem(id, { score: value });
+        setChecklistItem((prev) => ({
+          ...prev,
+          ...data,
+        }));
+      } catch (e: any) {
+        if (e.response?.data?.message) {
+          Toast.error(e.response.data.message);
+        }
+      } finally {
+        setLock(false);
+      }
     }
   };
 
@@ -64,19 +67,17 @@ export function ChecklistItemScreen({ route }: Props) {
 
   useEffect(() => {
     const getData = async () => {
-      await api
-        .get("/api/v1/checklist-items/" + checklistItem.id)
-        .then(({ data }) =>
-          setChecklistItem((prev) => ({
-            ...prev,
-            observation: data.observation,
-          }))
-        )
-        .catch((e) => {
-          if (e.response?.data?.message) {
-            Toast.error(e.response.data.message);
-          }
-        });
+      try {
+        const data = await getChecklistItemById(checklistItem.id);
+        setChecklistItem((prev) => ({
+          ...prev,
+          observation: data.observation,
+        }));
+      } catch (e: any) {
+        if (e.response?.data?.message) {
+          Toast.error(e.response.data.message);
+        }
+      }
     };
 
     if (route.params?.refresh) {

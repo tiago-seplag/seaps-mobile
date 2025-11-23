@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
 import { Card } from "../../components/ui/card";
 import { Select } from "../../components/form/select";
-import { api } from "../../services/api";
+import { getOrganizations } from "../../services";
 import { CreatePropertyRoutesProps } from "./route";
 import { Header } from "../../components/ui/header";
 import { Row } from "../../components/row";
@@ -45,9 +45,8 @@ export const StepOneScreen = ({ route }: Props) => {
   });
 
   useEffect(() => {
-    api
-      .get("/api/v1/organizations?per_page=100")
-      .then(({ data }) => setOrganizations(data.data));
+    getOrganizations({ per_page: 100 })
+      .then((response) => setOrganizations(response.data));
   }, []);
 
   const submit = (values: PropertyForm) => {

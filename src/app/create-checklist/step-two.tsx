@@ -23,7 +23,7 @@ import { Card } from "../../components/ui/card";
 import { FormButton } from "../../components/form/form-button";
 import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
 
-import { api } from "../../services/api";
+import { getProperties } from "../../services";
 
 import { PropertyItem } from "./components/property-item";
 import { CreateChecklistRoutesProps } from "./routes";
@@ -61,12 +61,11 @@ export function StepTwoScreen({ route }: Props) {
   const navigation = useNavigation();
 
   useEffect(() => {
-    api
-      .get(
-        "/api/v1/properties?per_page=1000&organization_id=" +
-          route.params.organization_id
-      )
-      .then(({ data }) => setProperties(data.data))
+    getProperties({
+      per_page: 1000,
+      organization_id: route.params.organization_id,
+    })
+      .then((response) => setProperties(response.data))
       .finally(() => setLoading(false));
   }, [isFocused]);
 

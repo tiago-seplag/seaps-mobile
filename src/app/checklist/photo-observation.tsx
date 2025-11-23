@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Toast } from "toastify-react-native";
 
-import { api } from "../../services/api";
+import { updateChecklistItemImage } from "../../services";
 import { Card } from "../../components/ui/card";
 import { BaseSafeAreaView } from "../../components/skeleton";
 import { FormButton } from "../../components/form/form-button";
@@ -56,23 +56,20 @@ export function PhotoObservationScreen({ route }: Props) {
     observation?: string;
   }) => {
     setLoading(true);
-    await api
-      .put(
-        "/api/v1/checklist-items/" +
-          checklistItemPhoto.checklist_item_id +
-          "/images/" +
-          checklistItemPhoto.id,
-        {
-          observation: observation,
-        }
-      )
-      .then(() => navigation.pop(2))
-      .catch((e) => {
-        if (e.response?.data?.message) {
-          Toast.error(e.response.data.message);
-        }
-      })
-      .finally(() => setLoading(false));
+    try {
+      await updateChecklistItemImage(
+        checklistItemPhoto.checklist_item_id,
+        checklistItemPhoto.id,
+        { observation }
+      );
+      navigation.pop(2);
+    } catch (e: any) {
+      if (e.response?.data?.message) {
+        Toast.error(e.response.data.message);
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
