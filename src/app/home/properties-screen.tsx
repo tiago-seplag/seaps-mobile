@@ -16,8 +16,9 @@ type Props = StaticScreenProps<{
 export function PropertiesScreen({ route: { params } }: Props) {
   const navigation = useNavigation();
 
-  const { data, loadingMore, loading, fetchData, loadMore } =
-    useInfinityScroll(getProperties);
+  const { data, loadingMore, loading, fetchData, loadMore } = useInfinityScroll(
+    (page: number) => getProperties({ page })
+  );
 
   useEffect(() => {
     fetchData(1);

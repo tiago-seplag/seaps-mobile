@@ -4,10 +4,8 @@ import { PaginationParams, PaginatedResponse } from "./types";
 /**
  * Lista as propriedades com paginação
  */
-export async function getProperties(
-  params?: PaginationParams
-): Promise<PaginatedResponse<Property>> {
-  const { data } = await api.get<PaginatedResponse<Property>>(
+export async function getProperties(params?: PaginationParams) {
+  const data = await api.get<PaginatedResponse<Property>>(
     "/api/v1/properties",
     {
       params: {
@@ -17,6 +15,7 @@ export async function getProperties(
       },
     }
   );
+
   return data;
 }
 

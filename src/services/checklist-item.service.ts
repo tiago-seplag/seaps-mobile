@@ -76,16 +76,12 @@ export async function uploadChecklistItemImages(
   itemId: string,
   formData: FormData
 ): Promise<void> {
-  await api.post(
-    `/api/v1/checklists/${checklistId}/items/${itemId}/images`,
-    formData,
-    {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
+  await api.post(`/api/v1/checklist-items/${itemId}/upload`, formData, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "multipart/form-data",
+    },
+  });
 }
 
 /**

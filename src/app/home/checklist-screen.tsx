@@ -19,8 +19,9 @@ export function ChecklistsScreen({ route: { params } }: Props) {
   const navigation = useNavigation();
 
   const [search, setSearch] = useState("");
-  const { data, loadingMore, loading, fetchData, loadMore } =
-    useInfinityScroll(getChecklists);
+  const { data, loadingMore, loading, fetchData, loadMore } = useInfinityScroll(
+    (page: number) => getChecklists({ page })
+  );
 
   const debouncedFetchData = useCallback(
     debounce((value: string) => {

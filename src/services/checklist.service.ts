@@ -4,10 +4,8 @@ import { PaginationParams, PaginatedResponse } from "./types";
 /**
  * Lista os checklists com paginação
  */
-export async function getChecklists(
-  params?: PaginationParams
-): Promise<PaginatedResponse<Checklist>> {
-  const { data } = await api.get<PaginatedResponse<Checklist>>(
+export async function getChecklists(params?: PaginationParams) {
+  const data = await api.get<PaginatedResponse<Checklist>>(
     "/api/v1/checklists",
     {
       params: {
