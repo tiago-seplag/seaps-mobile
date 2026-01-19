@@ -16,7 +16,7 @@ export async function getProperties(params?: PaginationParams) {
     }
   );
 
-  return data;
+  return data.data;
 }
 
 /**

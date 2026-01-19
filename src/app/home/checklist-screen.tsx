@@ -20,14 +20,15 @@ export function ChecklistsScreen({ route: { params } }: Props) {
 
   const [search, setSearch] = useState("");
   const { data, loadingMore, loading, fetchData, loadMore } = useInfinityScroll(
-    (page: number) => getChecklists({ page })
+    (page: number, params?: any) =>
+      getChecklists({ page, ...params }, params?.forceRefresh),
   );
 
   const debouncedFetchData = useCallback(
     debounce((value: string) => {
       fetchData(1, { property_name: value });
     }, 500),
-    []
+    [],
   );
 
   const handleSearchChange = (text: string) => {
@@ -70,7 +71,10 @@ export function ChecklistsScreen({ route: { params } }: Props) {
             <RefreshControl
               refreshing={loading}
               onRefresh={() =>
-                fetchData(1, search && { property_name: search })
+                fetchData(1, {
+                  ...(search && { property_name: search }),
+                  forceRefresh: true,
+                })
               }
             />
           }

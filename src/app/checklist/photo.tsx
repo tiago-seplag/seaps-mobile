@@ -58,14 +58,18 @@ export function PhotoScreen({ route }: Props) {
       ],
       {
         cancelable: true,
-      }
+      },
     );
   };
 
   async function onDeleteImage() {
     setLoading(true);
     try {
-      await deleteChecklistItemImage(checklistItem.id, checklistItemPhoto.id);
+      await deleteChecklistItemImage(
+        checklist.id,
+        checklistItem.id,
+        checklistItemPhoto.id,
+      );
       Toast.success("Imagem deletada com sucesso");
       navigation.goBack();
     } catch (e: any) {
@@ -79,7 +83,7 @@ export function PhotoScreen({ route }: Props) {
 
   async function handleUpdateChecklistImage() {
     try {
-      await updateChecklistItem(checklistItem.id, {
+      await updateChecklistItem(checklist.id, checklistItem.id, {
         image: checklistItemPhoto.image,
       });
       Toast.success("Item atulizado com sucesso");
@@ -94,8 +98,7 @@ export function PhotoScreen({ route }: Props) {
   const getData = async () => {
     setLoading(true);
     try {
-      await getChecklistItemById(checklistItem.id);
-      //   .then(({ data }) => setChecklistItem(data))
+      await getChecklistItemById(checklistItem.id, checklistItem.id);
     } catch (e: any) {
       if (e.response?.data?.message) {
         Toast.error(e.response.data.message);

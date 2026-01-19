@@ -26,10 +26,11 @@ interface ChecklistItem {
   updated_at: Date;
   checklist_id: string;
   item_id: string;
-  score: number | null;
-  observation: string | null;
-  image: string | null;
+  score?: number | null;
+  observation?: string | null;
+  image?: string | null;
   is_inspected: boolean;
+  images?: ChecklistItemImage[];
   item: {
     name: string;
   };

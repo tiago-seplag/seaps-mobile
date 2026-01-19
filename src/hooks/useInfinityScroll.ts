@@ -1,19 +1,8 @@
-import { AxiosResponse } from "axios";
+import { PaginatedResponse } from "../services/types";
 import { useRef, useState } from "react";
 
 export const useInfinityScroll = <T = unknown>(
-  getData: (
-    page: number,
-    filter?: any
-  ) => Promise<
-    AxiosResponse<
-      {
-        data: T[];
-        meta: any;
-      },
-      any
-    >
-  >
+  getData: (page: number, filter?: any) => Promise<PaginatedResponse<T>>,
 ) => {
   const [data, setData] = useState<T[]>([]);
 
@@ -32,16 +21,15 @@ export const useInfinityScroll = <T = unknown>(
 
     try {
       const response = await getData(page, filter);
-      const responseData = response.data;
 
       if (page === 1) {
-        setData(responseData.data);
+        setData(response.data);
       } else {
-        setData((prev) => [...prev, ...responseData.data]);
+        setData((prev) => [...prev, ...response.data]);
       }
 
-      currentPageRef.current = responseData.meta.current_page;
-      setLastPage(responseData.meta.last_page);
+      currentPageRef.current = response.meta.current_page;
+      setLastPage(response.meta.last_page);
     } catch (error) {
       console.log("Erro ao buscar dados:", error);
     } finally {

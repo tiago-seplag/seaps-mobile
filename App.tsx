@@ -10,6 +10,8 @@ import {
   RobotoMono_700Bold,
 } from "@expo-google-fonts/dev";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import { SyncService } from "./src/services/sync.service";
 
 export type RootStackParamList = {
   Initial: any;
@@ -22,6 +24,10 @@ export default function App() {
     MonoBold: RobotoMono_700Bold,
     Inter300: Inter_300Light,
   });
+
+  useEffect(() => {
+    SyncService.initialize();
+  }, []);
 
   if (!fontsLoaded) {
     return null;

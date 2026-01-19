@@ -19,8 +19,9 @@ import { ChecklistRoutesProps } from "./routes";
 import {
   uploadChecklistItemImages,
   getChecklistItemById,
-  ChecklistItem,
 } from "../../services";
+import { SyncService } from "../../services/sync.service";
+import { LocalStorageService } from "../../services/local-storage.service";
 import { BaseSafeAreaView, BaseView } from "../../components/skeleton";
 import { Header } from "../../components/ui/header";
 import { PhotosItem } from "./components/photos-item";
@@ -61,11 +62,32 @@ export function PhotosListScreen({ route }: Props) {
   const navigation = useNavigation<ChecklistRoutesProps>();
 
   const [checklistItem, setChecklistItem] = useState<ChecklistItem>(
-    route.params.checklistItem
+    route.params.checklistItem,
   );
   const [refresh, setRefresh] = useState(true);
 
   const [loading, setLoading] = useState(true);
+  const [pendingUploads, setPendingUploads] = useState(0);
+
+  const checkPendingUploads = async () => {
+    const pending = await LocalStorageService.getPendingUploads();
+    const itemPending = pending.filter((p) => p.itemId === checklistItem.id);
+    setPendingUploads(itemPending.length);
+  };
+
+  const handleSync = async () => {
+    setLoading(true);
+    try {
+      await SyncService.forceSync();
+      await checkPendingUploads();
+      setRefresh(!refresh);
+      Toast.success("Sincronização concluída");
+    } catch (error) {
+      Toast.error("Erro na sincronização");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSelectOrigin = () => {
     Alert.alert(
@@ -90,7 +112,7 @@ export function PhotosListScreen({ route }: Props) {
       {
         cancelable: true,
         onDismiss: () => 0,
-      }
+      },
     );
   };
 
@@ -120,7 +142,6 @@ export function PhotosListScreen({ route }: Props) {
       });
     }
 
-    
     if (!result.canceled) {
       uploadFiles(result);
     }
@@ -157,7 +178,10 @@ export function PhotosListScreen({ route }: Props) {
 
   const getData = async () => {
     try {
-      const data = await getChecklistItemById(checklistItem.id);
+      const data = await getChecklistItemById(
+        checklistItem.id,
+        checklistItem.id,
+      );
       setChecklistItem(data);
     } catch (e: any) {
       if (e.response?.data?.message) {
@@ -171,6 +195,7 @@ export function PhotosListScreen({ route }: Props) {
   useEffect(() => {
     if (focus) {
       getData();
+      checkPendingUploads();
     }
   }, [refresh, focus]);
 
@@ -198,6 +223,15 @@ export function PhotosListScreen({ route }: Props) {
           borderBottomColor:
             checklist?.status === "OPEN" ? "#067C03" : "#FD0006",
         }}
+        actionProps={
+          pendingUploads > 0
+            ? {
+                action: handleSync,
+                icon: "sync",
+                badge: pendingUploads.toString(),
+              }
+            : undefined
+        }
       />
       <BaseView style={{ gap: 8 }}>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>

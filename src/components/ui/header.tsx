@@ -22,6 +22,7 @@ export const Header = ({
     icon: keyof typeof MaterialIcons.glyphMap;
     action: () => void;
     disabled?: boolean;
+    badge?: string;
   };
   style?: StyleProp<ViewStyle>;
   backButton?: boolean;
@@ -67,7 +68,7 @@ export const Header = ({
         </Text>
         {actionProps && (
           <TouchableOpacity
-            style={{ opacity: actionProps.disabled ? 0.5 : 1 }}
+            style={{ opacity: actionProps.disabled ? 0.5 : 1, position: 'relative' }}
             disabled={actionProps.disabled}
             onPress={actionProps.action}
           >
@@ -76,6 +77,11 @@ export const Header = ({
               size={32}
               color={"#E8E8E8"}
             />
+            {actionProps.badge && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{actionProps.badge}</Text>
+              </View>
+            )}
           </TouchableOpacity>
         )}
       </View>
@@ -89,5 +95,22 @@ const styles = StyleSheet.create({
     color: "#E8E8E8",
     textTransform: "uppercase",
     fontWeight: "bold",
+  },
+  badge: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    backgroundColor: '#FF6B6B',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
 });

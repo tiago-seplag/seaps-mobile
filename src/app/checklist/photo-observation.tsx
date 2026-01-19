@@ -58,6 +58,7 @@ export function PhotoObservationScreen({ route }: Props) {
     setLoading(true);
     try {
       await updateChecklistItemImage(
+        checklist.id,
         checklistItemPhoto.checklist_item_id,
         checklistItemPhoto.id,
         { observation }

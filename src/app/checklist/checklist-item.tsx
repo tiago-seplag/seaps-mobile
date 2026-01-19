@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import {
-  updateChecklistItem,
-  getChecklistItemById,
-  ChecklistItem,
-} from "../../services";
+import { updateChecklistItem, getChecklistItemById } from "../../services";
 import { StaticScreenProps, useNavigation } from "@react-navigation/native";
 import { ChecklistRoutesProps } from "./routes";
 
@@ -28,7 +24,7 @@ export function ChecklistItemScreen({ route }: Props) {
   const checklist = route.params.checklist;
 
   const [checklistItem, setChecklistItem] = useState<ChecklistItem>(
-    route.params.checklistItem
+    route.params.checklistItem,
   );
   const [lock, setLock] = useState(false);
 
@@ -36,7 +32,9 @@ export function ChecklistItemScreen({ route }: Props) {
     if (!lock) {
       setLock(true);
       try {
-        const data = await updateChecklistItem(id, { score: value });
+        const data = await updateChecklistItem(checklist.id, id, {
+          score: Number(value),
+        });
         setChecklistItem((prev) => ({
           ...prev,
           ...data,
@@ -68,7 +66,7 @@ export function ChecklistItemScreen({ route }: Props) {
   useEffect(() => {
     const getData = async () => {
       try {
-        const data = await getChecklistItemById(checklistItem.id);
+        const data = await getChecklistItemById(checklist.id, checklistItem.id);
         setChecklistItem((prev) => ({
           ...prev,
           observation: data.observation,
