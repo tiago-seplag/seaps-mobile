@@ -1,4 +1,4 @@
-import { LocalStorageService, PendingUpload } from "./local-storage.service";
+import { LocalStorageService, PendingUpload, PendingUpdate } from "./local-storage.service";
 import { api } from "./api";
 import NetInfo from "@react-native-community/netinfo";
 
@@ -11,13 +11,56 @@ export class SyncService {
     NetInfo.addEventListener((state) => {
       this.isOnline = state.isConnected ?? false;
       if (this.isOnline && !this.isProcessing) {
-        this.processPendingUploads();
+        this.syncAll();
       }
     });
 
     // Check initial status
     const netInfo = await NetInfo.fetch();
     this.isOnline = netInfo.isConnected ?? false;
+  }
+
+  static async syncAll() {
+    await this.processPendingUpdates();
+    await this.processPendingUploads();
+  }
+
+  static async processPendingUpdates() {
+    if (this.isProcessing || !this.isOnline) return;
+
+    this.isProcessing = true;
+
+    try {
+      const pendingUpdates = await LocalStorageService.getPendingUpdates();
+
+      for (const update of pendingUpdates) {
+        if (!this.isOnline) break; // Stop if connection lost
+
+        try {
+          await this.processUpdate(update);
+          await LocalStorageService.removePendingUpdate(update.id);
+        } catch (error) {
+          console.warn(`Failed to sync update ${update.id}:`, error);
+          await LocalStorageService.incrementUpdateRetryCount(update.id);
+
+          // Remove after 3 failed attempts
+          if (update.retryCount >= 3) {
+            await LocalStorageService.removePendingUpdate(update.id);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error processing pending updates:", error);
+    } finally {
+      this.isProcessing = false;
+    }
+  }
+
+  private static async processUpdate(update: PendingUpdate) {
+    await api.put(
+      `/api/v2/checklist-items/${update.itemId}`,
+      update.data,
+    );
   }
 
   static async processPendingUploads() {
@@ -108,7 +151,7 @@ export class SyncService {
 
   static async forceSync() {
     if (this.isOnline) {
-      await this.processPendingUploads();
+      await this.syncAll();
     }
   }
 }

@@ -100,9 +100,24 @@ export async function updateChecklistItem(
     );
     return data;
   } catch (error) {
-    // If offline, return the local update
-    console.warn("Failed to sync update, keeping local changes:", error);
-    // Return a mock updated item
+    // If offline, queue for later sync
+    console.warn("Failed to sync update, queued for later sync:", error);
+    
+    await LocalStorageService.addPendingUpdate({
+      checklistId,
+      itemId,
+      data: updateData,
+    });
+
+    // Get updated local item to return
+    const items = await LocalStorageService.getChecklistItems(checklistId);
+    const updatedItem = items?.find(item => item.id === itemId);
+    
+    if (updatedItem) {
+      return updatedItem as unknown as ChecklistItem;
+    }
+    
+    // Fallback: return mock with updates
     return { id: itemId, ...updateData } as ChecklistItem;
   }
 }
