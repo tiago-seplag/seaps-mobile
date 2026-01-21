@@ -29,7 +29,7 @@ export async function getChecklistItems(
 
   // Fetch from API
   const { data } = await api.get<ChecklistItem[]>(
-    `/api/v1/checklists/${checklistId}/items`,
+    `/api/v2/checklists/${checklistId}/items`,
   );
 
   // Cache locally
@@ -59,7 +59,7 @@ export async function getChecklistItemById(
 
   // Fetch from API
   const { data } = await api.get<ChecklistItem>(
-    `/api/v1/checklist-items/${itemId}`,
+    `/api/v2/checklist-items/${itemId}`,
   );
 
   // Update local storage
@@ -89,7 +89,7 @@ export async function updateChecklistItem(
   // Try to sync with API
   try {
     const { data } = await api.put<ChecklistItem>(
-      `/api/v1/checklist-items/${itemId}`,
+      `/api/v2/checklist-items/${itemId}`,
       updateData,
     );
     // Update local with server response
@@ -140,7 +140,7 @@ export async function uploadChecklistItemImages(
 
   // Try to sync immediately
   try {
-    await api.post(`/api/v1/checklist-items/${itemId}/upload`, formData, {
+    await api.post(`/api/v2/checklist-items/${itemId}/upload`, formData, {
       headers: {
         Accept: "application/json",
         "Content-Type": "multipart/form-data",
@@ -172,7 +172,7 @@ export async function updateChecklistItemImage(
 
   // Try to sync immediately
   try {
-    await api.put(`/api/v1/checklist-items/${itemId}/images/${imageId}`, data);
+    await api.put(`/api/v2/checklist-items/${itemId}/images/${imageId}`, data);
   } catch (error) {
     console.warn("Image update failed, queued for later sync:", error);
   }
@@ -196,7 +196,7 @@ export async function deleteChecklistItemImage(
 
   // Try to sync immediately
   try {
-    await api.delete(`/api/v1/checklist-items/${itemId}/images/${imageId}`);
+    await api.delete(`/api/v2/checklist-items/${itemId}/images/${imageId}`);
   } catch (error) {
     console.warn("Image delete failed, queued for later sync:", error);
   }

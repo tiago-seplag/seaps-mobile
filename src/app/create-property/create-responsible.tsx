@@ -51,7 +51,7 @@ export function CreateResponsibleScreen({
 
   useEffect(() => {
     api
-      .get("/api/v1/organizations")
+      .get("/api/v2/organizations")
       .then(({ data }) => setOrganizations(data.data));
   }, []);
 
@@ -65,7 +65,7 @@ export function CreateResponsibleScreen({
     };
 
     return api
-      .post("/api/v1/responsible", data)
+      .post("/api/v2/responsible", data)
       .then(() => navigate.goBack())
       .catch((e) => console.log(e.response.data));
   };

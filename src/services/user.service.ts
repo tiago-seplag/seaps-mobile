@@ -21,7 +21,7 @@ export interface GetUsersParams {
 export async function getUsers(
   params?: GetUsersParams
 ): Promise<PaginatedResponse<AppUser>> {
-  const { data } = await api.get<PaginatedResponse<AppUser>>("/api/v1/users", {
+  const { data } = await api.get<PaginatedResponse<AppUser>>("/api/v2/users", {
     params,
   });
   return data;
@@ -31,6 +31,6 @@ export async function getUsers(
  * Busca um usuário específico pelo ID
  */
 export async function getUserById(id: string): Promise<AppUser> {
-  const { data } = await api.get<AppUser>(`/api/v1/users/${id}`);
+  const { data } = await api.get<AppUser>(`/api/v2/users/${id}`);
   return data;
 }

@@ -30,7 +30,7 @@ export function Login() {
   const submitLogin = async ({ email, password }: any) => {
     setLoading(true);
     try {
-      const { data } = await api.post("/api/v1/sessions", {
+      const { data } = await api.post("/api/v2/sessions", {
         email: email.trim().toLowerCase(),
         password: password.trim(),
       });

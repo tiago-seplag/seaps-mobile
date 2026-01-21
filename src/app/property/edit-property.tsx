@@ -80,7 +80,7 @@ export function EditProperty({ route }: Props) {
 
   useEffect(() => {
     api
-      .get("/api/v1/organizations?per_page=100")
+      .get("/api/v2/organizations?per_page=100")
       .then(({ data }) => setOrganizations(data.data))
       .catch((e) => console.log(e));
   }, []);
@@ -88,7 +88,7 @@ export function EditProperty({ route }: Props) {
   useEffect(() => {
     if (property && isFocused) {
       api
-        .get("/api/v1/persons/?organization_id&per_page=1000")
+        .get("/api/v2/persons/?organization_id&per_page=1000")
         .then(({ data }) => setResponsible(data.data))
         .catch((e) => console.log(e));
     }
@@ -156,7 +156,7 @@ export function EditProperty({ route }: Props) {
     };
 
     return api
-      .put("/api/v1/properties/" + property.id, data)
+      .put("/api/v2/properties/" + property.id, data)
       .then(() =>
         navigation.dispatch(
           StackActions.popTo("HomeRoutes", {

@@ -82,7 +82,7 @@ export class SyncService {
     formData.append("folder", upload.data.folder);
 
     await api.post(
-      `/api/v1/checklist-items/${upload.itemId}/upload`,
+      `/api/v2/checklist-items/${upload.itemId}/upload`,
       formData,
       {
         headers: {
@@ -95,14 +95,14 @@ export class SyncService {
 
   private static async processImageUpdate(upload: PendingUpload) {
     await api.put(
-      `/api/v1/checklist-items/${upload.itemId}/images/${upload.data.imageId}`,
+      `/api/v2/checklist-items/${upload.itemId}/images/${upload.data.imageId}`,
       { observation: upload.data.observation },
     );
   }
 
   private static async processImageDelete(upload: PendingUpload) {
     await api.delete(
-      `/api/v1/checklist-items/${upload.itemId}/images/${upload.data.imageId}`,
+      `/api/v2/checklist-items/${upload.itemId}/images/${upload.data.imageId}`,
     );
   }
 
