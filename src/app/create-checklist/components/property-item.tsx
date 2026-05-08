@@ -54,6 +54,14 @@ export const PropertyItem = ({
             style={{ backgroundColor: "#E8EAF2" }}
           />
         </View>
+        {item.item?.city && item.item?.state && (
+          <CardText
+            numberOfLines={1}
+            style={{ fontSize: 14, fontWeight: "bold" }}
+          >
+            {item.item?.city} - {item.item?.state}
+          </CardText>
+        )}
         <CardText numberOfLines={1} style={{ fontSize: 14 }}>
           {item.item?.address}
         </CardText>

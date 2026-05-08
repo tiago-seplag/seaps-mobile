@@ -68,7 +68,10 @@ export const Header = ({
         </Text>
         {actionProps && (
           <TouchableOpacity
-            style={{ opacity: actionProps.disabled ? 0.5 : 1, position: 'relative' }}
+            style={{
+              opacity: actionProps.disabled ? 0.5 : 1,
+              position: "relative",
+            }}
             disabled={actionProps.disabled}
             onPress={actionProps.action}
           >
@@ -97,20 +100,20 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   badge: {
-    position: 'absolute',
+    position: "absolute",
     top: -8,
     right: -8,
-    backgroundColor: '#FF6B6B',
+    backgroundColor: "#FF6B6B",
     borderRadius: 10,
     minWidth: 20,
     height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 4,
   },
   badgeText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
