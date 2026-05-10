@@ -14,7 +14,7 @@ export async function getOrganizations(
   params?: PaginationParams
 ): Promise<PaginatedResponse<Organization>> {
   const { data } = await api.get<PaginatedResponse<Organization>>(
-    "/api/v1/organizations",
+    "/api/v2/organizations",
     {
       params: {
         page: 1,
@@ -30,6 +30,6 @@ export async function getOrganizations(
  * Busca uma organização específica pelo ID
  */
 export async function getOrganizationById(id: string): Promise<Organization> {
-  const { data } = await api.get<Organization>(`/api/v1/organizations/${id}`);
+  const { data } = await api.get<Organization>(`/api/v2/organizations/${id}`);
   return data;
 }

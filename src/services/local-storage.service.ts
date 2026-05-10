@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const CHECKLISTS_KEY = 'checklists';
 const CHECKLIST_ITEMS_KEY = 'checklist_items_';
 const PENDING_UPLOADS_KEY = 'pending_uploads';
+const PENDING_UPDATES_KEY = 'pending_updates';
 
 export interface CachedChecklist {
   id: string;
@@ -21,6 +22,15 @@ export interface PendingUpload {
   checklistId: string;
   itemId: string;
   type: 'image_upload' | 'image_update' | 'image_delete';
+  data: any;
+  timestamp: number;
+  retryCount: number;
+}
+
+export interface PendingUpdate {
+  id: string;
+  checklistId: string;
+  itemId: string;
   data: any;
   timestamp: number;
   retryCount: number;
@@ -144,6 +154,59 @@ export class LocalStorageService {
       }
     } catch (error) {
       console.error('Error incrementing retry count:', error);
+    }
+  }
+
+  // Pending Updates (for score/observation changes)
+  static async addPendingUpdate(update: Omit<PendingUpdate, 'id' | 'timestamp' | 'retryCount'>): Promise<string> {
+    try {
+      const pending = await this.getPendingUpdates();
+      const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+      const newUpdate: PendingUpdate = {
+        ...update,
+        id,
+        timestamp: Date.now(),
+        retryCount: 0,
+      };
+      pending.push(newUpdate);
+      await AsyncStorage.setItem(PENDING_UPDATES_KEY, JSON.stringify(pending));
+      return id;
+    } catch (error) {
+      console.error('Error adding pending update:', error);
+      throw error;
+    }
+  }
+
+  static async getPendingUpdates(): Promise<PendingUpdate[]> {
+    try {
+      const data = await AsyncStorage.getItem(PENDING_UPDATES_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error('Error getting pending updates:', error);
+      return [];
+    }
+  }
+
+  static async removePendingUpdate(id: string): Promise<void> {
+    try {
+      const pending = await this.getPendingUpdates();
+      const filtered = pending.filter(update => update.id !== id);
+      await AsyncStorage.setItem(PENDING_UPDATES_KEY, JSON.stringify(filtered));
+    } catch (error) {
+      console.error('Error removing pending update:', error);
+    }
+  }
+
+  static async incrementUpdateRetryCount(id: string): Promise<void> {
+    try {
+      const pending = await this.getPendingUpdates();
+      const update = pending.find(u => u.id === id);
+      if (update) {
+        update.retryCount += 1;
+        await AsyncStorage.setItem(PENDING_UPDATES_KEY, JSON.stringify(pending));
+      }
+    } catch (error) {
+      console.error('Error incrementing update retry count:', error);
     }
   }
 }

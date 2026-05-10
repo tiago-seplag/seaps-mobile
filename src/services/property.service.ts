@@ -6,7 +6,7 @@ import { PaginationParams, PaginatedResponse } from "./types";
  */
 export async function getProperties(params?: PaginationParams) {
   const data = await api.get<PaginatedResponse<Property>>(
-    "/api/v1/properties",
+    "/api/v2/properties",
     {
       params: {
         page: 1,
@@ -23,7 +23,7 @@ export async function getProperties(params?: PaginationParams) {
  * Busca uma propriedade específica pelo ID
  */
 export async function getPropertyById(id: string): Promise<Property> {
-  const { data } = await api.get<Property>(`/api/v1/properties/${id}`);
+  const { data } = await api.get<Property>(`/api/v2/properties/${id}`);
   return data;
 }
 
@@ -33,7 +33,7 @@ export async function getPropertyById(id: string): Promise<Property> {
 export async function createProperty(
   data: Partial<Property>
 ): Promise<Property> {
-  const response = await api.post<Property>("/api/v1/properties", data);
+  const response = await api.post<Property>("/api/v2/properties", data);
   return response.data;
 }
 
@@ -44,7 +44,7 @@ export async function updateProperty(
   id: string,
   data: Partial<Property>
 ): Promise<Property> {
-  const response = await api.put<Property>(`/api/v1/properties/${id}`, data);
+  const response = await api.put<Property>(`/api/v2/properties/${id}`, data);
   return response.data;
 }
 
@@ -52,5 +52,5 @@ export async function updateProperty(
  * Deleta uma propriedade
  */
 export async function deleteProperty(id: string): Promise<void> {
-  await api.delete(`/api/v1/properties/${id}`);
+  await api.delete(`/api/v2/properties/${id}`);
 }

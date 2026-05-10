@@ -28,7 +28,7 @@ export async function getChecklists(
 
   // Fetch from API and cache
   const response = await api.get<PaginatedResponse<Checklist>>(
-    "/api/v1/checklists",
+    "/api/v2/checklists",
     {
       params: {
         page: 1,
@@ -58,7 +58,7 @@ export async function getChecklistById(id: string): Promise<Checklist> {
   }
 
   // Fetch from API
-  const { data } = await api.get<Checklist>(`/api/v1/checklists/${id}`);
+  const { data } = await api.get<Checklist>(`/api/v2/checklists/${id}`);
 
   // Update local storage
   const current = (await LocalStorageService.getChecklists()) || [];
@@ -72,14 +72,14 @@ export async function getChecklistById(id: string): Promise<Checklist> {
  * Finaliza um checklist
  */
 export async function finishChecklist(id: string): Promise<void> {
-  await api.put(`/api/v1/checklists/${id}/finish`);
+  await api.put(`/api/v2/checklists/${id}/finish`);
 }
 
 /**
  * Reabre um checklist finalizado
  */
 export async function reopenChecklist(id: string): Promise<void> {
-  await api.post(`/api/v1/checklists/${id}/re-open`);
+  await api.post(`/api/v2/checklists/${id}/re-open`);
 }
 
 /**
@@ -88,6 +88,6 @@ export async function reopenChecklist(id: string): Promise<void> {
 export async function createChecklist(
   data: Partial<Checklist>,
 ): Promise<Checklist> {
-  const response = await api.post<Checklist>("/api/v1/checklists", data);
+  const response = await api.post<Checklist>("/api/v2/checklists", data);
   return response.data;
 }

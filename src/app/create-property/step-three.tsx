@@ -55,7 +55,7 @@ export const StepThreeScreen = ({
   const watchedState = watch("state");
   const submit = async (values: any) => {
     return api
-      .post("/api/v1/properties", {
+      .post("/api/v2/properties", {
         ...property,
         ...values,
         neighborhood: values.neighborhood.toUpperCase().trim(),

@@ -37,7 +37,7 @@ export const PDFButtonModal: FC<PDFButtonModalProps> = ({ checklist, id }) => {
 
       if (!fileInfo.exists) {
         const download = await FileSystem.downloadAsync(
-          process.env.EXPO_PUBLIC_API_URL + "/api/v1/reports/" + id,
+          process.env.EXPO_PUBLIC_API_URL + "/api/v2/reports/" + id,
           FileSystem.documentDirectory + fileName,
           {
             headers: {
