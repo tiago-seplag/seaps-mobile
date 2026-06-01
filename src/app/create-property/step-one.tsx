@@ -85,6 +85,7 @@ export const StepOneScreen = ({ route }: Props) => {
               { id: "OWN", name: "PRÓPRIO" },
               { id: "RENTED", name: "ALUGADO" },
               { id: "GRANT", name: "CONCESSÃO" },
+              { id: "PRIVATE", name: "PRIVADO" },
             ]}
           />
         </Card>

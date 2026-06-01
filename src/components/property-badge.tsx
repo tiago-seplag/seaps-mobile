@@ -21,6 +21,12 @@ export const PropertyBadge = ({ type }: { type: string }) => {
       style.borderColor = "#dc2626";
       style.color = "#dc2626";
       break;
+    case "PRIVATE":
+      style.backgroundColor = "#16a34a20";
+      style.label = "PRIVADO";
+      style.borderColor = "#16a34a";
+      style.color = "#16a34a";
+      break;
     default:
       break;
   }

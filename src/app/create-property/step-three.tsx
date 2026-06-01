@@ -75,8 +75,8 @@ export const StepThreeScreen = ({
                 params: {
                   refresh: true,
                 },
-              })
-        )
+              }),
+        ),
       )
       .catch((e) => console.log(e));
   };
@@ -84,15 +84,13 @@ export const StepThreeScreen = ({
   useEffect(() => {
     if (watchedState) {
       api
-        .get(
-          `https://brasilapi.com.br/api/ibge/municipios/v1/${watchedState}?providers=dados-abertos-br,gov,wikipedia`
-        )
+        .get("/api/v2/address/cities/" + watchedState)
         .then(({ data }) => {
           setCities(
-            data.map((city: { nome: string; codigo_ibge: string }) => ({
-              id: city.nome.replace(/\s*\(.*?\)/g, ""),
-              name: city.nome.replace(/\s*\(.*?\)/g, ""),
-            }))
+            data.map((city: { name: string; id: string }) => ({
+              id: city.name.replace(/\s*\(.*?\)/g, ""),
+              name: city.name.replace(/\s*\(.*?\)/g, ""),
+            })),
           );
         })
         .catch((e) => console.log(e));
@@ -101,14 +99,19 @@ export const StepThreeScreen = ({
 
   const findAddressByCEP = async (cep: string) => {
     try {
-      const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-      const data = await response.json();
+      const data = await api
+        .get(`/api/v2/address/zipcode/${cep}`)
+        .then(({ data }) => data);
 
-      if (!data.erro) {
-        setValue("street", data.logradouro?.toUpperCase() || "");
-        setValue("neighborhood", data.bairro?.toUpperCase() || "");
-        setValue("city", data.localidade.toUpperCase() || "");
-        setValue("state", data.uf || "");
+      if (data) {
+        setValue("street", data.street?.toUpperCase() || "");
+        setValue("neighborhood", data.neighborhood?.toUpperCase() || "");
+        setValue("city", data.city?.toUpperCase() || "");
+        setValue("state", data.state || "");
+        setValue(
+          "address",
+          `${data.street} - ${data.neighborhood}, ${data.city} - ${data.state}, ${cep}`.toUpperCase(),
+        );
       }
     } catch (error) {
       console.log("Error fetching CEP:", error);
@@ -118,18 +121,16 @@ export const StepThreeScreen = ({
   return (
     <BaseSafeAreaView>
       <Header backButton title={"CRIAR IMÓVEL"} />
-
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
-        // style={styles.container}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <BaseView style={{ gap: 16 }}>
             <StepsCount step={3} length={3} />
             <Row />
-            <Card>
-              <ScrollView>
+            <Card style={{ flex: 1 }}>
+              <ScrollView style={{ flex: 1 }}>
                 <View style={{ gap: 4 }}>
                   <Input
                     control={control}
@@ -144,6 +145,7 @@ export const StepThreeScreen = ({
                     errors={errors}
                     label="CEP:"
                     name="cep"
+                    keyboardType="numeric"
                     placeholder="00000-000"
                     errorMessage="Insira o CEP"
                     maxLength={9}

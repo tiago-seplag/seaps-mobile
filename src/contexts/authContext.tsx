@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useStorageState } from "../hooks/useAsyncState";
-import { api, getUserData } from "../services";
+import { api, getUserData, User } from "../services";
 import { ActivityIndicator, View } from "react-native";
 import * as AuthSession from "expo-auth-session";
 
@@ -37,7 +37,7 @@ export function useSession() {
 }
 
 export function SessionProvider(props: React.PropsWithChildren) {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<User | null>(null);
   const [[isLoading, session], setSession] = useStorageState("session");
 
   const [, , promptAsync] = AuthSession.useAuthRequest(
@@ -48,7 +48,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
     },
     {
       endSessionEndpoint: LOGOUT_URL,
-    }
+    },
   );
 
   const getData = async () => {

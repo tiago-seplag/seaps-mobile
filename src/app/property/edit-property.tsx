@@ -238,6 +238,7 @@ export function EditProperty({ route }: Props) {
                   { id: "OWN", name: "PRÓPRIO" },
                   { id: "RENTED", name: "ALUGADO" },
                   { id: "GRANT", name: "CONCESSÃO" },
+                  { id: "PRIVATE", name: "PRIVADO" },
                 ]}
               />
               <Input

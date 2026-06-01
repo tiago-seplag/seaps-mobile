@@ -5,7 +5,7 @@
     "platforms": ["ios", "android"],
     "orientation": "portrait",
     "slug": "checklists-app",
-    "version": "1.2.3",
+    "version": "1.2.4",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
@@ -19,7 +19,10 @@
       "bundleIdentifier": "br.gov.mt.cepromat.mt-cidadao-gov.MTCidadao-NOTIFY",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "CFBundleDisplayName": "Sistema de Manutenção Predial"
+        "CFBundleDisplayName": "Sistema de Manutenção Predial",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
       }
     },
     "android": {
